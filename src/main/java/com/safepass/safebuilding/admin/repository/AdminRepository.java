@@ -8,8 +8,5 @@ import java.util.UUID;
 
 @Repository
 public interface AdminRepository extends JpaRepository<Admin, UUID> {
-    Admin findByUsername(String username);
 
-    boolean existsByUsernameAndPassword(String username, String password);
-    Admin findAdminByUsername(String username);
 }

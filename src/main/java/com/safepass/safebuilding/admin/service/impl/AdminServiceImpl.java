@@ -10,14 +10,5 @@ import org.springframework.stereotype.Service;
 public class AdminServiceImpl implements AdminService {
     @Autowired
     private AdminRepository adminRepository;
-    @Override
-    public boolean verifyAdminAccount(String username, String password) {
-        return adminRepository.existsByUsernameAndPassword(username, password);
 
-    }
-
-    @Override
-    public Admin getAdminInformation(String username) {
-        return adminRepository.findAdminByUsername(username);
-    }
 }

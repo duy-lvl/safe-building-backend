@@ -6,6 +6,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import java.util.UUID;
 @Getter
 @Setter
@@ -24,6 +25,9 @@ public class Admin {
     private String username;
     private String password;
     private String fullname;
+
+    @Email
+    private String email;
 
     @Enumerated(EnumType.STRING)
     private AdminStatus status;
