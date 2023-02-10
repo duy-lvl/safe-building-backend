@@ -30,6 +30,6 @@ public class FlatType {
     private String description;
     private FlatTypeStatus status;
 
-    @OneToMany(mappedBy = "flatTypeId")
+    @OneToMany(mappedBy = "id")
     private List<Flat> flats;
 }

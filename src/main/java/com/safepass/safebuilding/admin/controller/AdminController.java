@@ -1,10 +1,10 @@
 package com.safepass.safebuilding.admin.controller;
 
 import com.safepass.safebuilding.admin.service.AdminService;
+import com.safepass.safebuilding.common.dto.ResponseObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = "/api/v1/admin")
@@ -16,4 +16,6 @@ public class AdminController {
     public String testApi(){
         return "Hello world";
     }
+
+
 }

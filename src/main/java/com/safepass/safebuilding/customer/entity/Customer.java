@@ -5,6 +5,7 @@ import com.safepass.safebuilding.notification.entity.Notification;
 import com.safepass.safebuilding.rent_contract.entity.RentContract;
 import com.safepass.safebuilding.common.meta.CustomerStatus;
 import com.safepass.safebuilding.common.meta.Gender;
+import com.safepass.safebuilding.wallet.entity.Wallet;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
@@ -51,8 +52,8 @@ public class Customer {
     private List<RentContract> rentContracts;
 
     @OneToMany(mappedBy = "customerId")
-    private List<MoneyTransfer> moneyTransfers;
-
-    @OneToMany(mappedBy = "customerId")
     private List<Notification> notifications;
+
+    @OneToMany(mappedBy = "id")
+    private List<Wallet> wallets;
 }

@@ -29,6 +29,6 @@ public class Service {
     @Enumerated(EnumType.STRING)
     private ServiceStatus status;
 
-    @OneToMany(mappedBy = "serviceId")
+    @OneToMany(mappedBy = "id")
     private List<BillItem> billItems;
 }

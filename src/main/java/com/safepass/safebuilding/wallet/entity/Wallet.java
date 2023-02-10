@@ -2,6 +2,7 @@ package com.safepass.safebuilding.wallet.entity;
 
 import com.safepass.safebuilding.common.meta.WalletStatus;
 import com.safepass.safebuilding.customer.entity.Customer;
+import com.safepass.safebuilding.money_transfer.entity.MoneyTransfer;
 import com.safepass.safebuilding.transaction.entity.Transaction;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
@@ -25,7 +26,7 @@ public class Wallet {
 
     //FK
     @Type(type = "org.hibernate.type.UUIDCharType")
-    @OneToOne(targetEntity = Customer.class)
+    @ManyToOne(targetEntity = Customer.class)
     @JoinColumn(
             name = "customer_id",
             referencedColumnName = "id"
@@ -37,6 +38,9 @@ public class Wallet {
     @Enumerated(EnumType.STRING)
     private WalletStatus status;
 
-    @OneToMany(mappedBy = "walletId")
+    @OneToMany(mappedBy = "id")
     private List<Transaction> transactions;
+
+    @OneToMany(mappedBy = "id")
+    private List<MoneyTransfer> moneyTransfers;
 }

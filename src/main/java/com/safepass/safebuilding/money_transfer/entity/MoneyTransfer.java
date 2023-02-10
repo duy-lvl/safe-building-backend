@@ -3,6 +3,7 @@ package com.safepass.safebuilding.money_transfer.entity;
 import com.safepass.safebuilding.common.meta.MoneyTransferStatus;
 import com.safepass.safebuilding.common.meta.MoneyTransferType;
 import com.safepass.safebuilding.customer.entity.Customer;
+import com.safepass.safebuilding.wallet.entity.Wallet;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,12 +31,12 @@ public class MoneyTransfer {
 
     //FK
     @Type(type = "org.hibernate.type.UUIDCharType")
-    @ManyToOne(targetEntity = Customer.class)
+    @ManyToOne(targetEntity = Wallet.class)
     @JoinColumn(
-            name = "customer_id",
+            name = "wallet_id",
             referencedColumnName = "id"
     )
-    private UUID customerId;
+    private UUID walletId;
 
     @Enumerated(EnumType.STRING)
     private MoneyTransferType type;
