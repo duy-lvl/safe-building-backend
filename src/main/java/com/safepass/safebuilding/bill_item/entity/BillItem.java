@@ -2,7 +2,6 @@ package com.safepass.safebuilding.bill_item.entity;
 
 import com.safepass.safebuilding.bill.entity.Bill;
 import com.safepass.safebuilding.service.entity.Service;
-import com.safepass.safebuilding.common.meta.BillItemStatus;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
@@ -44,6 +43,4 @@ public class BillItem {
     private int quantity;
     private int value;
 
-    @Enumerated(EnumType.STRING)
-    private BillItemStatus status;
 }

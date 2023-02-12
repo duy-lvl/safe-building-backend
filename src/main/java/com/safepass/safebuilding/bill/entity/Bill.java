@@ -45,11 +45,4 @@ public class Bill {
     @OneToMany(mappedBy = "billId")
     private List<BillItem> billItems;
 
-    //FK
-    @OneToOne(targetEntity = Transaction.class)
-    @JoinColumn(
-            name = "transaction_id",
-            referencedColumnName = "id"
-    )
-    private UUID transactionId;
 }

@@ -1,6 +1,6 @@
 package com.safepass.safebuilding.facility.entity;
 
-import com.safepass.safebuilding.common.meta.FurnitureStatus;
+import com.safepass.safebuilding.common.meta.FacilityStatus;
 import com.safepass.safebuilding.flat.entity.Flat;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
@@ -23,20 +23,11 @@ public class Facility {
     @Type(type = "org.hibernate.type.UUIDCharType")
     private UUID id;
 
-    //FK
-    @Type(type = "org.hibernate.type.UUIDCharType")
-    @ManyToOne(targetEntity = Flat.class)
-    @JoinColumn(
-            name = "flat_id",
-            referencedColumnName = "id"
-    )
-    private UUID flatId;
-
     private String item;
     private int quantity;
 
     @Enumerated(EnumType.STRING)
-    private FurnitureStatus status;
+    private FacilityStatus status;
 
     @ManyToMany(mappedBy = "facilities")
     private List<Flat> flats;

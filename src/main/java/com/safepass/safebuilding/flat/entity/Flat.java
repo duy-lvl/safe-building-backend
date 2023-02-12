@@ -8,8 +8,11 @@ import com.safepass.safebuilding.common.meta.FlatStatus;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
+import org.hibernate.validator.constraints.UniqueElements;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.List;
 import java.util.UUID;
 @Getter
@@ -31,6 +34,10 @@ public class Flat {
     @Enumerated(EnumType.STRING)
     private FlatStatus status;
 
+    @Min(101)
+    @Max(999)
+    @UniqueElements
+    private int roomNumber;
     //FK
     @Type(type = "org.hibernate.type.UUIDCharType")
     @ManyToOne(targetEntity = FlatType.class)

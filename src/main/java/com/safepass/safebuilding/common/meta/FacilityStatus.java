@@ -1,5 +1,5 @@
 package com.safepass.safebuilding.common.meta;
 
-public enum FurnitureStatus {
+public enum FacilityStatus {
     AVAILABLE, UNAVAILABLE
 }

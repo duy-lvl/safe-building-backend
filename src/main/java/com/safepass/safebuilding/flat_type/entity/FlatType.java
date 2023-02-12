@@ -28,6 +28,8 @@ public class FlatType {
 
     private String name;
     private String description;
+
+    @Enumerated(EnumType.STRING)
     private FlatTypeStatus status;
 
     @OneToMany(mappedBy = "id")

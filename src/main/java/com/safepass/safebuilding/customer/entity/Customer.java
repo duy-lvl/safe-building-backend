@@ -35,6 +35,8 @@ public class Customer {
     private String fullname;
 
     private Date dateOfBirth;
+
+    @Enumerated(EnumType.STRING)
     private Gender gender;
 
     @Email

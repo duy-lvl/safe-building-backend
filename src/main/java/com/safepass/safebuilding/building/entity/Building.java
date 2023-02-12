@@ -24,6 +24,8 @@ public class Building {
     private UUID id;
 
     private String name;
+
+    @Enumerated(EnumType.STRING)
     private BuildingStatus status;
 
     @OneToMany(mappedBy = "id")

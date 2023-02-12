@@ -22,7 +22,7 @@ public class Admin {
     @Type(type = "org.hibernate.type.UUIDCharType")
     private UUID id;
 
-    private String username;
+    private String phone;
     private String password;
     private String fullname;
 

@@ -1,8 +1,8 @@
 package com.safepass.safebuilding.transaction.entity;
 
+import com.safepass.safebuilding.bill.entity.Bill;
 import com.safepass.safebuilding.wallet.entity.Wallet;
 import com.safepass.safebuilding.common.meta.TransactionStatus;
-import com.safepass.safebuilding.common.meta.TransactionType;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
@@ -35,14 +35,16 @@ public class Transaction {
 
     private Date date;
 
-    @Enumerated(EnumType.STRING)
-    private TransactionType type;
-
     private int amount;
     private String description;
 
     @Enumerated(EnumType.STRING)
     private TransactionStatus status;
 
-
+    @OneToOne(targetEntity = Bill.class)
+    @JoinColumn(
+            name = "bill_id",
+            referencedColumnName = "id"
+    )
+    private UUID billId;
 }
