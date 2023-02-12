@@ -27,8 +27,7 @@ public class Customer {
     @Column(name = "id", updatable = false, nullable = false)
     @Type(type = "org.hibernate.type.UUIDCharType")
     private UUID id;
-
-    private String username;
+    
     private String password;
 
     @Column(columnDefinition = "varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL, FULLTEXT KEY fullname(fullname)")
