@@ -7,9 +7,11 @@ import com.safepass.safebuilding.building.service.BuildingService;
 import com.safepass.safebuilding.common.dto.Pagination;
 import com.safepass.safebuilding.common.dto.ResponseObject;
 import com.safepass.safebuilding.common.exception.InvalidPageSizeException;
+import com.safepass.safebuilding.common.exception.MaxPageExceededException;
 import com.safepass.safebuilding.common.utils.ModelMapperCustom;
 import com.safepass.safebuilding.common.validation.PaginationValidation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -27,20 +29,24 @@ public class BuildingServiceImpl implements BuildingService {
     @Autowired
     private PaginationValidation paginationValidation;
     @Override
-    public ResponseEntity<ResponseObject> getAllBuilding(int page, int size) throws InvalidPageSizeException {
+    public ResponseEntity<ResponseObject> getAllBuilding(int page, int size) throws InvalidPageSizeException, MaxPageExceededException {
         try {
             paginationValidation.validatePageSize(page, size);
             Pageable pageRequest = PageRequest.of(page - 1, size);
+            Page<Building> buildingPage = buildingRepository.findAll(pageRequest);
+            int totalPage = buildingPage.getTotalPages();
+            Pagination pagination = new Pagination(page, size, totalPage);
+            paginationValidation.validateMaxPageNumber(pagination);
 
-            List<Building> buildings = buildingRepository.findAll(pageRequest).getContent();
+            List<Building> buildings = buildingPage.getContent();
             List<BuildingDTO> buildingDTOs = modelMapper.mapList(buildings, BuildingDTO.class);
 
-            int totalPage = buildingRepository.findAll(pageRequest).getTotalPages();
-            Pagination pagination = new Pagination(page, size, totalPage);
+
+
             ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.OK)
                     .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", pagination, buildingDTOs));
             return responseEntity;
-        } catch (InvalidPageSizeException e) {
+        } catch (InvalidPageSizeException | MaxPageExceededException e) {
             ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ResponseObject(HttpStatus.NOT_ACCEPTABLE.toString(), e.getMessage(), null, null));
             return responseEntity;

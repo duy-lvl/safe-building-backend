@@ -1,5 +1,7 @@
 package com.safepass.safebuilding.common.validation;
+import com.safepass.safebuilding.common.dto.Pagination;
 import com.safepass.safebuilding.common.exception.InvalidPageSizeException;
+import com.safepass.safebuilding.common.exception.MaxPageExceededException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,6 +16,12 @@ public class PaginationValidation {
         }
         if (size < MINIMUM_VALUE_OF_SIZE) {
             throw new InvalidPageSizeException("Page size must be a positive integer");
+        }
+    }
+
+    public void validateMaxPageNumber(Pagination pagination) throws MaxPageExceededException {
+        if (pagination.getPage() > pagination.getTotalPage()) {
+            throw new MaxPageExceededException("Page number exceeds total pages!");
         }
     }
 }
