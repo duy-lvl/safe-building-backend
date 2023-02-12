@@ -111,10 +111,9 @@ public class DataImport {
             customerIds.add(UUID.randomUUID());
         }
         for (int i = 0; i < 15; i++) {
-            StringBuilder sql = new StringBuilder("INSERT INTO customer (id, username, password, fullname, date_of_birth, gender, email, phone, address, citizen_id, date_join, status) VALUES (\"");
-            sql.append(customerIds.get(i)).append("\", \"") //id
-                    .append(faker.name().username()).append("\", \"")
-                    .append(faker.number().numberBetween(10000000, 99999999)).append("\", \"")
+            StringBuilder sql = new StringBuilder("INSERT INTO customer (id, password, fullname, date_of_birth, gender, email, phone, address, citizen_id, date_join, status) VALUES (\"");
+            sql.append(customerIds.get(i)).append("\", ") //id
+                    .append(faker.number().numberBetween(10000000, 99999999)).append(", \"")
                     .append(faker.name().fullName()).append("\", \"")
                     .append(sdf.format(faker.date().birthday())).append("\", \"")
                     .append(Gender.FEMALE).append("\", \"")
@@ -130,10 +129,9 @@ public class DataImport {
         }
 
         for (int i = 15; i < 30; i++) {
-            StringBuilder sql = new StringBuilder("INSERT INTO customer (id, username, password, fullname, date_of_birth, gender, email, phone, address, citizen_id, date_join, status) VALUES (\"");
-            sql.append(customerIds.get(i)).append("\", \"") //id
-                    .append(faker.name().username()).append("\", \"")
-                    .append(faker.number().numberBetween(10000000, 99999999)).append("\", \"")
+            StringBuilder sql = new StringBuilder("INSERT INTO customer (id, password, fullname, date_of_birth, gender, email, phone, address, citizen_id, date_join, status) VALUES (\"");
+            sql.append(customerIds.get(i)).append("\", ") //id
+                    .append(faker.number().numberBetween(10000000, 99999999)).append(", \"")
                     .append(faker.name().fullName()).append("\", \"")
                     .append(sdf.format(faker.date().birthday())).append("\", \"")
                     .append(Gender.MALE).append("\", \"")
@@ -150,10 +148,9 @@ public class DataImport {
 
 
         for (int i = 30; i < 45; i++) {
-            StringBuilder sql = new StringBuilder("INSERT INTO customer (id, username, password, fullname, date_of_birth, gender, email, phone, address, citizen_id, date_join, status) VALUES (\"");
-            sql.append(customerIds.get(i)).append("\", \"") //id
-                    .append(faker.name().username()).append("\", \"")
-                    .append(faker.number().numberBetween(10000000, 99999999)).append("\", \"")
+            StringBuilder sql = new StringBuilder("INSERT INTO customer (id, password, fullname, date_of_birth, gender, email, phone, address, citizen_id, date_join, status) VALUES (\"");
+            sql.append(customerIds.get(i)).append("\", ") //id
+                    .append(faker.number().numberBetween(10000000, 99999999)).append(", \"")
                     .append(faker.name().fullName()).append("\", \"")
                     .append(sdf.format(faker.date().birthday())).append("\", \"")
                     .append(Gender.FEMALE).append("\", \"")
@@ -169,10 +166,9 @@ public class DataImport {
         }
 
         for (int i = 45; i < 60; i++) {
-            StringBuilder sql = new StringBuilder("INSERT INTO customer (id, username, password, fullname, date_of_birth, gender, email, phone, address, citizen_id, date_join, status) VALUES (\"");
-            sql.append(customerIds.get(i)).append("\", \"") //id
-                    .append(faker.name().username()).append("\", \"")
-                    .append(faker.number().numberBetween(10000000, 99999999)).append("\", \"")
+            StringBuilder sql = new StringBuilder("INSERT INTO customer (id, password, fullname, date_of_birth, gender, email, phone, address, citizen_id, date_join, status) VALUES (\"");
+            sql.append(customerIds.get(i)).append("\", ") //id
+                    .append(faker.number().numberBetween(10000000, 99999999)).append(", \"")
                     .append(faker.name().fullName()).append("\", \"")
                     .append(sdf.format(faker.date().birthday())).append("\", \"")
                     .append(Gender.MALE).append("\", \"")
@@ -502,7 +498,7 @@ public class DataImport {
     void createData() {
 
         writeToFile(
-                "D:\\import\\admin.txt",
+                "src\\main\\resources\\import.txt",
                 createAdmin() + "\n\n" + createFlatType() + "\n\n" +
                         createService() + "\n\n" + createCustomer() + "\n\n" +
                         createBuilding() + "\n\n" + createFlat() + "\n\n" +
@@ -512,19 +508,6 @@ public class DataImport {
                         createBill() + "\n\n" + createBillItem()
         );
 
-//        createAdmin();
-//        createFlatType();
-//        createService();
-//        createCustomer();
-//        createBuilding();
-//        createFlat();
-//        createFacility();
-//        createFlatFacility();
-//        createWallet();
-//        createRentContract();
-//        createMoneyTransfer();
-//        createBill();
-//        createBillItem();
     }
     private int random(int min, int max) {
         return min + (int) (Math.random() * (max-min+1));
