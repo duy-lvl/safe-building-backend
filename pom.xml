@@ -125,6 +125,8 @@
 			<artifactId>aws-java-sdk-s3</artifactId>
 			<version>1.12.405</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.modelmapper/modelmapper -->
+
 
 	</dependencies>
 
