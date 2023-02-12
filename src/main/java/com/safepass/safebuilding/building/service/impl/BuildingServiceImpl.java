@@ -41,8 +41,6 @@ public class BuildingServiceImpl implements BuildingService {
             List<Building> buildings = buildingPage.getContent();
             List<BuildingDTO> buildingDTOs = modelMapper.mapList(buildings, BuildingDTO.class);
 
-
-
             ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.OK)
                     .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", pagination, buildingDTOs));
             return responseEntity;
