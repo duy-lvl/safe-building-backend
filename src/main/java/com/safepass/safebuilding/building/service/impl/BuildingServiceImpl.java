@@ -8,6 +8,7 @@ import com.safepass.safebuilding.common.dto.Pagination;
 import com.safepass.safebuilding.common.dto.ResponseObject;
 import com.safepass.safebuilding.common.exception.InvalidPageSizeException;
 import com.safepass.safebuilding.common.exception.MaxPageExceededException;
+import com.safepass.safebuilding.common.meta.ServiceStatus;
 import com.safepass.safebuilding.common.utils.ModelMapperCustom;
 import com.safepass.safebuilding.common.validation.PaginationValidation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,7 @@ public class BuildingServiceImpl implements BuildingService {
     private ModelMapperCustom modelMapper = new ModelMapperCustom();
     @Autowired
     private PaginationValidation paginationValidation;
+
     @Override
     public ResponseEntity<ResponseObject> getAllBuilding(int page, int size) throws InvalidPageSizeException, MaxPageExceededException {
         try {
@@ -50,6 +52,6 @@ public class BuildingServiceImpl implements BuildingService {
             return responseEntity;
         }
 
-
+//        return service.getAll(page, size, buildingRepository, BuildingDTO.class);
     }
 }

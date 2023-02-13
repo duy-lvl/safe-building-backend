@@ -6,5 +6,6 @@ import com.safepass.safebuilding.common.exception.MaxPageExceededException;
 import org.springframework.http.ResponseEntity;
 
 public interface ServiceService {
+
     ResponseEntity<ResponseObject> getAllService(int page, int size) throws InvalidPageSizeException, MaxPageExceededException;
 }
