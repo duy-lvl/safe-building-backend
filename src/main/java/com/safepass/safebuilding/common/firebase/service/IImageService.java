@@ -1,3 +1,5 @@
+package com.safepass.safebuilding.common.firebase.service;
+
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -45,3 +47,4 @@ public interface IImageService {
     }
 
 }
+
