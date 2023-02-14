@@ -9,10 +9,12 @@ import java.util.UUID;
 
 @Repository
 public interface AdminRepository extends JpaRepository<Admin, UUID> {
+
     Admin findAdminByEmail(String email);
     Admin findAdminByPhone(String phone);
     @Query("SELECT a FROM Admin a WHERE a.email = ?1 OR a.phone = ?1 AND a.password = ?2")
     Admin loginAdmin(String phoneOrEmail, String password);
 
     Admin findAdminByPhoneAndPassword(String phone, String password);
+
 }

@@ -26,6 +26,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import com.safepass.safebuilding.admin.entity.Admin;
+import com.safepass.safebuilding.admin.repository.AdminRepository;
+import com.safepass.safebuilding.admin.service.AdminService;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -39,6 +45,7 @@ import java.util.stream.Collectors;
 @Log4j2
 public class AdminServiceImpl implements AdminService {
 
+    @Autowired
     private AdminRepository adminRepository;
 
     private final ModelMapper modelMapper;
@@ -114,4 +121,7 @@ public class AdminServiceImpl implements AdminService {
                 .headers(responseHeaders)
                 .body(responseObject);
     }
+
+
+
 }

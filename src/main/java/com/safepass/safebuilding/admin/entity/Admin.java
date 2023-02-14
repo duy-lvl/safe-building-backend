@@ -29,6 +29,9 @@ public class Admin {
     @Email
     private String email;
 
+    @Email
+    private String email;
+
     @Enumerated(EnumType.STRING)
     private AdminStatus status;
 }
