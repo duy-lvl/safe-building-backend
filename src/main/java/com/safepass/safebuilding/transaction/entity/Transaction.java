@@ -25,13 +25,8 @@ public class Transaction {
     private UUID id;
 
     //FK
-    @Type(type = "org.hibernate.type.UUIDCharType")
-    @ManyToOne(targetEntity = Wallet.class)
-    @JoinColumn(
-            name = "wallet_id",
-            referencedColumnName = "id"
-    )
-    private UUID walletId;
+    @ManyToOne
+    private Wallet wallet;
 
     private Date date;
 
@@ -41,10 +36,6 @@ public class Transaction {
     @Enumerated(EnumType.STRING)
     private TransactionStatus status;
 
-    @OneToOne(targetEntity = Bill.class)
-    @JoinColumn(
-            name = "bill_id",
-            referencedColumnName = "id"
-    )
-    private UUID billId;
+    @OneToOne
+    private Bill bill;
 }

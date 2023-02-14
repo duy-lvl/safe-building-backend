@@ -28,13 +28,8 @@ public class Bill {
     private UUID id;
 
     //FK
-    @Type(type = "org.hibernate.type.UUIDCharType")
-    @ManyToOne(targetEntity = RentContract.class)
-    @JoinColumn(
-        name = "rent_contract_id",
-        referencedColumnName = "id"
-    )
-    private UUID rentContractId;
+    @ManyToOne
+    private RentContract rentContract;
 
     private Date date;
     private int value;
@@ -42,7 +37,5 @@ public class Bill {
     @Enumerated(EnumType.STRING)
     private BillStatus status;
 
-    @OneToMany(mappedBy = "billId")
-    private List<BillItem> billItems;
 
 }

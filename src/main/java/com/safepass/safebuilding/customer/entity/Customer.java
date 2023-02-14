@@ -1,5 +1,6 @@
 package com.safepass.safebuilding.customer.entity;
 
+import com.safepass.safebuilding.device.entity.Device;
 import com.safepass.safebuilding.money_transfer.entity.MoneyTransfer;
 import com.safepass.safebuilding.notification.entity.Notification;
 import com.safepass.safebuilding.rent_contract.entity.RentContract;
@@ -49,12 +50,4 @@ public class Customer {
     @Enumerated(EnumType.STRING)
     private CustomerStatus status;
 
-    @OneToMany(mappedBy = "customerId")
-    private List<RentContract> rentContracts;
-
-    @OneToMany(mappedBy = "customerId")
-    private List<Notification> notifications;
-
-    @OneToMany(mappedBy = "id")
-    private List<Wallet> wallets;
 }

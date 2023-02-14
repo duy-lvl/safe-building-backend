@@ -1,20 +1,21 @@
-package com.safepass.safebuilding.bill_item.entity;
+package com.safepass.safebuilding.device.entity;
 
-import com.safepass.safebuilding.bill.entity.Bill;
-import com.safepass.safebuilding.service.entity.Service;
+import com.safepass.safebuilding.customer.entity.Customer;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
+import org.springframework.data.annotation.Reference;
 
 import javax.persistence.*;
 import java.util.UUID;
+
+@Entity
 @Getter
 @Setter
-@ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
-public class BillItem {
+@ToString
+public class Device {
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
@@ -22,15 +23,8 @@ public class BillItem {
     @Type(type = "org.hibernate.type.UUIDCharType")
     private UUID id;
 
-    //FK
+    private String token;
+
     @ManyToOne
-    private Bill bill;
-
-    //FK
-    @ManyToOne
-    private Service service;
-
-    private int quantity;
-    private int value;
-
+    private Customer customer;
 }

@@ -27,13 +27,8 @@ public class Notification {
     private UUID id;
 
     //FK
-    @Type(type = "org.hibernate.type.UUIDCharType")
-    @ManyToOne(targetEntity = Customer.class)
-    @JoinColumn(
-            name = "customer_id",
-            referencedColumnName = "id"
-    )
-    private UUID customerId;
+    @ManyToOne
+    private Customer customer;
 
     private String header;
     private String content;

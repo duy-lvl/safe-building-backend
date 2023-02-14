@@ -47,18 +47,8 @@ public class Flat {
     )
     private UUID flatTypeId;
 
-    @Type(type = "org.hibernate.type.UUIDCharType")
-    @ManyToOne(targetEntity = Building.class)
-    @JoinColumn(
-            name = "building_id",
-            referencedColumnName = "id"
-    )
-    private UUID buildingId;
-
-
-
-    @OneToMany(mappedBy = "id")
-    private List<RentContract> rentContracts;
+    @ManyToOne
+    private Building building;
 
     @ManyToMany
     @JoinTable(
@@ -67,4 +57,5 @@ public class Flat {
             inverseJoinColumns = @JoinColumn(name = "facility_id")
     )
     private List<Facility> facilities;
+
 }

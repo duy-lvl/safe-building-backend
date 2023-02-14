@@ -32,6 +32,4 @@ public class FlatType {
     @Enumerated(EnumType.STRING)
     private FlatTypeStatus status;
 
-    @OneToMany(mappedBy = "id")
-    private List<Flat> flats;
 }

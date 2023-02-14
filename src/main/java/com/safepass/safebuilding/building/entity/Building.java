@@ -28,7 +28,4 @@ public class Building {
     @Enumerated(EnumType.STRING)
     private BuildingStatus status;
 
-    @OneToMany(mappedBy = "id", fetch = FetchType.EAGER)
-    private List<Flat> flats;
-
 }
