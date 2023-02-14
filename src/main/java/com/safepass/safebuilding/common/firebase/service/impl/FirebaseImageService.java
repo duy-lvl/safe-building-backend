@@ -27,6 +27,7 @@ public class FirebaseImageService implements IImageService {
     @Autowired
     Properties properties;
 
+
     @EventListener
     public void init(ApplicationReadyEvent event) {
 
