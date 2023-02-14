@@ -2,7 +2,7 @@ package com.safepass.safebuilding.flat.entity;
 
 import com.safepass.safebuilding.flat_type.entity.FlatType;
 import com.safepass.safebuilding.building.entity.Building;
-import com.safepass.safebuilding.furniture.entity.Furniture;
+import com.safepass.safebuilding.facility.entity.Facility;
 import com.safepass.safebuilding.rent_contract.entity.RentContract;
 import com.safepass.safebuilding.common.meta.FlatStatus;
 import lombok.*;
@@ -48,11 +48,16 @@ public class Flat {
     )
     private UUID buildingId;
 
-    @OneToMany(mappedBy = "flatId")
-    private List<Furniture> funitures;
 
-    @OneToMany(mappedBy = "flatId")
+
+    @OneToMany(mappedBy = "id")
     private List<RentContract> rentContracts;
 
-
+    @ManyToMany
+    @JoinTable(
+            name = "flat_facility",
+            joinColumns = @JoinColumn(name = "flat_id"),
+            inverseJoinColumns = @JoinColumn(name = "facility_id")
+    )
+    private List<Facility> facilities;
 }

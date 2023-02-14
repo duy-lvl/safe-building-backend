@@ -1,13 +1,13 @@
-package com.safepass.safebuilding.furniture.controller;
+package com.safepass.safebuilding.facility.controller;
 
-import com.safepass.safebuilding.furniture.service.FurnitureService;
+import com.safepass.safebuilding.facility.service.FacilityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(value = "/api/v1/furniture")
-public class FurnitureController {
+public class FacilityController {
     @Autowired
-    private FurnitureService furnitureService;
+    private FacilityService furnitureService;
 }

@@ -18,7 +18,7 @@
                     pattern="${FILE_LOG_PATTERN}"/>
         </File>
     </Appenders>
-    
+
     <Loggers>
         <Root level="all">
             <AppenderRef ref="Console"/>

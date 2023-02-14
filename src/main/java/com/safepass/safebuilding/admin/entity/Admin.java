@@ -6,6 +6,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import java.util.UUID;
 @Getter
 @Setter
@@ -13,6 +14,7 @@ import java.util.UUID;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Admin {
     @Id
     @GeneratedValue(generator = "UUID")
@@ -21,9 +23,11 @@ public class Admin {
     @Type(type = "org.hibernate.type.UUIDCharType")
     private UUID id;
 
-    private String username;
     private String password;
     private String fullname;
+    private String phone;
+    @Email
+    private String email;
 
     @Enumerated(EnumType.STRING)
     private AdminStatus status;

@@ -51,6 +51,6 @@ public class RentContract {
     @Enumerated(EnumType.STRING)
     private RentContractStatus status;
 
-    @OneToMany(mappedBy = "rentContractId")
+    @OneToMany(mappedBy = "id")
     private List<Bill> bills;
 }

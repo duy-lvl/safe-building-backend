@@ -26,7 +26,7 @@ public class Building {
     private String name;
     private BuildingStatus status;
 
-    @OneToMany(mappedBy = "buildingId")
+    @OneToMany(mappedBy = "id")
     private List<Flat> flats;
 
 }
