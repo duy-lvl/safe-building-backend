@@ -36,10 +36,16 @@ public class AdminController {
 
     @PostMapping("/web/login")
     @SecurityRequirements
-    @PreAuthorize("permitAll()")
+//    @PreAuthorize("permitAll()")
     public ResponseEntity<ResponseObject> login(@Param("phone") String phone, @Param("password") String password) {
         return adminService.login(response, request, phone, password);
     }
 
+    @PostMapping("/web/login-with-email")
+    @SecurityRequirements
+//    @PreAuthorize("permitAll()")
+    public ResponseEntity<ResponseObject> loginWithEmail(@Param("email") String email) {
+        return adminService.loginWithEmail(response, request, email);
+    }
 
 }

@@ -122,6 +122,55 @@ public class AdminServiceImpl implements AdminService {
                 .body(responseObject);
     }
 
+    @Override
+    public ResponseEntity<ResponseObject> loginWithEmail(HttpServletResponse response, HttpServletRequest request, String email) {
+        Admin admin = adminRepository.findAdminByEmail(email);
+//        if(admin!=null ){
+//            if(!passwordEncoder.matches(password, admin.getPassword())){
+//                admin = null;
+//            }
+//        }
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(admin.getPhone()+"-Admin", admin.getPassword())
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        UserPrinciple userPrinciple = (UserPrinciple) authentication.getPrincipal();
+        UserPrinciple user = null ;
+        ResponseObject responseObject = null;
+        if(admin == null){
+            log.error("Wrong credentials information");
+            responseObject = new ResponseObject(HttpStatus.NOT_ACCEPTABLE.toString(), "Wrong credentials information", null, null );
+        } else if(admin.getStatus().equals(AdminStatus.INACTIVE)) {
+            log.info("Admin found in database with username with inactive status:"+admin.getFullname());
+            responseObject = new ResponseObject(HttpStatus.NOT_ACCEPTABLE.toString(), "Account has been locked", null, null );
+        } else if(admin.getStatus().equals(AdminStatus.ACTIVE)) {
+            log.info("Admin found in database with username with active status:" + admin.getFullname());
+            Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+            authorities.add(new SimpleGrantedAuthority(LoginAuthorities.ADMIN.toString()));
+            user = UserPrinciple.adminBuild(admin);
+            responseObject = new ResponseObject(HttpStatus.ACCEPTED.toString(), "Login successfully", null, userPrinciple );
+        }
+//        RefreshTokenService.createJwt(response, request, userPrinciple);
+        Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());
+        String accessToken = JWT.create()
+                .withSubject(userPrinciple.getUsername())
+                .withExpiresAt(new Date(System.currentTimeMillis()+accessTokenDuration))
+//                .withIssuer(request.getRequestURI().toString())
+                .withClaim("roles", userPrinciple.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
+                .sign(algorithm);
+        String refreshToken = JWT.create()
+                .withSubject(userPrinciple.getUsername())
+                .withExpiresAt(new Date(System.currentTimeMillis()+refreshTokenDuration))
+//                .withIssuer(request.getRequestURI().toString())
+                .sign(algorithm);
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set("Access_token",
+                accessToken);
+        responseHeaders.set("Refresh_token", refreshToken);
+        return ResponseEntity.status(HttpStatus.OK)
+                .headers(responseHeaders)
+                .body(responseObject);
+    }
 
 
 }

@@ -9,4 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 
 public interface AdminService {
     ResponseEntity<ResponseObject> login(HttpServletResponse response, HttpServletRequest request, String phoneOrEmail, String password);
+
+    ResponseEntity<ResponseObject> loginWithEmail(HttpServletResponse response, HttpServletRequest request, String email);
 }
