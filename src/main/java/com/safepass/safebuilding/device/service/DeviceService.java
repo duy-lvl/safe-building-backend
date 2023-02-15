@@ -9,6 +9,4 @@ import java.util.UUID;
 
 public interface DeviceService {
     Device addToken(Customer customer, String token);
-    ResponseEntity<ResponseObject> getAllDevice(int page, int size);
-
 }

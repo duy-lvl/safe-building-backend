@@ -23,4 +23,15 @@ public class CustomerServiceUtil {
                 "\tAND rent_contract.status = \"VALID\" AND customer.status = \"ACTIVE\"\n" +
                 "ORDER BY building.name ASC, flat.room_number ASC, customer.status ASC";
     }
+
+    public static String construcQueryForGetCustomerDevice(int page, int size) {
+        return "SELECT DISTINCT customer_id, fullname\n" +
+                "FROM device JOIN customer ON device.customer_id = customer.id\n" +
+                "LIMIT " + size + " OFFSET " + (page * size);
+    }
+
+    public static String constructQueryForGetTotalRowGetCustomerDevice() {
+        return "SELECT count(DISTINCT customer_id)" +
+                "FROM device JOIN customer ON device.customer_id = customer.id;";
+    }
 }

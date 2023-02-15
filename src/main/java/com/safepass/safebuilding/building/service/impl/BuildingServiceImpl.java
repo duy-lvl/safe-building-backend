@@ -31,7 +31,7 @@ public class BuildingServiceImpl implements BuildingService {
     private PaginationValidation paginationValidation;
 
     @Override
-    public ResponseEntity<ResponseObject> getAllBuilding(int page, int size) {
+    public ResponseEntity<ResponseObject> getBuildingList(int page, int size) {
         try {
             paginationValidation.validatePageSize(page, size);
             Pageable pageRequest = PageRequest.of(page - 1, size);

@@ -4,32 +4,32 @@ import com.safepass.safebuilding.common.dto.Pagination;
 import com.safepass.safebuilding.common.dto.ResponseObject;
 import com.safepass.safebuilding.common.exception.InvalidPageSizeException;
 import com.safepass.safebuilding.common.exception.MaxPageExceededException;
+import com.safepass.safebuilding.common.utils.ModelMapperCustom;
 import com.safepass.safebuilding.common.validation.PaginationValidation;
 import com.safepass.safebuilding.customer.dto.CustomerDTO;
+import com.safepass.safebuilding.customer.dto.CustomerDeviceDTO;
 import com.safepass.safebuilding.customer.entity.Customer;
 import com.safepass.safebuilding.customer.jdbc.CustomerJDBC;
 import com.safepass.safebuilding.customer.repository.CustomerRepository;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.safepass.safebuilding.common.dto.ResponseObject;
 import com.safepass.safebuilding.common.meta.CustomerStatus;
 import com.safepass.safebuilding.common.meta.LoginAuthorities;
 import com.safepass.safebuilding.common.security.jwt.userprincipal.UserPrinciple;
-import com.safepass.safebuilding.customer.entity.Customer;
-import com.safepass.safebuilding.customer.repository.CustomerRepository;
 import com.safepass.safebuilding.customer.service.CustomerService;
+import com.safepass.safebuilding.device.dto.DeviceDTO;
+import com.safepass.safebuilding.device.entity.Device;
+import com.safepass.safebuilding.device.repository.DeviceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -65,6 +65,8 @@ public class CustomerServiceImpl implements CustomerService {
     @Value("${app.jwtRefreshExpirationMs}")
     static int refreshTokenDuration = 86400000;
     private final ModelMapper modelMapper;
+
+    private ModelMapperCustom modelMapperCustom = new ModelMapperCustom();
     @Autowired
     private CustomerRepository customerRepository;
     @Autowired
@@ -72,16 +74,18 @@ public class CustomerServiceImpl implements CustomerService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private PaginationValidation paginationValidation;
+    @Autowired
+    private DeviceRepository deviceRepository;
     public CustomerServiceImpl(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
     }
 
     @Autowired
-    private PaginationValidation paginationValidation;
-    @Autowired
     private CustomerJDBC customerJDBC;
 
-    public ResponseEntity<ResponseObject> getAllCustomer(int page, int size) {
+    public ResponseEntity<ResponseObject> getCustomerList(int page, int size) {
         try {
             paginationValidation.validatePageSize(page, size);
             System.out.println("get all");
@@ -95,7 +99,7 @@ public class CustomerServiceImpl implements CustomerService {
             paginationValidation.validateMaxPageNumber(pagination);
 
             String queryGetAll = CustomerServiceUtil.constructQueryForGetAllCustomer(page - 1, size);
-            List<CustomerDTO> customerDTOs = customerJDBC.getAllCustomer(queryGetAll);
+            List<CustomerDTO> customerDTOs = customerJDBC.getCustomerList(queryGetAll);
 
             ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.OK)
                     .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", pagination, customerDTOs));
@@ -222,5 +226,35 @@ public class CustomerServiceImpl implements CustomerService {
         return ResponseEntity.status(HttpStatus.OK)
                 .headers(responseHeaders)
                 .body(responseObject);
+    }
+
+    @Override
+    public ResponseEntity<ResponseObject> getCustomerDeviceList(int page, int size) {
+        try {
+            paginationValidation.validatePageSize(page, size);
+
+            String queryForCustomerDevice = CustomerServiceUtil.construcQueryForGetCustomerDevice(page - 1, size);
+            String queryForCustomerDeviceTotalRow = CustomerServiceUtil.constructQueryForGetTotalRowGetCustomerDevice();
+            long totalRow = customerJDBC.getTotalRow(queryForCustomerDeviceTotalRow);
+            int totalPage = (int) Math.ceil(1.0 * totalRow / size);
+            Pagination pagination = new Pagination(page, size, totalPage);
+            paginationValidation.validateMaxPageNumber(pagination);
+
+            List<CustomerDeviceDTO> customers = customerJDBC.getCustomerDeviceList(queryForCustomerDevice);
+
+            for (CustomerDeviceDTO customer: customers) {
+                List<Device> devices = deviceRepository.findByCustomerId(customer.getCustomerId());
+                List<DeviceDTO> deviceDTOs = modelMapperCustom.mapList(devices, DeviceDTO.class);
+                customer.setDevice(deviceDTOs);
+            }
+
+            ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.OK)
+                    .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", pagination, customers));
+            return responseEntity;
+        } catch (InvalidPageSizeException | MaxPageExceededException e) {
+            ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ResponseObject(HttpStatus.NOT_ACCEPTABLE.toString(), e.getMessage(), null, null));
+            return responseEntity;
+        }
     }
 }

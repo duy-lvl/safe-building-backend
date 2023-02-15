@@ -12,5 +12,5 @@ import java.util.UUID;
 
 @Repository
 public interface DeviceRepository extends JpaRepository<Device, UUID> {
-
+    List<Device> findByCustomerId(UUID customerId);
 }

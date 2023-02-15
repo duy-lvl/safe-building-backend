@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
-@RequestMapping(value = "/api/v1/building")
+@RequestMapping(value = "/api/v1/web/building")
 public class BuildingController {
     @Autowired
     private BuildingService buildingService;
@@ -20,6 +20,6 @@ public class BuildingController {
             @RequestParam(name = "page", defaultValue = "1")  int page,
             @RequestParam(name = "size", defaultValue = "10") int size
     ) throws InvalidPageSizeException, MaxPageExceededException {
-        return buildingService.getAllBuilding(page, size);
+        return buildingService.getBuildingList(page, size);
     }
 }
