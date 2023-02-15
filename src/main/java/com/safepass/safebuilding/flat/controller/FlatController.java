@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "/api/v1/flat")
+@RequestMapping(value = "/api/v1/web/flats")
 public class FlatController {
     @Autowired
     private FlatService flatService;

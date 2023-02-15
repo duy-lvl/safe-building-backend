@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "/api/v1/money-transfer")
+@RequestMapping(value = "/api/v1/web/money-transfers")
 public class MoneyTransferController {
     @Autowired
     private MoneyTransferService moneyTransferService;

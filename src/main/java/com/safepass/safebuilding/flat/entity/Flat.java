@@ -39,13 +39,8 @@ public class Flat {
     @UniqueElements
     private int roomNumber;
     //FK
-    @Type(type = "org.hibernate.type.UUIDCharType")
-    @ManyToOne(targetEntity = FlatType.class)
-    @JoinColumn(
-            name = "flat_type_id",
-            referencedColumnName = "id"
-    )
-    private UUID flatTypeId;
+    @ManyToOne
+    private FlatType flatType;
 
     @ManyToOne
     private Building building;

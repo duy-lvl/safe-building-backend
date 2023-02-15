@@ -14,7 +14,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/device")
+@RequestMapping("/api/v1/web/devices")
 public class DeviceController {
     @Autowired
     private DeviceService deviceService;

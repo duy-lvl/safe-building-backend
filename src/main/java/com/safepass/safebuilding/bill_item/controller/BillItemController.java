@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "/api/v1/bill-item")
+@RequestMapping(value = "/api/v1/web/bill-items")
 public class BillItemController {
     @Autowired
     private BillItemService billItemService;

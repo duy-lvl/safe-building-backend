@@ -22,7 +22,7 @@ import java.util.UUID;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
-@RequestMapping(value = "/api/v1/customers")
+@RequestMapping(value = "/api/v1/web/customers")
 public class CustomerController {
 
     @Autowired
