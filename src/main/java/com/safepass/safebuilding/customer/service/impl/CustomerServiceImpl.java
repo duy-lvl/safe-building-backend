@@ -3,7 +3,6 @@ package com.safepass.safebuilding.customer.service.impl;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.safepass.safebuilding.common.dto.ResponseObject;
-import com.safepass.safebuilding.common.meta.AdminStatus;
 import com.safepass.safebuilding.common.meta.CustomerStatus;
 import com.safepass.safebuilding.common.meta.LoginAuthorities;
 import com.safepass.safebuilding.common.security.jwt.userprincipal.UserPrinciple;
@@ -68,7 +67,7 @@ public class CustomerServiceImpl implements CustomerService {
 //            }
 //        }
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(phone + "-Customer", password)
+                new UsernamePasswordAuthenticationToken(phone + "&Customer", password)
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
         UserPrinciple userPrinciple = (UserPrinciple) authentication.getPrincipal();
@@ -117,11 +116,23 @@ public class CustomerServiceImpl implements CustomerService {
 //                customer = null;
 //            }
 //        }
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(customer.getPhone() + "-Customer", customer.getPassword())
-        );
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        UserPrinciple userPrinciple = (UserPrinciple) authentication.getPrincipal();
+//        Authentication authentication = authenticationManager.authenticate(
+//                new UsernamePasswordAuthenticationToken(customer.getPhone() + "-Customer", customer.getPassword())
+//        );
+//        SecurityContextHolder.getContext().setAuthentication(authentication);
+//        UserPrinciple userPrinciple = (UserPrinciple) authentication.getPrincipal();
+        Collection<SimpleGrantedAuthority> authority = new ArrayList<>();
+        authority.add(new SimpleGrantedAuthority(LoginAuthorities.CUSTOMER.toString()));
+
+        UserPrinciple userPrinciple = UserPrinciple.builder()
+                .id(customer.getId())
+                .password(customer.getPassword())
+                .fullname(customer.getFullname())
+                .email(customer.getEmail())
+                .phone(customer.getPhone())
+                .customerStatus(customer.getStatus())
+                .authorities(authority)
+                .build();
         UserPrinciple user = null;
         ResponseObject responseObject = null;
         if (customer == null) {

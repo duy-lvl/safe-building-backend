@@ -9,7 +9,6 @@ import com.safepass.safebuilding.common.dto.ResponseObject;
 import com.safepass.safebuilding.common.meta.AdminStatus;
 import com.safepass.safebuilding.common.meta.LoginAuthorities;
 import com.safepass.safebuilding.common.security.jwt.userprincipal.UserPrinciple;
-import com.safepass.safebuilding.common.service.RefreshTokenService;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,15 +22,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import com.safepass.safebuilding.admin.entity.Admin;
-import com.safepass.safebuilding.admin.repository.AdminRepository;
-import com.safepass.safebuilding.admin.service.AdminService;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -45,24 +36,20 @@ import java.util.stream.Collectors;
 @Log4j2
 public class AdminServiceImpl implements AdminService {
 
+    @Value("${app.secret}")
+    static String secret = "safe_building";
+    @Value("${app.jwtExpirationMs}")
+    static int accessTokenDuration = 1800000;
+    @Value("${app.jwtRefreshExpirationMs}")
+    static int refreshTokenDuration = 86400000;
+    private final ModelMapper modelMapper;
     @Autowired
     private AdminRepository adminRepository;
-
-    private final ModelMapper modelMapper;
-
     @Autowired
     private AuthenticationManager authenticationManager;
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Value("${app.secret}")
-    static String secret="safe_building";
-
-    @Value("${app.jwtExpirationMs}")
-    static int accessTokenDuration=1800000;
-
-    @Value("${app.jwtRefreshExpirationMs}")
-    static int refreshTokenDuration= 86400000;
     public AdminServiceImpl(AdminRepository adminRepository, ModelMapper modelMapper) {
         this.adminRepository = adminRepository;
         this.modelMapper = modelMapper;
@@ -81,36 +68,36 @@ public class AdminServiceImpl implements AdminService {
 //            }
 //        }
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(phone+"-Admin", password)
+                new UsernamePasswordAuthenticationToken(phone + "&Admin", password)
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
         UserPrinciple userPrinciple = (UserPrinciple) authentication.getPrincipal();
-        UserPrinciple user = null ;
+        UserPrinciple user = null;
         ResponseObject responseObject = null;
-        if(admin == null){
+        if (admin == null) {
             log.error("Wrong credentials information");
-            responseObject = new ResponseObject(HttpStatus.NOT_ACCEPTABLE.toString(), "Wrong credentials information", null, null );
-        } else if(admin.getStatus().equals(AdminStatus.INACTIVE)) {
-            log.info("Admin found in database with username with inactive status:"+admin.getFullname());
-            responseObject = new ResponseObject(HttpStatus.NOT_ACCEPTABLE.toString(), "Account has been locked", null, null );
-        } else if(admin.getStatus().equals(AdminStatus.ACTIVE)) {
+            responseObject = new ResponseObject(HttpStatus.NOT_ACCEPTABLE.toString(), "Wrong credentials information", null, null);
+        } else if (admin.getStatus().equals(AdminStatus.INACTIVE)) {
+            log.info("Admin found in database with username with inactive status:" + admin.getFullname());
+            responseObject = new ResponseObject(HttpStatus.NOT_ACCEPTABLE.toString(), "Account has been locked", null, null);
+        } else if (admin.getStatus().equals(AdminStatus.ACTIVE)) {
             log.info("Admin found in database with username with active status:" + admin.getFullname());
             Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
             authorities.add(new SimpleGrantedAuthority(LoginAuthorities.ADMIN.toString()));
             user = UserPrinciple.adminBuild(admin);
-            responseObject = new ResponseObject(HttpStatus.ACCEPTED.toString(), "Login successfully", null, userPrinciple );
+            responseObject = new ResponseObject(HttpStatus.ACCEPTED.toString(), "Login successfully", null, userPrinciple);
         }
 //        RefreshTokenService.createJwt(response, request, userPrinciple);
         Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());
         String accessToken = JWT.create()
                 .withSubject(userPrinciple.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis()+accessTokenDuration))
+                .withExpiresAt(new Date(System.currentTimeMillis() + accessTokenDuration))
 //                .withIssuer(request.getRequestURI().toString())
                 .withClaim("roles", userPrinciple.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
                 .sign(algorithm);
         String refreshToken = JWT.create()
                 .withSubject(userPrinciple.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis()+refreshTokenDuration))
+                .withExpiresAt(new Date(System.currentTimeMillis() + refreshTokenDuration))
 //                .withIssuer(request.getRequestURI().toString())
                 .sign(algorithm);
         HttpHeaders responseHeaders = new HttpHeaders();
@@ -130,37 +117,48 @@ public class AdminServiceImpl implements AdminService {
 //                admin = null;
 //            }
 //        }
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(admin.getPhone()+"-Admin", admin.getPassword())
-        );
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        UserPrinciple userPrinciple = (UserPrinciple) authentication.getPrincipal();
-        UserPrinciple user = null ;
+//        Authentication authentication = authenticationManager.authenticate(
+//                new UsernamePasswordAuthenticationToken(admin.getPhone()+"-Admin", admin.getPassword())
+//        );
+//        SecurityContextHolder.getContext().setAuthentication(authentication);
+        Collection<SimpleGrantedAuthority> authority = new ArrayList<>();
+        authority.add(new SimpleGrantedAuthority(LoginAuthorities.ADMIN.toString()));
+
+        UserPrinciple userPrinciple = UserPrinciple.builder()
+                .id(admin.getId())
+                .password(admin.getPassword())
+                .fullname(admin.getFullname())
+                .email(admin.getEmail())
+                .phone(admin.getPhone())
+                .adminStatus(admin.getStatus())
+                .authorities(authority)
+                .build();
+        UserPrinciple user = null;
         ResponseObject responseObject = null;
-        if(admin == null){
+        if (admin == null) {
             log.error("Wrong credentials information");
-            responseObject = new ResponseObject(HttpStatus.NOT_ACCEPTABLE.toString(), "Wrong credentials information", null, null );
-        } else if(admin.getStatus().equals(AdminStatus.INACTIVE)) {
-            log.info("Admin found in database with username with inactive status:"+admin.getFullname());
-            responseObject = new ResponseObject(HttpStatus.NOT_ACCEPTABLE.toString(), "Account has been locked", null, null );
-        } else if(admin.getStatus().equals(AdminStatus.ACTIVE)) {
+            responseObject = new ResponseObject(HttpStatus.NOT_ACCEPTABLE.toString(), "Wrong credentials information", null, null);
+        } else if (admin.getStatus().equals(AdminStatus.INACTIVE)) {
+            log.info("Admin found in database with username with inactive status:" + admin.getFullname());
+            responseObject = new ResponseObject(HttpStatus.NOT_ACCEPTABLE.toString(), "Account has been locked", null, null);
+        } else if (admin.getStatus().equals(AdminStatus.ACTIVE)) {
             log.info("Admin found in database with username with active status:" + admin.getFullname());
             Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
             authorities.add(new SimpleGrantedAuthority(LoginAuthorities.ADMIN.toString()));
             user = UserPrinciple.adminBuild(admin);
-            responseObject = new ResponseObject(HttpStatus.ACCEPTED.toString(), "Login successfully", null, userPrinciple );
+            responseObject = new ResponseObject(HttpStatus.ACCEPTED.toString(), "Login successfully", null, userPrinciple);
         }
 //        RefreshTokenService.createJwt(response, request, userPrinciple);
         Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());
         String accessToken = JWT.create()
                 .withSubject(userPrinciple.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis()+accessTokenDuration))
+                .withExpiresAt(new Date(System.currentTimeMillis() + accessTokenDuration))
 //                .withIssuer(request.getRequestURI().toString())
                 .withClaim("roles", userPrinciple.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
                 .sign(algorithm);
         String refreshToken = JWT.create()
                 .withSubject(userPrinciple.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis()+refreshTokenDuration))
+                .withExpiresAt(new Date(System.currentTimeMillis() + refreshTokenDuration))
 //                .withIssuer(request.getRequestURI().toString())
                 .sign(algorithm);
         HttpHeaders responseHeaders = new HttpHeaders();

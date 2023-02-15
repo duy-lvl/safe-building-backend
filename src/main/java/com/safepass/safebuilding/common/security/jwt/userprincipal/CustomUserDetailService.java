@@ -38,7 +38,7 @@ public class CustomUserDetailService implements UserDetailsService {
     @Override
     @Cacheable(value = "userDetails")
     public UserDetails loadUserByUsername(String phone) throws UsernameNotFoundException {
-        String []strings = phone.split("-");
+        String []strings = phone.split("&");
         if("Admin".equals(strings[1])){
             Admin admin = adminRepository.findAdminByPhone(strings[0]);
             return UserPrinciple.adminBuild(admin);

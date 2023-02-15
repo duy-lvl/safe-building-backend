@@ -10,7 +10,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.servlet.FilterChain;
@@ -43,8 +42,8 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
-        log.info("Username is :"+username);
-        log.info("Password is :"+password);
+        log.info("Username is :" + username);
+        log.info("Password is :" + password);
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
         return authenticationManager.authenticate(authenticationToken);
     }
@@ -55,16 +54,16 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());
         String accessToken = JWT.create()
                 .withSubject(user.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis()+accessTokenDuration))
-                .withIssuer(request.getRequestURI().toString())
+                .withExpiresAt(new Date(System.currentTimeMillis() + accessTokenDuration))
+                .withIssuer(request.getRequestURI())
                 .withClaim("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
                 .sign(algorithm);
         String refreshToken = JWT.create()
                 .withSubject(user.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis()+refreshTokenDuration))
-                .withIssuer(request.getRequestURI().toString())
+                .withExpiresAt(new Date(System.currentTimeMillis() + refreshTokenDuration))
+                .withIssuer(request.getRequestURI())
                 .sign(algorithm);
-        response.setHeader("access_token",accessToken);
-        response.setHeader("refresh_token",refreshToken);
+        response.setHeader("access_token", accessToken);
+        response.setHeader("refresh_token", refreshToken);
     }
 }

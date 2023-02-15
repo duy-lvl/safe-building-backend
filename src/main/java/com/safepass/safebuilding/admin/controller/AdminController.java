@@ -7,11 +7,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,14 +33,14 @@ public class AdminController {
     @PostMapping("/web/login")
     @SecurityRequirements
 //    @PreAuthorize("permitAll()")
-    public ResponseEntity<ResponseObject> login(@Param("phone") String phone, @Param("password") String password) {
+    public ResponseEntity<ResponseObject> login(@RequestParam("phone") String phone, @RequestParam("password") String password) {
         return adminService.login(response, request, phone, password);
     }
 
     @PostMapping("/web/login-with-email")
     @SecurityRequirements
 //    @PreAuthorize("permitAll()")
-    public ResponseEntity<ResponseObject> loginWithEmail(@Param("email") String email) {
+    public ResponseEntity<ResponseObject> loginWithEmail(@RequestParam("email") String email) {
         return adminService.loginWithEmail(response, request, email);
     }
 
