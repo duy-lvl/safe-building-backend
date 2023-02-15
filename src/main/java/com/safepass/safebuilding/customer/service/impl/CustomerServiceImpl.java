@@ -36,9 +36,7 @@ public class CustomerServiceImpl implements CustomerService {
             Pageable pageRequest = PageRequest.of(page - 1, size);
 
             String queryTotalRow = CustomerServiceUtil.constructQueryForGetTotalRowGetAllCustomer();
-            System.out.println("Query:"+queryTotalRow);
             Long totalRow = customerJDBC.getTotalRow(queryTotalRow);
-            System.out.println("Total row: " + totalRow);
 
             int totalPage = (int)Math.ceil(1.0*totalRow/size);
             Pagination pagination = new Pagination(page, size, totalPage);

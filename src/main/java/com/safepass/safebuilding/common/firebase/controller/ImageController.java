@@ -28,4 +28,5 @@ public class ImageController {
             ) throws IOException {
         return rentContractService.uploadFile(files, customerId, rentContractId, flatId);
     }
+
 }

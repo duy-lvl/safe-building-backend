@@ -12,6 +12,7 @@ import com.safepass.safebuilding.common.validation.PaginationValidation;
 import com.safepass.safebuilding.customer.entity.Customer;
 import com.safepass.safebuilding.device.dto.DeviceDTO;
 import com.safepass.safebuilding.device.entity.Device;
+import com.safepass.safebuilding.device.jdbc.DeviceJDBC;
 import com.safepass.safebuilding.device.repository.DeviceRepository;
 import com.safepass.safebuilding.device.service.DeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,11 @@ public class DeviceServiceImpl implements DeviceService {
     private PaginationValidation paginationValidation;
     @Autowired
     private DeviceRepository deviceRepository;
+
+    @Autowired
+    private DeviceJDBC deviceJDBC;
+
+
     private ModelMapperCustom modelMapper = new ModelMapperCustom();
     @Override
     public Device addToken(Customer customer, String token) {
@@ -42,14 +48,16 @@ public class DeviceServiceImpl implements DeviceService {
     public ResponseEntity<ResponseObject> getAllDevice(int page, int size) {
         try {
             paginationValidation.validatePageSize(page, size);
-            Pageable pageRequest = PageRequest.of(page - 1, size);
-            Page<Device> devicePage = deviceRepository.findAll(pageRequest);
-            int totalPage = devicePage.getTotalPages();
+
+            String query = DeviceServiceUtil.constructQueryGetAll(page - 1, size);
+            List<DeviceDTO> deviceDTOs = deviceJDBC.getAllDevice(query);
+            String totalRowquery = DeviceServiceUtil.constructQueryGetTotalRow(page - 1, size);
+            long totalRow = deviceJDBC.getTotalRow(totalRowquery);
+
+            int totalPage = (int) Math.ceil(1.0 * totalRow / size);
+
             Pagination pagination = new Pagination(page, size, totalPage);
             paginationValidation.validateMaxPageNumber(pagination);
-
-            List<Device> devices = devicePage.getContent();
-            List<DeviceDTO> deviceDTOs = modelMapper.mapList(devices, DeviceDTO.class);
 
             ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.OK)
                     .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", pagination, deviceDTOs));

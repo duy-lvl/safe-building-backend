@@ -12,5 +12,6 @@ import java.util.UUID;
 @NoArgsConstructor
 public class DeviceDTO {
     private String token;
-    private Customer customer;
+    private UUID customerId;
+    private String fullname;
 }
