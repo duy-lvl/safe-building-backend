@@ -74,20 +74,8 @@ public class AdminServiceImpl implements AdminService {
         UserPrinciple userPrinciple = (UserPrinciple) authentication.getPrincipal();
         UserPrinciple user = null;
         ResponseObject responseObject = null;
-        if (admin == null) {
-            log.error("Wrong credentials information");
-            responseObject = new ResponseObject(HttpStatus.NOT_ACCEPTABLE.toString(), "Wrong credentials information", null, null);
-        } else if (admin.getStatus().equals(AdminStatus.INACTIVE)) {
-            log.info("Admin found in database with username with inactive status:" + admin.getFullname());
-            responseObject = new ResponseObject(HttpStatus.NOT_ACCEPTABLE.toString(), "Account has been locked", null, null);
-        } else if (admin.getStatus().equals(AdminStatus.ACTIVE)) {
-            log.info("Admin found in database with username with active status:" + admin.getFullname());
-            Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-            authorities.add(new SimpleGrantedAuthority(LoginAuthorities.ADMIN.toString()));
-            user = UserPrinciple.adminBuild(admin);
-            responseObject = new ResponseObject(HttpStatus.ACCEPTED.toString(), "Login successfully", null, userPrinciple);
-        }
-//        RefreshTokenService.createJwt(response, request, userPrinciple);
+
+        //        RefreshTokenService.createJwt(response, request, userPrinciple);
         Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());
         String accessToken = JWT.create()
                 .withSubject(userPrinciple.getUsername())
@@ -100,6 +88,24 @@ public class AdminServiceImpl implements AdminService {
                 .withExpiresAt(new Date(System.currentTimeMillis() + refreshTokenDuration))
 //                .withIssuer(request.getRequestURI().toString())
                 .sign(algorithm);
+
+
+        if (admin == null) {
+            log.error("Wrong credentials information");
+            responseObject = new ResponseObject(HttpStatus.NOT_ACCEPTABLE.toString(), "Wrong credentials information", null, null);
+        } else if (admin.getStatus().equals(AdminStatus.INACTIVE)) {
+            log.info("Admin found in database with username with inactive status:" + admin.getFullname());
+            responseObject = new ResponseObject(HttpStatus.NOT_ACCEPTABLE.toString(), "Account has been locked", null, null);
+        } else if (admin.getStatus().equals(AdminStatus.ACTIVE)) {
+            log.info("Admin found in database with username with active status:" + admin.getFullname());
+            Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+            authorities.add(new SimpleGrantedAuthority(LoginAuthorities.ADMIN.toString()));
+            user = UserPrinciple.adminBuild(admin);
+            userPrinciple.setAccessToken(accessToken);
+            userPrinciple.setRefreshToken(refreshToken);
+            responseObject = new ResponseObject(HttpStatus.ACCEPTED.toString(), "Login successfully", null, userPrinciple);
+        }
+
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set("Access_token",
                 accessToken);
@@ -135,20 +141,8 @@ public class AdminServiceImpl implements AdminService {
                 .build();
         UserPrinciple user = null;
         ResponseObject responseObject = null;
-        if (admin == null) {
-            log.error("Wrong credentials information");
-            responseObject = new ResponseObject(HttpStatus.NOT_ACCEPTABLE.toString(), "Wrong credentials information", null, null);
-        } else if (admin.getStatus().equals(AdminStatus.INACTIVE)) {
-            log.info("Admin found in database with username with inactive status:" + admin.getFullname());
-            responseObject = new ResponseObject(HttpStatus.NOT_ACCEPTABLE.toString(), "Account has been locked", null, null);
-        } else if (admin.getStatus().equals(AdminStatus.ACTIVE)) {
-            log.info("Admin found in database with username with active status:" + admin.getFullname());
-            Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-            authorities.add(new SimpleGrantedAuthority(LoginAuthorities.ADMIN.toString()));
-            user = UserPrinciple.adminBuild(admin);
-            responseObject = new ResponseObject(HttpStatus.ACCEPTED.toString(), "Login successfully", null, userPrinciple);
-        }
-//        RefreshTokenService.createJwt(response, request, userPrinciple);
+
+        //        RefreshTokenService.createJwt(response, request, userPrinciple);
         Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());
         String accessToken = JWT.create()
                 .withSubject(userPrinciple.getUsername())
@@ -161,6 +155,24 @@ public class AdminServiceImpl implements AdminService {
                 .withExpiresAt(new Date(System.currentTimeMillis() + refreshTokenDuration))
 //                .withIssuer(request.getRequestURI().toString())
                 .sign(algorithm);
+
+        if (admin == null) {
+            log.error("Wrong credentials information");
+            responseObject = new ResponseObject(HttpStatus.NOT_ACCEPTABLE.toString(), "Wrong credentials information", null, null);
+        } else if (admin.getStatus().equals(AdminStatus.INACTIVE)) {
+            log.info("Admin found in database with username with inactive status:" + admin.getFullname());
+            responseObject = new ResponseObject(HttpStatus.NOT_ACCEPTABLE.toString(), "Account has been locked", null, null);
+        } else if (admin.getStatus().equals(AdminStatus.ACTIVE)) {
+            log.info("Admin found in database with username with active status:" + admin.getFullname());
+            Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+            authorities.add(new SimpleGrantedAuthority(LoginAuthorities.ADMIN.toString()));
+            user = UserPrinciple.adminBuild(admin);
+
+            userPrinciple.setAccessToken(accessToken);
+            userPrinciple.setRefreshToken(refreshToken);
+            responseObject = new ResponseObject(HttpStatus.ACCEPTED.toString(), "Login successfully", null, userPrinciple);
+        }
+
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set("Access_token",
                 accessToken);

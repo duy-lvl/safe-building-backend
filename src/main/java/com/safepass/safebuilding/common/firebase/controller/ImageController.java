@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.constraints.NotNull;
 import java.io.IOException;
 
 @RestController
@@ -21,7 +22,7 @@ public class ImageController {
     @PostMapping
     public ResponseEntity<ResponseObject> uploadFile
             (
-                    @RequestParam(name = "file") MultipartFile[] files,
+                    @NotNull @RequestParam(name = "file") MultipartFile[] files,
                     @RequestParam(name = "customerId") String customerId,
                     @RequestParam(name = "flatId") String flatId,
                     @RequestParam(name = "rentContractId") String rentContractId
