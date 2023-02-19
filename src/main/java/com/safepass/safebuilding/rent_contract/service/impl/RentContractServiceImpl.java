@@ -26,8 +26,8 @@ public class RentContractServiceImpl implements RentContractService {
         String query = RentContractServiceUtil.constructQuery(rentContractId, customerId, flatId, url);
         boolean result = rentContractJDBC.uploadRentContract(query);
         if (result) {
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", null, null));
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(new ResponseObject(HttpStatus.CREATED.toString(), "Successfully", null, null));
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ResponseObject(HttpStatus.BAD_REQUEST.toString(), "Failed", null, null));

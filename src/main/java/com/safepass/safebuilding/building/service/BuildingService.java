@@ -6,5 +6,6 @@ import com.safepass.safebuilding.common.exception.MaxPageExceededException;
 import org.springframework.http.ResponseEntity;
 
 public interface BuildingService {
-    ResponseEntity<ResponseObject> getBuildingList(int page, int size) throws InvalidPageSizeException, MaxPageExceededException;
+    ResponseEntity<ResponseObject> getBuildingList(int page, int size);
+    ResponseEntity<ResponseObject> fetchBuildingByName(String name, int page, int size);
 }

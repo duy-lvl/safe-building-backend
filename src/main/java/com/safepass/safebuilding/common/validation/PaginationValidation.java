@@ -2,6 +2,7 @@ package com.safepass.safebuilding.common.validation;
 import com.safepass.safebuilding.common.dto.Pagination;
 import com.safepass.safebuilding.common.exception.InvalidPageSizeException;
 import com.safepass.safebuilding.common.exception.MaxPageExceededException;
+import com.safepass.safebuilding.common.exception.NoSuchDataException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,7 +20,10 @@ public class PaginationValidation {
         }
     }
 
-    public void validateMaxPageNumber(Pagination pagination) throws MaxPageExceededException {
+    public void validateMaxPageNumber(Pagination pagination) throws MaxPageExceededException, NoSuchDataException {
+        if (pagination.getTotalPage() == 0) {
+            throw new NoSuchDataException("No data found!");
+        }
         if (pagination.getPage() > pagination.getTotalPage()) {
             throw new MaxPageExceededException("Page number exceeds total pages!");
         }

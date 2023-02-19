@@ -16,10 +16,19 @@ public class BuildingController {
     private BuildingService buildingService;
 
     @GetMapping
-    public ResponseEntity<ResponseObject> getAll(
+    public ResponseEntity<ResponseObject> getBuildingList(
             @RequestParam(name = "page", defaultValue = "1")  int page,
             @RequestParam(name = "size", defaultValue = "10") int size
-    ) throws InvalidPageSizeException, MaxPageExceededException {
+    ) {
         return buildingService.getBuildingList(page, size);
+    }
+
+    @GetMapping("/find-building")
+    public ResponseEntity<ResponseObject> findBuildingByName(
+            @RequestParam(name = "page", defaultValue = "1")  int page,
+            @RequestParam(name = "size", defaultValue = "10") int size,
+            @RequestParam(name = "name") String name
+    ) {
+        return buildingService.fetchBuildingByName(name, page, size);
     }
 }
