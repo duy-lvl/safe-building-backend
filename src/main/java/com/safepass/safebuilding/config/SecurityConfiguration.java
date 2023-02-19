@@ -1,8 +1,8 @@
 package com.safepass.safebuilding.config;
 
-import com.safepass.safebuilding.common.filter.CustomAuthenticationFilter;
-import com.safepass.safebuilding.common.filter.CustomAuthorizationFilter;
-import com.safepass.safebuilding.common.security.jwt.userprincipal.CustomUserDetailService;
+import com.safepass.safebuilding.common.security.filter.CustomAuthenticationFilter;
+import com.safepass.safebuilding.common.security.filter.CustomAuthorizationFilter;
+import com.safepass.safebuilding.common.security.user.CustomUserDetailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -15,6 +15,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -28,10 +30,13 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 public class SecurityConfiguration {
     @Autowired
     CustomUserDetailService userDetailService;
-    String[] apiList = {
-            "/api/v1/customer",
-            "/api/v1/admin"
+    String[] permitedApiList = {
+            "/api/v1/auth/web/login",
+            "/api/v1/auth/web/login-with-email",
+            "/api/v1/auth/mobile/login",
+            "/api/v1/auth/mobile/login-with-email",
     };
+
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -63,24 +68,35 @@ public class SecurityConfiguration {
                 .cors()
                 .and()
                 .csrf()
-                .disable()
-                ;
+                .disable();
         httpSecurity.sessionManagement().sessionCreationPolicy(STATELESS);
         httpSecurity.addFilter(filter);
+
         httpSecurity
                 .authorizeHttpRequests()
-                .antMatchers("/api/v1/admin/web/login").permitAll();
+                .antMatchers(permitedApiList).permitAll();
         httpSecurity
                 .authorizeHttpRequests()
-                .antMatchers(apiList).authenticated();
+                .antMatchers("/api/**").authenticated();
         httpSecurity
                 .authorizeHttpRequests()
-                .antMatchers("/api/v1/admin").hasRole("ROLE_ADMIN");
+                .antMatchers("/api/v1/web/**").hasAuthority("ROLE_ADMIN");
         httpSecurity
                 .authorizeHttpRequests()
-                .antMatchers(GET,"/api/v1/customer").hasRole("ROLE_CUSTOMER");
+                .antMatchers(GET, "/api/v1/mobile/**").hasAuthority("ROLE_CUSTOMER");
         httpSecurity.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+//        httpSecurity.oauth2ResourceServer().jwt()
+//                .jwtAuthenticationConverter(jwtAuthenticationConverter());
         return httpSecurity.build();
     }
 
+    private JwtAuthenticationConverter jwtAuthenticationConverter() {
+        // create a custom JWT converter to map the "roles" from the token as granted authorities
+        JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+        jwtGrantedAuthoritiesConverter.setAuthoritiesClaimName("roles");
+        jwtGrantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
+        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
+        return jwtAuthenticationConverter;
+    }
 }

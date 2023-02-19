@@ -1,15 +1,10 @@
-package com.safepass.safebuilding.common.filter;
+package com.safepass.safebuilding.common.security.filter;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.safepass.safebuilding.common.security.jwt.userprincipal.UserPrinciple;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.servlet.FilterChain;
@@ -17,20 +12,18 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Date;
-import java.util.stream.Collectors;
 
 @Log4j2
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
 
-    @Value("${app.secret}")
+    //    @Value("${app.secret}")
     String secret;
 
-    @Value("${app.jwtExpirationMs}")
+    //    @Value("${app.jwtExpirationMs}")
     int accessTokenDuration;
 
-    @Value("${app.jwtRefreshExpirationMs}")
+    //    @Value("${app.jwtRefreshExpirationMs}")
     int refreshTokenDuration;
 
     public CustomAuthenticationFilter(AuthenticationManager authenticationManager) {
@@ -50,20 +43,20 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
-        UserPrinciple user = (UserPrinciple) authentication.getPrincipal();
-        Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());
-        String accessToken = JWT.create()
-                .withSubject(user.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis() + accessTokenDuration))
-                .withIssuer(request.getRequestURI())
-                .withClaim("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
-                .sign(algorithm);
-        String refreshToken = JWT.create()
-                .withSubject(user.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis() + refreshTokenDuration))
-                .withIssuer(request.getRequestURI())
-                .sign(algorithm);
-        response.setHeader("access_token", accessToken);
-        response.setHeader("refresh_token", refreshToken);
+//        UserPrinciple user = (UserPrinciple) authentication.getPrincipal();
+//        Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());
+//        String accessToken = JWT.create()
+//                .withSubject(user.getUsername())
+//                .withExpiresAt(new Date(System.currentTimeMillis() + accessTokenDuration))
+//                .withIssuer(request.getRequestURI())
+//                .withClaim("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
+//                .sign(algorithm);
+//        String refreshToken = JWT.create()
+//                .withSubject(user.getUsername())
+//                .withExpiresAt(new Date(System.currentTimeMillis() + refreshTokenDuration))
+//                .withIssuer(request.getRequestURI())
+//                .sign(algorithm);
+//        response.setHeader("access_token", accessToken);
+//        response.setHeader("refresh_token", refreshToken);
     }
 }

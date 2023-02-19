@@ -1,4 +1,4 @@
-package com.safepass.safebuilding.common.security.jwt.payload.response;
+package com.safepass.safebuilding.common.jwt.entity.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

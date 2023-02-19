@@ -1,4 +1,4 @@
-package com.safepass.safebuilding.common.filter;
+package com.safepass.safebuilding.common.security.filter;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 
 import static java.util.Arrays.stream;
@@ -25,8 +26,10 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 
 @Log4j2
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
-    @Value("${app.secret}")
-    static String secret = "safe_building";
+    @Value("${jwt.secretKey}")
+    static String secret = "safe building";
+
+    private Algorithm algorithm;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -37,7 +40,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
             if (authorizationHeader != null && authorizationHeader.startsWith("Bearer")) {
                 try {
                     String token = authorizationHeader.substring("Bearer ".length());
-                    Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());
+                    algorithm = Algorithm.HMAC256(secret.getBytes());
                     JWTVerifier verifier = JWT.require(algorithm).build();
                     DecodedJWT decodedJWT = verifier.verify(token);
                     String phone = decodedJWT.getSubject();
@@ -47,7 +50,9 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                         authorities.add(new SimpleGrantedAuthority(role));
                     });
                     UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(phone, null, authorities);
+                    log.info(authenticationToken.getAuthorities()+"   "+authenticationToken.getPrincipal());
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                    log.info(SecurityContextHolder.getContext().getAuthentication().getPrincipal());
                     filterChain.doFilter(request, response);
                 } catch (Exception e) {
                     log.error("Error logging in: {}", e.getMessage());
