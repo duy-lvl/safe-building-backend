@@ -59,7 +59,7 @@ public class BuildingServiceImpl implements BuildingService {
 //        return service.getAll(page, size, buildingRepository, BuildingDTO.class);
     }
 
-    public ResponseEntity<ResponseObject> fetchBuildingByName(String name, int page, int size) {
+    public ResponseEntity<ResponseObject> searchBuildingByName(String name, int page, int size) {
         try {
             paginationValidation.validatePageSize(page, size);
             Pageable pageRequest = PageRequest.of(page - 1, size);

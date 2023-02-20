@@ -1,8 +1,6 @@
 package com.safepass.safebuilding.customer.controller;
 
 import com.safepass.safebuilding.common.dto.ResponseObject;
-import com.safepass.safebuilding.common.exception.InvalidPageSizeException;
-import com.safepass.safebuilding.common.exception.MaxPageExceededException;
 import com.safepass.safebuilding.customer.entity.Customer;
 import com.safepass.safebuilding.customer.service.CustomerService;
 import com.safepass.safebuilding.device.entity.Device;
@@ -14,22 +12,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
 import java.util.UUID;
 
 @RestController
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping(value = "/api/v1/web/customers")
 public class CustomerController {
-
-    @Autowired
-    static HttpServletRequest request;
-
-    @Autowired
-    static HttpServletResponse response;
 
     @Autowired
     private CustomerService customerService;
@@ -38,6 +31,7 @@ public class CustomerController {
     private DeviceService deviceService;
 
     @PostMapping("/{customerId}/add-device")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ResponseObject> addDevice (
             @RequestParam(name = "token") String token,
             @PathVariable(name = "customerId") String customerId
@@ -59,34 +53,22 @@ public class CustomerController {
 
 
     @GetMapping
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ResponseObject> getList (
             @RequestParam(name = "page", defaultValue = "1")  int page,
             @RequestParam(name = "size", defaultValue = "10") int size
-    ) throws InvalidPageSizeException, MaxPageExceededException {
+    ) {
         return customerService.getCustomerList(page, size);
     }
 
     @GetMapping("/test")
-    @PostAuthorize("hasRole('ROLE_CUSTOMER')")
+    @PreAuthorize("hasAuthority('CUSTOMER')")
     public String testApi() {
         return "Hello world customer";
     }
 
-    @PostMapping("/mobile/login")
-    @SecurityRequirements
-//    @PreAuthorize("permitAll()")
-    public ResponseEntity<ResponseObject> login(@RequestParam("phone") String phone, @RequestParam("password") String password) {
-        return customerService.login(response, request, phone, password);
-    }
-
-    @PostMapping("/mobile/login-with-email")
-    @SecurityRequirements
-//    @PreAuthorize("permitAll()")
-    public ResponseEntity<ResponseObject> loginWithEmail(@RequestParam("email") String email) {
-        return customerService.loginWithEmail(response, request, email);
-    }
-
     @GetMapping("/devices")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ResponseObject> getCustomerDevice(
             @RequestParam(name = "page", defaultValue = "1")  int page,
             @RequestParam(name = "size", defaultValue = "10") int size
@@ -94,4 +76,5 @@ public class CustomerController {
 
         return customerService.getCustomerDeviceList(page, size);
     }
+
 }

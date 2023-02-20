@@ -1,4 +1,4 @@
-package com.safepass.safebuilding.common.security.jwt.userprincipal;
+package com.safepass.safebuilding.common.security.user;
 
 
 import com.safepass.safebuilding.admin.entity.Admin;
@@ -10,7 +10,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service

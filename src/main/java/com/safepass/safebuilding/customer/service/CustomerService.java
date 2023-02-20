@@ -12,9 +12,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface CustomerService {
-    ResponseEntity<ResponseObject> login(HttpServletResponse response, HttpServletRequest request, String phoneOrEmail, String password);
+    ResponseEntity<ResponseObject> login(String phoneOrEmail, String password);
 
-    ResponseEntity<ResponseObject> loginWithEmail(HttpServletResponse response, HttpServletRequest request, String email);
+    ResponseEntity<ResponseObject> loginWithEmail(String email);
     ResponseEntity<ResponseObject> getCustomerList(int page, int size);
     Optional<Customer> getCustomerById(UUID id);
 

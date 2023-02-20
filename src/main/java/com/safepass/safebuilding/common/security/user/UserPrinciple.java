@@ -1,7 +1,8 @@
-package com.safepass.safebuilding.common.security.jwt.userprincipal;
+package com.safepass.safebuilding.common.security.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.safepass.safebuilding.admin.entity.Admin;
+import com.safepass.safebuilding.common.jwt.entity.response.TokenResponse;
 import com.safepass.safebuilding.common.meta.AdminStatus;
 import com.safepass.safebuilding.common.meta.CustomerStatus;
 import com.safepass.safebuilding.common.meta.LoginAuthorities;
@@ -23,16 +24,16 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @Data
-public class UserPrinciple implements UserDetails {
+public class UserPrinciple implements UserDetails  {
     private UUID id;
     @JsonIgnore
     private String password;
     private String fullname;
     private String email;
-
     private String phone;
     private CustomerStatus customerStatus;
     private AdminStatus adminStatus;
+    private TokenResponse tokenResponse;
     private Collection<? extends GrantedAuthority> authorities;
     private String accessToken;
     private String refreshToken;

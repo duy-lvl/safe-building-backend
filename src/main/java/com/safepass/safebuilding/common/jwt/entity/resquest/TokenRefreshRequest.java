@@ -1,4 +1,4 @@
-package com.safepass.safebuilding.common.security.jwt.payload.resquest;
+package com.safepass.safebuilding.common.jwt.entity.resquest;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
