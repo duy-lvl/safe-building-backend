@@ -32,6 +32,7 @@ public class AdminServiceImpl implements AdminService {
     @Autowired
     private JwtService jwtService;
 
+
     public AdminServiceImpl(AdminRepository adminRepository, ModelMapper modelMapper) {
         this.adminRepository = adminRepository;
         this.modelMapper = modelMapper;
