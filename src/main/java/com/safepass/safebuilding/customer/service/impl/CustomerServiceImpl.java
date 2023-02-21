@@ -88,17 +88,14 @@ public class CustomerServiceImpl implements CustomerService {
             String queryGetAll = CustomerServiceUtil.constructQueryForGetAllCustomer(page - 1, size);
             List<CustomerDTO> customerDTOs = customerJDBC.getCustomerList(queryGetAll);
 
-            ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.OK)
+            return ResponseEntity.status(HttpStatus.OK)
                     .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", pagination, customerDTOs));
-            return responseEntity;
         } catch (InvalidPageSizeException | MaxPageExceededException e) {
-            ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ResponseObject(HttpStatus.NOT_ACCEPTABLE.toString(), e.getMessage(), null, null));
-            return responseEntity;
         } catch (NoSuchDataException e) {
-            ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ResponseObject(HttpStatus.NOT_FOUND.toString(), e.getMessage(), null, null));
-            return responseEntity;
         }
     }
 
@@ -142,8 +139,7 @@ public class CustomerServiceImpl implements CustomerService {
 
 
         }
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(responseObject);
+        return ResponseEntity.status(HttpStatus.OK).body(responseObject);
     }
 
     /**
@@ -176,8 +172,7 @@ public class CustomerServiceImpl implements CustomerService {
             }
             responseObject = new ResponseObject(HttpStatus.ACCEPTED.toString(), "Login successfully", null, userPrinciple);
         }
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(responseObject);
+        return ResponseEntity.status(HttpStatus.OK).body(responseObject);
     }
 
     @Override
@@ -200,17 +195,17 @@ public class CustomerServiceImpl implements CustomerService {
                 customer.setDevice(deviceDTOs);
             }
 
-            ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.OK)
+
+            return ResponseEntity.status(HttpStatus.OK)
                     .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", pagination, customers));
-            return responseEntity;
         } catch (InvalidPageSizeException | MaxPageExceededException e) {
             ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ResponseObject(HttpStatus.NOT_ACCEPTABLE.toString(), e.getMessage(), null, null));
-            return responseEntity;
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ResponseObject(HttpStatus.NOT_ACCEPTABLE.toString(), e.getMessage(), null, null));
         } catch (NoSuchDataException e) {
-            ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ResponseObject(HttpStatus.NOT_FOUND.toString(), e.getMessage(), null, null));
-            return responseEntity;
         }
     }
 }

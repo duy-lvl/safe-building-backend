@@ -91,7 +91,6 @@ public class AdminServiceImpl implements AdminService {
         ResponseObject responseObject = null;
         Admin admin = adminRepository.findAdminByEmail(email);
         TokenResponse tokenResponse = null;
-log.info("Login with email");
         if (admin == null) {
             log.error("Wrong credentials information");
             responseObject = new ResponseObject(HttpStatus.NOT_ACCEPTABLE.toString(), "Wrong credentials information", null, null);
@@ -107,8 +106,7 @@ log.info("Login with email");
             userPrinciple.setTokenResponse(tokenResponse);
             responseObject = new ResponseObject(HttpStatus.ACCEPTED.toString(), "Login successfully", null, userPrinciple);
         }
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(responseObject);
+        return ResponseEntity.status(HttpStatus.OK).body(responseObject);
     }
 
 
