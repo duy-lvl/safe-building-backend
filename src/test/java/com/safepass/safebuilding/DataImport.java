@@ -30,7 +30,7 @@ public class DataImport {
     private List<UUID> billIds;
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
     private Faker faker = new Faker();
-    @Test
+//    @Test
     public String createAdmin() {
 
         List<String> sqls = new ArrayList<>();
@@ -68,11 +68,10 @@ public class DataImport {
             flatTypeIds.add(UUID.randomUUID());
         }
         for (int i = 0; i < 10; i++) {
-            StringBuilder sql = new StringBuilder("INSERT INTO flat_type (id, description, name, status) VALUES (\"");
+            StringBuilder sql = new StringBuilder("INSERT INTO flat_type (id, description, name) VALUES (\"");
             sql.append(flatTypeIds.get(i)).append("\", \"") //id
                     .append("Description ").append(i).append("\", \"") //description
-                    .append("Flat type ").append(i).append("\", \"") //name
-                    .append(FlatTypeStatus.ACTIVE).append("\");");
+                    .append("Flat type ").append(i).append("\");");
             sqls.add(sql.toString());
         }
         String output = "";
@@ -359,7 +358,7 @@ public class DataImport {
                             .append(faker.business().creditCardExpiry()).append("\", \"")
                             .append(RentContractStatus.VALID).append("\", ")
                             .append(random(5, 30)*1000000).append(", \"")
-                            .append(customerIds.get(count)).append("\", \"")
+                            .append(customerIds.get(random(0, customerIds.size()-1))).append("\", \"")
                             .append(flatId)
                             .append("\");");
                     sqls.add(sql.toString());

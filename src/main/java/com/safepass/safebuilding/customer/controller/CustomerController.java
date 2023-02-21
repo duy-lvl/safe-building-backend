@@ -5,11 +5,9 @@ import com.safepass.safebuilding.customer.entity.Customer;
 import com.safepass.safebuilding.customer.service.CustomerService;
 import com.safepass.safebuilding.device.entity.Device;
 import com.safepass.safebuilding.device.service.DeviceService;
-import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,7 +19,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(value = "/api/v1/web/customers")
+@RequestMapping(value = "/api/v1/customers")
 public class CustomerController {
 
     @Autowired
@@ -77,4 +75,12 @@ public class CustomerController {
         return customerService.getCustomerDeviceList(page, size);
     }
 
+    @GetMapping("/accounts")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<ResponseObject> getAccountList(
+            @RequestParam(name = "page", defaultValue = "1")  int page,
+            @RequestParam(name = "size", defaultValue = "10") int size
+    ) {
+        return customerService.getAccountList(page, size);
+    }
 }

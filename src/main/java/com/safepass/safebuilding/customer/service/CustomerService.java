@@ -19,4 +19,6 @@ public interface CustomerService {
     Optional<Customer> getCustomerById(UUID id);
 
     ResponseEntity<ResponseObject> getCustomerDeviceList(int page, int size);
+
+    ResponseEntity<ResponseObject> getAccountList(int page, int size);
 }

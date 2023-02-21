@@ -10,4 +10,6 @@ public interface RentContractService {
 
     ResponseEntity<ResponseObject> uploadFile(MultipartFile[] files, String customerId, String rentContractId, String flatId) throws IOException;
     String create(MultipartFile[] files) throws IOException;
+
+    ResponseEntity<ResponseObject> getList(int page, int size);
 }

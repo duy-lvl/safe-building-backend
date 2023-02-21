@@ -1,7 +1,17 @@
 package com.safepass.safebuilding.rent_contract.service.impl;
 
+import com.safepass.safebuilding.common.dto.Pagination;
 import com.safepass.safebuilding.common.dto.ResponseObject;
+import com.safepass.safebuilding.common.exception.InvalidPageSizeException;
+import com.safepass.safebuilding.common.exception.MaxPageExceededException;
+import com.safepass.safebuilding.common.exception.NoSuchDataException;
 import com.safepass.safebuilding.common.firebase.service.IImageService;
+import com.safepass.safebuilding.common.validation.PaginationValidation;
+import com.safepass.safebuilding.customer.dto.CustomerDeviceDTO;
+import com.safepass.safebuilding.customer.service.impl.CustomerServiceUtil;
+import com.safepass.safebuilding.device.dto.DeviceDTO;
+import com.safepass.safebuilding.device.entity.Device;
+import com.safepass.safebuilding.rent_contract.dto.RentContractDTO;
 import com.safepass.safebuilding.rent_contract.jdbc.RentContractJDBC;
 import com.safepass.safebuilding.rent_contract.service.RentContractService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @Service
 public class RentContractServiceImpl implements RentContractService {
@@ -18,6 +29,8 @@ public class RentContractServiceImpl implements RentContractService {
     private IImageService imageService;
     @Autowired
     private RentContractJDBC rentContractJDBC;
+    @Autowired
+    private PaginationValidation paginationValidation;
 
     @Override
     public ResponseEntity<ResponseObject> uploadFile(MultipartFile[] files, String customerId, String rentContractId, String flatId) throws IOException {
@@ -45,4 +58,37 @@ public class RentContractServiceImpl implements RentContractService {
 
         return imageUrl;
     }
+
+    @Override
+    public ResponseEntity<ResponseObject> getList(int page, int size) {
+        try {
+            paginationValidation.validatePageSize(page, size);
+
+
+            String queryTotalRow = RentContractServiceUtil.contructQueryGetAllTotalRow();
+            long totalRow = rentContractJDBC.getTotalRow(queryTotalRow);
+            int totalPage = (int) Math.ceil(1.0 * totalRow / size);
+            Pagination pagination = new Pagination(page, size, totalPage);
+            paginationValidation.validateMaxPageNumber(pagination);
+            String queryGetList = RentContractServiceUtil.contructQueryGetAll(page - 1, size);
+            List<RentContractDTO> rentContracts = rentContractJDBC.getList(queryGetList);
+
+
+            ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.OK)
+                    .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", pagination, rentContracts));
+            return responseEntity;
+        } catch (InvalidPageSizeException | MaxPageExceededException e) {
+            ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ResponseObject(HttpStatus.NOT_ACCEPTABLE.toString(), e.getMessage(), null, null));
+            return responseEntity;
+        } catch (NoSuchDataException e) {
+            ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ResponseObject(HttpStatus.NOT_FOUND.toString(), e.getMessage(), null, null));
+            return responseEntity;
+        }
+
+
+    }
+
+
 }

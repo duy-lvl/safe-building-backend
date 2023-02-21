@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
-@RequestMapping(value = "/api/v1/web/buildings")
+@RequestMapping(value = "/api/v1/buildings")
 public class BuildingController {
     @Autowired
     private BuildingService buildingService;

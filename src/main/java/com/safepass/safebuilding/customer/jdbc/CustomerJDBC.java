@@ -1,6 +1,7 @@
 package com.safepass.safebuilding.customer.jdbc;
 
 
+import com.safepass.safebuilding.common.jdbc.Jdbc;
 import com.safepass.safebuilding.common.meta.CustomerStatus;
 import com.safepass.safebuilding.customer.dto.CustomerDTO;
 import com.safepass.safebuilding.customer.dto.CustomerDeviceDTO;
@@ -13,7 +14,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Component
-public class CustomerJDBC {
+public class CustomerJDBC extends Jdbc {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
@@ -28,9 +29,6 @@ public class CustomerJDBC {
             customerDTO.setStatus(CustomerStatus.valueOf(rs.getString("customer_status")));
             return  customerDTO;
         });
-    }
-    public Long getTotalRow(String query) {
-        return jdbcTemplate.queryForObject(query, Long.class);
     }
 
     public List<CustomerDeviceDTO> getCustomerDeviceList(String query) {

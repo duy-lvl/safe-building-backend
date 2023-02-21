@@ -7,6 +7,7 @@ import com.safepass.safebuilding.common.exception.MaxPageExceededException;
 import com.safepass.safebuilding.common.exception.NoSuchDataException;
 import com.safepass.safebuilding.common.utils.ModelMapperCustom;
 import com.safepass.safebuilding.common.validation.PaginationValidation;
+import com.safepass.safebuilding.customer.dto.AccountDTO;
 import com.safepass.safebuilding.customer.dto.CustomerDTO;
 import com.safepass.safebuilding.customer.dto.CustomerDeviceDTO;
 import com.safepass.safebuilding.customer.entity.Customer;
@@ -22,6 +23,7 @@ import com.safepass.safebuilding.device.dto.DeviceDTO;
 import com.safepass.safebuilding.device.entity.Device;
 import com.safepass.safebuilding.device.repository.DeviceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -75,7 +77,6 @@ public class CustomerServiceImpl implements CustomerService {
     public ResponseEntity<ResponseObject> getCustomerList(int page, int size) {
         try {
             paginationValidation.validatePageSize(page, size);
-            System.out.println("get all");
             Pageable pageRequest = PageRequest.of(page - 1, size);
 
             String queryTotalRow = CustomerServiceUtil.constructQueryForGetTotalRowGetAllCustomer();
@@ -213,4 +214,33 @@ public class CustomerServiceImpl implements CustomerService {
             return responseEntity;
         }
     }
+
+    @Override
+    public ResponseEntity<ResponseObject> getAccountList(int page, int size) {
+        try {
+            paginationValidation.validatePageSize(page, size);
+            Pageable pageable = PageRequest.of(page-1, size);
+            Page<Customer> customerPage = customerRepository.findAll(pageable);
+            int totalPage = customerPage.getTotalPages();
+            Pagination pagination = new Pagination(page, size, totalPage);
+            paginationValidation.validateMaxPageNumber(pagination);
+            List<Customer> customers = customerPage.getContent();
+            List<AccountDTO> accountDTOs = modelMapperCustom.mapList(customers, AccountDTO.class);
+
+
+            ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.OK)
+                    .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", pagination, accountDTOs));
+            return responseEntity;
+        } catch (InvalidPageSizeException | MaxPageExceededException e) {
+            ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ResponseObject(HttpStatus.NOT_ACCEPTABLE.toString(), e.getMessage(), null, null));
+            return responseEntity;
+        } catch (NoSuchDataException e) {
+            ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ResponseObject(HttpStatus.NOT_FOUND.toString(), e.getMessage(), null, null));
+            return responseEntity;
+        }
+    }
+
+
 }

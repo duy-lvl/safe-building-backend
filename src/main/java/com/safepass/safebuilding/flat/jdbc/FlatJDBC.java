@@ -1,5 +1,6 @@
 package com.safepass.safebuilding.flat.jdbc;
 
+import com.safepass.safebuilding.common.jdbc.Jdbc;
 import com.safepass.safebuilding.flat.dto.FlatDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -8,7 +9,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class FlatJDBC {
+public class FlatJDBC extends Jdbc {
     @Autowired
     private JdbcTemplate jdbcTemplate;
     public List<FlatDTO> getFlatList(String query) {
@@ -23,7 +24,5 @@ public class FlatJDBC {
         });
     }
 
-    public Long getTotalRow(String query) {
-        return jdbcTemplate.queryForObject(query, Long.class);
-    }
+
 }
