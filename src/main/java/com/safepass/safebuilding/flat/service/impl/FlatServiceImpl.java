@@ -7,7 +7,6 @@ import com.safepass.safebuilding.common.exception.MaxPageExceededException;
 import com.safepass.safebuilding.common.exception.NoSuchDataException;
 import com.safepass.safebuilding.common.validation.PaginationValidation;
 import com.safepass.safebuilding.flat.dto.FlatDTO;
-import com.safepass.safebuilding.flat.entity.Flat;
 import com.safepass.safebuilding.flat.jdbc.FlatJDBC;
 import com.safepass.safebuilding.flat.service.FlatService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -26,6 +26,7 @@ public class CustomerJDBC extends Jdbc {
             customerDTO.setPhone(rs.getString("phone"));
             customerDTO.setRoomNumber(rs.getInt("room_number"));
             customerDTO.setStatus(CustomerStatus.valueOf(rs.getString("customer_status")));
+            customerDTO.setBuildingId(rs.getString("building_id"));
             return  customerDTO;
         });
     }

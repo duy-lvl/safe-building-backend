@@ -20,4 +20,5 @@ public class CustomerDTO {
     private int roomNumber;
     private CustomerStatus status;
     private List<DeviceDTO> device;
+    private String buildingId;
 }

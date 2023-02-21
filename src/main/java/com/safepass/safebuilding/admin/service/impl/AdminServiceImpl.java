@@ -15,7 +15,6 @@ import com.safepass.safebuilding.common.security.user.UserPrinciple;
 import com.safepass.safebuilding.common.utils.ModelMapperCustom;
 import com.safepass.safebuilding.common.validation.PaginationValidation;
 import com.safepass.safebuilding.customer.dto.AccountDTO;
-import com.safepass.safebuilding.customer.entity.Customer;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,7 +1,5 @@
 package com.safepass.safebuilding.customer.service.impl;
 
-
-import com.safepass.safebuilding.admin.repository.AdminRepository;
 import com.safepass.safebuilding.common.dto.Pagination;
 import com.safepass.safebuilding.common.dto.ResponseObject;
 import com.safepass.safebuilding.common.exception.InvalidPageSizeException;
@@ -22,6 +20,7 @@ import com.safepass.safebuilding.customer.service.CustomerService;
 import com.safepass.safebuilding.device.dto.DeviceDTO;
 import com.safepass.safebuilding.device.entity.Device;
 import com.safepass.safebuilding.device.repository.DeviceRepository;
+import com.safepass.safebuilding.device.service.DeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -45,14 +44,9 @@ import java.util.UUID;
 @Service
 @Log4j2
 public class CustomerServiceImpl implements CustomerService {
-
-    @Override
-    public Optional<Customer> getCustomerById(UUID id) {
-        return customerRepository.findById(id);
-    }
-
     private ModelMapper modelMapper;
-
+    @Autowired
+    private DeviceService deviceService;
     private ModelMapperCustom modelMapperCustom = new ModelMapperCustom();
     @Autowired
     private CustomerRepository customerRepository;
@@ -60,23 +54,22 @@ public class CustomerServiceImpl implements CustomerService {
     private AuthenticationManager authenticationManager;
     @Autowired
     private JwtService jwtService;
-
     @Autowired
     private PaginationValidation paginationValidation;
     @Autowired
     private DeviceRepository deviceRepository;
-
     public CustomerServiceImpl(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
     }
-
     @Autowired
     private CustomerJDBC customerJDBC;
 
+    /**
+     * {@inheritDoc}
+     * */
     public ResponseEntity<ResponseObject> getCustomerList(int page, int size) {
         try {
             paginationValidation.validatePageSize(page, size);
-            Pageable pageRequest = PageRequest.of(page - 1, size);
 
             String queryTotalRow = CustomerServiceUtil.constructQueryForGetTotalRowGetAllCustomer();
             Long totalRow = customerJDBC.getTotalRow(queryTotalRow);
@@ -109,12 +102,8 @@ public class CustomerServiceImpl implements CustomerService {
 
 
     /**
-     * Login with phone and password for mobile
-     *
-     * @param phone
-     * @param password
-     * @return ResponseEntity<ResponseObject>
-     */
+     * {@inheritDoc}
+     * */
     @Override
     public ResponseEntity<ResponseObject> login(String phone, String password) {
         ResponseObject responseObject = null;
@@ -152,11 +141,8 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     /**
-     * Login with email for mobile
-     *
-     * @param email
-     * @return ResponseEntity<ResponseObject>
-     */
+     * {@inheritDoc}
+     * */
     @Override
     public ResponseEntity<ResponseObject> loginWithEmail(String email) {
         ResponseObject responseObject = null;
@@ -186,7 +172,9 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
 
-
+    /**
+     * {@inheritDoc}
+     * */
     @Override
     public ResponseEntity<ResponseObject> getAccountList(int page, int size) {
         try {
@@ -214,5 +202,35 @@ public class CustomerServiceImpl implements CustomerService {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * */
+    @Override
+    public ResponseEntity<ResponseObject> addDevice(String customerId, String token) {
+        Optional<Customer> customer = getCustomerById(UUID.fromString(customerId));
+        if (customer.isPresent()) {
+            Device device = deviceService.addToken(customer.get(), token);
+            if (device != null) {
+                ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.CREATED)
+                        .body(new ResponseObject(HttpStatus.CREATED.toString(), "Successfully", null, null));
+                return responseEntity;
+            }
+        }
 
+        ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ResponseObject(HttpStatus.BAD_REQUEST.toString(), "Device existed", null, null));
+        return responseEntity;
+    }
+
+    /**
+     * {@inheritDoc}
+     * */
+    @Override
+    public ResponseEntity<ResponseObject> filter(String name, String phone, String buildingId, String status) {
+        return null;
+    }
+
+    public Optional<Customer> getCustomerById(UUID id) {
+        return customerRepository.findById(id);
+    }
 }
