@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FlatDTO {
+    private String id;
     private String buildingName;
     private int roomNumber;
     private String flatType;

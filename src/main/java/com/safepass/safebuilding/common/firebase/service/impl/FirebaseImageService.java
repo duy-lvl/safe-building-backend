@@ -104,12 +104,8 @@ public class FirebaseImageService implements IImageService {
     @Configuration
     @ConfigurationProperties(prefix = "firebase")
     public static class Properties {
-
         private String bucketName;
-
         private String imageUrl;
-
-
     }
 
 }

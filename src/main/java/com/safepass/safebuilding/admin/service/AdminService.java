@@ -8,4 +8,5 @@ public interface AdminService {
     ResponseEntity<ResponseObject> login(String phoneOrEmail, String password);
 
     ResponseEntity<ResponseObject> loginWithEmail(String email);
+    ResponseEntity<ResponseObject> getAccountList(int page, int size);
 }

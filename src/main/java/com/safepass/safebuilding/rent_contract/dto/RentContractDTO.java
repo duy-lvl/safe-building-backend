@@ -10,9 +10,13 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RentContractDTO {
+    private String id;
     private String buildingName;
     private int roomNumber;
     private String customerName;
     private String expiryDate;
     private RentContractStatus status;
+    private String rentContractLink;
+    private String customerId;
+    private String flatId;
 }

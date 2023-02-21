@@ -13,12 +13,8 @@ import java.util.UUID;
 
 public interface CustomerService {
     ResponseEntity<ResponseObject> login(String phoneOrEmail, String password);
-
     ResponseEntity<ResponseObject> loginWithEmail(String email);
     ResponseEntity<ResponseObject> getCustomerList(int page, int size);
     Optional<Customer> getCustomerById(UUID id);
-
-    ResponseEntity<ResponseObject> getCustomerDeviceList(int page, int size);
-
     ResponseEntity<ResponseObject> getAccountList(int page, int size);
 }

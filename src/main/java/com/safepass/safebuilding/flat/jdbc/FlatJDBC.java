@@ -15,6 +15,7 @@ public class FlatJDBC extends Jdbc {
     public List<FlatDTO> getFlatList(String query) {
         return jdbcTemplate.query(query, (rs, rowNum) -> {
            FlatDTO flat = new FlatDTO();
+           flat.setId(rs.getString("id"));
            flat.setBuildingName(rs.getString("building_name"));
            flat.setRoomNumber(rs.getInt("room_number"));
            flat.setPrice(rs.getInt("price"));

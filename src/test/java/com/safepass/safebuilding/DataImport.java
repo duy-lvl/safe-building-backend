@@ -559,4 +559,9 @@ public class DataImport {
             e.printStackTrace();
         }
     }
+
+//    @Test
+//    void Test() {
+//        System.out.println("https://storage.googleapis.com/safe-building.appspot.com/74bef04e-91bd-4396-bce7-be174df6d07ajpg".split("/")[4]);
+//    }
 }

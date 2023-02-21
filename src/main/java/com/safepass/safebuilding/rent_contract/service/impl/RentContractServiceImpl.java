@@ -7,10 +7,6 @@ import com.safepass.safebuilding.common.exception.MaxPageExceededException;
 import com.safepass.safebuilding.common.exception.NoSuchDataException;
 import com.safepass.safebuilding.common.firebase.service.IImageService;
 import com.safepass.safebuilding.common.validation.PaginationValidation;
-import com.safepass.safebuilding.customer.dto.CustomerDeviceDTO;
-import com.safepass.safebuilding.customer.service.impl.CustomerServiceUtil;
-import com.safepass.safebuilding.device.dto.DeviceDTO;
-import com.safepass.safebuilding.device.entity.Device;
 import com.safepass.safebuilding.rent_contract.dto.RentContractDTO;
 import com.safepass.safebuilding.rent_contract.jdbc.RentContractJDBC;
 import com.safepass.safebuilding.rent_contract.service.RentContractService;
@@ -34,7 +30,7 @@ public class RentContractServiceImpl implements RentContractService {
 
     @Override
     public ResponseEntity<ResponseObject> uploadFile(MultipartFile[] files, String customerId, String rentContractId, String flatId) throws IOException {
-        String url = create(files);
+        String url = create(files).split("/")[4];
 
         String query = RentContractServiceUtil.constructQuery(rentContractId, customerId, flatId, url);
         boolean result = rentContractJDBC.uploadRentContract(query);

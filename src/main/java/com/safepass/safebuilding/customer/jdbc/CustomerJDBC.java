@@ -4,8 +4,6 @@ package com.safepass.safebuilding.customer.jdbc;
 import com.safepass.safebuilding.common.jdbc.Jdbc;
 import com.safepass.safebuilding.common.meta.CustomerStatus;
 import com.safepass.safebuilding.customer.dto.CustomerDTO;
-import com.safepass.safebuilding.customer.dto.CustomerDeviceDTO;
-import com.safepass.safebuilding.customer.entity.Customer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -21,6 +19,7 @@ public class CustomerJDBC extends Jdbc {
     public List<CustomerDTO> getCustomerList(String query) {
         return jdbcTemplate.query(query, (rs, rowNum) -> {
             CustomerDTO customerDTO = new CustomerDTO();
+            customerDTO.setCustomerId(rs.getString("customer_id"));
             customerDTO.setCitizenId(rs.getString("citizen_id"));
             customerDTO.setFullname(rs.getString("fullname"));
             customerDTO.setBuildingName(rs.getString("building_name"));
@@ -31,12 +30,5 @@ public class CustomerJDBC extends Jdbc {
         });
     }
 
-    public List<CustomerDeviceDTO> getCustomerDeviceList(String query) {
-        return jdbcTemplate.query(query, (rs, rowNum) -> {
-            CustomerDeviceDTO customer = new CustomerDeviceDTO();
-            customer.setCustomerId(UUID.fromString(rs.getString("customer_id")));
-            customer.setFullname(rs.getString("fullname"));
-            return customer;
-        });
-    }
+
 }

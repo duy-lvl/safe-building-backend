@@ -1,5 +1,7 @@
 package com.safepass.safebuilding.customer.service.impl;
 
+
+import com.safepass.safebuilding.admin.repository.AdminRepository;
 import com.safepass.safebuilding.common.dto.Pagination;
 import com.safepass.safebuilding.common.dto.ResponseObject;
 import com.safepass.safebuilding.common.exception.InvalidPageSizeException;
@@ -9,13 +11,11 @@ import com.safepass.safebuilding.common.utils.ModelMapperCustom;
 import com.safepass.safebuilding.common.validation.PaginationValidation;
 import com.safepass.safebuilding.customer.dto.AccountDTO;
 import com.safepass.safebuilding.customer.dto.CustomerDTO;
-import com.safepass.safebuilding.customer.dto.CustomerDeviceDTO;
 import com.safepass.safebuilding.customer.entity.Customer;
 import com.safepass.safebuilding.customer.jdbc.CustomerJDBC;
 import com.safepass.safebuilding.customer.repository.CustomerRepository;
 import com.safepass.safebuilding.common.jwt.entity.response.TokenResponse;
 import com.safepass.safebuilding.common.jwt.service.JwtService;
-import com.safepass.safebuilding.common.meta.AdminStatus;
 import com.safepass.safebuilding.common.meta.CustomerStatus;
 import com.safepass.safebuilding.common.security.user.UserPrinciple;
 import com.safepass.safebuilding.customer.service.CustomerService;
@@ -30,7 +30,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -89,6 +88,11 @@ public class CustomerServiceImpl implements CustomerService {
             String queryGetAll = CustomerServiceUtil.constructQueryForGetAllCustomer(page - 1, size);
             List<CustomerDTO> customerDTOs = customerJDBC.getCustomerList(queryGetAll);
 
+            for (CustomerDTO customer : customerDTOs) {
+                List<Device> devices = deviceRepository.findByCustomerId(UUID.fromString(customer.getCustomerId()));
+                List<DeviceDTO> deviceDTOs = modelMapperCustom.mapList(devices, DeviceDTO.class);
+                customer.setDevice(deviceDTOs);
+            }
             ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.OK)
                     .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", pagination, customerDTOs));
             return responseEntity;
@@ -181,39 +185,7 @@ public class CustomerServiceImpl implements CustomerService {
                 .body(responseObject);
     }
 
-    @Override
-    public ResponseEntity<ResponseObject> getCustomerDeviceList(int page, int size) {
-        try {
-            paginationValidation.validatePageSize(page, size);
 
-            String queryForCustomerDevice = CustomerServiceUtil.construcQueryForGetCustomerDevice(page - 1, size);
-            String queryForCustomerDeviceTotalRow = CustomerServiceUtil.constructQueryForGetTotalRowGetCustomerDevice();
-            long totalRow = customerJDBC.getTotalRow(queryForCustomerDeviceTotalRow);
-            int totalPage = (int) Math.ceil(1.0 * totalRow / size);
-            Pagination pagination = new Pagination(page, size, totalPage);
-            paginationValidation.validateMaxPageNumber(pagination);
-
-            List<CustomerDeviceDTO> customers = customerJDBC.getCustomerDeviceList(queryForCustomerDevice);
-
-            for (CustomerDeviceDTO customer : customers) {
-                List<Device> devices = deviceRepository.findByCustomerId(customer.getCustomerId());
-                List<DeviceDTO> deviceDTOs = modelMapperCustom.mapList(devices, DeviceDTO.class);
-                customer.setDevice(deviceDTOs);
-            }
-
-            ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.OK)
-                    .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", pagination, customers));
-            return responseEntity;
-        } catch (InvalidPageSizeException | MaxPageExceededException e) {
-            ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ResponseObject(HttpStatus.NOT_ACCEPTABLE.toString(), e.getMessage(), null, null));
-            return responseEntity;
-        } catch (NoSuchDataException e) {
-            ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ResponseObject(HttpStatus.NOT_FOUND.toString(), e.getMessage(), null, null));
-            return responseEntity;
-        }
-    }
 
     @Override
     public ResponseEntity<ResponseObject> getAccountList(int page, int size) {

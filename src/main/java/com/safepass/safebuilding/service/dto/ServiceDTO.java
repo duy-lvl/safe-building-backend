@@ -13,6 +13,7 @@ import javax.persistence.Enumerated;
 @NoArgsConstructor
 public class ServiceDTO {
 
+    private String id;
     private String name;
     private String description;
     private int price;

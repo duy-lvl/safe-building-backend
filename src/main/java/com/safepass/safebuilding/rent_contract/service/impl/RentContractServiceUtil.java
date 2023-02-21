@@ -11,8 +11,8 @@ public class RentContractServiceUtil {
     }
 
     public static String contructQueryGetAll(int page, int size) {
-        return "SELECT building.name AS building_name, room_number, customer.fullname AS customer_name, \n" +
-                "\texpiry_date, rent_contract.status AS status\n" +
+        return "SELECT rent_contract.id, building.name AS building_name, room_number, customer.fullname AS customer_name, \n" +
+                "\texpiry_date, rent_contract.status AS status, contract AS rent_contract_link, flat.id AS flat_id, customer.id AS customer_id\n" +
                 "FROM building JOIN flat ON building.id=flat.building_id  \n" +
                 "\tJOIN rent_contract ON rent_contract.flat_id=flat.id     \n" +
                 "\tJOIN customer ON customer.id=rent_contract.customer_id \n" +

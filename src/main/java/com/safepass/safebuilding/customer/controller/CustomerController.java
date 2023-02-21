@@ -64,16 +64,7 @@ public class CustomerController {
     public String testApi() {
         return "Hello world customer";
     }
-
-    @GetMapping("/devices")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<ResponseObject> getCustomerDevice(
-            @RequestParam(name = "page", defaultValue = "1")  int page,
-            @RequestParam(name = "size", defaultValue = "10") int size
-    ) {
-
-        return customerService.getCustomerDeviceList(page, size);
-    }
+    
 
     @GetMapping("/accounts")
     @PreAuthorize("hasAuthority('ADMIN')")

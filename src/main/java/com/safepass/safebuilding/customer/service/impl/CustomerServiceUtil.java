@@ -3,7 +3,7 @@ package com.safepass.safebuilding.customer.service.impl;
 public class CustomerServiceUtil {
 
     public static String constructQueryForGetAllCustomer(int page, int size) {
-        return "SELECT building.name AS building_name, flat.room_number AS room_number, customer.phone, \n" +
+        return "SELECT customer.id AS customer_id, building.name AS building_name, flat.room_number AS room_number, customer.phone, \n" +
                 "\tcustomer.fullname, customer.citizen_id, customer.status AS customer_status\n" +
                 "FROM building JOIN flat ON building.id = flat.building_id \n" +
                 "\tJOIN rent_contract ON rent_contract.flat_id = flat.id\n" +
