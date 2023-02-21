@@ -6,7 +6,7 @@ After download need to stop redis client in port 6379:
 2. shutdown
 3. exit
 
-After that use cmd below
+After that use 
 cmd real server: C:\Program Files\Redis>redis-server redis.windows.conf
 
 cmd start test server: redis-server --port 6380 --slaveof 127.0.0.1 6379
