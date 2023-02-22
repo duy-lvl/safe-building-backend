@@ -20,10 +20,6 @@ public class CustomUserDetailService implements UserDetailsService {
     @Autowired
     AdminRepository adminRepository;
 
-
-
-
-    @Cacheable(value = "userDetails")
     public UserDetails loadAdminByUsername(String phone) throws UsernameNotFoundException {
         String []strings = phone.split("-");
         if("Admin".equals(strings[1])){
@@ -35,7 +31,6 @@ public class CustomUserDetailService implements UserDetailsService {
         }
     }
     @Override
-    @Cacheable(value = "userDetails")
     public UserDetails loadUserByUsername(String phone) throws UsernameNotFoundException {
         String []strings = phone.split("&");
         if("Admin".equals(strings[1])){

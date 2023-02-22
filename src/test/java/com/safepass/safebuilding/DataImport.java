@@ -2,13 +2,8 @@ package com.safepass.safebuilding;
 
 import com.github.javafaker.Faker;
 import com.safepass.safebuilding.common.meta.*;
-import com.safepass.safebuilding.flat_type.entity.FlatType;
-import org.junit.jupiter.api.Test;
-
-import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
