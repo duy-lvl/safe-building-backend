@@ -9,6 +9,7 @@ import com.safepass.safebuilding.common.utils.ModelMapperCustom;
 import com.safepass.safebuilding.common.validation.PaginationValidation;
 import com.safepass.safebuilding.customer.dto.AccountDTO;
 import com.safepass.safebuilding.customer.dto.CustomerDTO;
+import com.safepass.safebuilding.customer.dto.RequestObjectForFilter;
 import com.safepass.safebuilding.customer.entity.Customer;
 import com.safepass.safebuilding.customer.jdbc.CustomerJDBC;
 import com.safepass.safebuilding.customer.repository.CustomerRepository;
@@ -222,15 +223,45 @@ public class CustomerServiceImpl implements CustomerService {
         return responseEntity;
     }
 
-    /**
-     * {@inheritDoc}
-     * */
-    @Override
-    public ResponseEntity<ResponseObject> filter(String name, String phone, String buildingId, String status) {
-        return null;
-    }
 
     public Optional<Customer> getCustomerById(UUID id) {
         return customerRepository.findById(id);
     }
+
+    /**
+     * {@inheritDoc}
+     * */
+    public ResponseEntity<ResponseObject> filterCustomer(RequestObjectForFilter requestObjectForFilter, int page, int size) {
+        try {
+            paginationValidation.validatePageSize(page, size);
+
+            String queryTotalRow = CustomerServiceUtil.filterTotalRow(requestObjectForFilter);
+            Long totalRow = customerJDBC.getTotalRow(queryTotalRow);
+
+            int totalPage = (int) Math.ceil(1.0 * totalRow / size);
+            Pagination pagination = new Pagination(page, size, totalPage);
+            paginationValidation.validateMaxPageNumber(pagination);
+
+            String queryFilter = CustomerServiceUtil.constructQueryForFilter(requestObjectForFilter, page-1, size);
+            List<CustomerDTO> customerDTOs = customerJDBC.getCustomerList(queryFilter);
+
+            for (CustomerDTO customer : customerDTOs) {
+                List<Device> devices = deviceRepository.findByCustomerId(UUID.fromString(customer.getCustomerId()));
+                List<DeviceDTO> deviceDTOs = modelMapperCustom.mapList(devices, DeviceDTO.class);
+                customer.setDevice(deviceDTOs);
+            }
+            ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.OK)
+                    .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", pagination, customerDTOs));
+            return responseEntity;
+        } catch (InvalidPageSizeException | MaxPageExceededException e) {
+            ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ResponseObject(HttpStatus.NOT_ACCEPTABLE.toString(), e.getMessage(), null, null));
+            return responseEntity;
+        } catch (NoSuchDataException e) {
+            ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ResponseObject(HttpStatus.NOT_FOUND.toString(), e.getMessage(), null, null));
+            return responseEntity;
+        }
+    }
+
 }

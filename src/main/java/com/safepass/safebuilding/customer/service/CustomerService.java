@@ -1,6 +1,7 @@
 package com.safepass.safebuilding.customer.service;
 
 import com.safepass.safebuilding.common.dto.ResponseObject;
+import com.safepass.safebuilding.customer.dto.RequestObjectForFilter;
 import org.springframework.http.ResponseEntity;
 
 
@@ -49,14 +50,17 @@ public interface CustomerService {
      */
     ResponseEntity<ResponseObject> addDevice(String customerId, String token);
 
+
     /**
-     * Get customer list for customer management screen
+     * Filter customer by name/phone
+     * AND/OR building name
+     * AND/OR customer status
      *
-     * @param name {@code String}
-     * @param phone {@code String}
-     * @param buildingId {@code String}
-     * @param status {@code String}
+     * @param requestObjectForFilter {@code RequestObjectForFilter}
+     * @param page {@code int}
+     * @param size {@code int}
+     *
      * @return ResponseEntity<ResponseObject>
      */
-    ResponseEntity<ResponseObject> filter(String name, String phone, String buildingId, String status);
+    ResponseEntity<ResponseObject> filterCustomer(RequestObjectForFilter requestObjectForFilter, int page, int size);
 }

@@ -1,6 +1,7 @@
 package com.safepass.safebuilding.customer.controller;
 
 import com.safepass.safebuilding.common.dto.ResponseObject;
+import com.safepass.safebuilding.customer.dto.RequestObjectForFilter;
 import com.safepass.safebuilding.customer.service.CustomerService;
 import com.safepass.safebuilding.device.service.DeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,5 +56,15 @@ public class CustomerController {
             @RequestParam(name = "size", defaultValue = "10") int size
     ) {
         return customerService.getAccountList(page, size);
+    }
+
+    @PostMapping("/filter")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<ResponseObject> filterCustomer(
+            @RequestParam(name = "page", defaultValue = "1")  int page,
+            @RequestParam(name = "size", defaultValue = "10") int size,
+            @RequestBody RequestObjectForFilter requestObjectForFilter
+            ) {
+        return customerService.filterCustomer(requestObjectForFilter, page, size);
     }
 }
