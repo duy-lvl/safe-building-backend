@@ -3,6 +3,7 @@ package com.safepass.safebuilding.common.controller;
 import com.safepass.safebuilding.admin.service.AdminService;
 import com.safepass.safebuilding.common.dto.LoginForm;
 import com.safepass.safebuilding.common.dto.ResponseObject;
+import com.safepass.safebuilding.common.service.AuthService;
 import com.safepass.safebuilding.customer.service.CustomerService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.concurrent.ExecutionException;
+
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthController {
@@ -22,31 +25,13 @@ public class AuthController {
     @Autowired
     private AdminService adminService;
 
-    @PostMapping("/web/login")
-    @SecurityRequirements
-    @PreAuthorize("permitAll()")
-    public ResponseEntity<ResponseObject> loginWeb(@RequestBody LoginForm loginForm) {
-        return adminService.login(loginForm.getPhone(), loginForm.getPassword());
-    }
+    @Autowired
+    AuthService authService;
 
-    @PostMapping("/web/login-with-email")
+    @PostMapping("/login")
     @SecurityRequirements
     @PreAuthorize("permitAll()")
-    public ResponseEntity<ResponseObject> loginWebWithEmail(@RequestBody LoginForm login) {
-        return adminService.loginWithEmail(login.getEmail());
-    }
-
-    @PostMapping("/mobile/login")
-    @SecurityRequirements
-    @PreAuthorize("permitAll()")
-    public ResponseEntity<ResponseObject> loginMobile(@RequestBody LoginForm loginForm) {
-        return customerService.login(loginForm.getPhone(), loginForm.getPassword());
-    }
-
-    @PostMapping("/mobile/login-with-email")
-    @SecurityRequirements
-    @PreAuthorize("permitAll()")
-    public ResponseEntity<ResponseObject> loginMobileWithEmail(@RequestBody LoginForm loginForm) {
-        return customerService.loginWithEmail(loginForm.getEmail());
+    public ResponseEntity<ResponseObject> login(@RequestBody LoginForm loginForm) throws ExecutionException, InterruptedException {
+        return authService.login(loginForm);
     }
 }

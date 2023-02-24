@@ -24,7 +24,8 @@ public class CorsConfig {
                                 "http://14.225.254.180:80",
                                 "https://maaz.global",
                                 "https://admin.maaz.global",
-                                "http://14.225.204.166:80");
+                                "http://14.225.204.166:80",
+                                "https://safe-building-web.vercel.app");
             }
         };
     }

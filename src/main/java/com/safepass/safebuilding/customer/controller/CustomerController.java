@@ -40,15 +40,13 @@ public class CustomerController {
         if (customer.isPresent()) {
             Device device = deviceService.addToken(customer.get(), token);
             if (device != null) {
-                ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.CREATED)
+                return ResponseEntity.status(HttpStatus.CREATED)
                         .body(new ResponseObject(HttpStatus.CREATED.toString(), "Successfully", null, null));
-                return responseEntity;
             }
         }
 
-        ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ResponseObject(HttpStatus.BAD_REQUEST.toString(), "Device existed", null, null));
-        return responseEntity;
     }
 
 

@@ -1,5 +1,7 @@
 package com.safepass.safebuilding.admin.service.impl;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseToken;
 import com.safepass.safebuilding.admin.entity.Admin;
 import com.safepass.safebuilding.admin.repository.AdminRepository;
 import com.safepass.safebuilding.admin.service.AdminService;
@@ -20,6 +22,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import java.util.concurrent.ExecutionException;
 
 @Service
 @Log4j2
@@ -84,13 +88,21 @@ public class AdminServiceImpl implements AdminService {
      * Login with email for web
      *
      * @param email
+     * @param token
      * @return ResponseEntity<ResponseObject>
      */
     @Override
-    public ResponseEntity<ResponseObject> loginWithEmail(String email) {
+    public ResponseEntity<ResponseObject> loginWithEmail(String email, String token) throws ExecutionException, InterruptedException {
         ResponseObject responseObject = null;
         Admin admin = adminRepository.findAdminByEmail(email);
         TokenResponse tokenResponse = null;
+        FirebaseToken firebaseToken = FirebaseAuth.getInstance().verifyIdTokenAsync(token).get();
+        String tokenEmail = firebaseToken.getEmail();
+        boolean verifyEmail = firebaseToken.isEmailVerified();
+        if (!tokenEmail.equals(email) || !(verifyEmail)) {
+            responseObject = new ResponseObject(HttpStatus.NOT_ACCEPTABLE.toString(), "Wrong credentials information", null, null);
+            return ResponseEntity.status(HttpStatus.OK).body(responseObject);
+        }
         if (admin == null) {
             log.error("Wrong credentials information");
             responseObject = new ResponseObject(HttpStatus.NOT_ACCEPTABLE.toString(), "Wrong credentials information", null, null);

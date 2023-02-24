@@ -1,10 +1,16 @@
 package com.safepass.safebuilding.customer.service.impl;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseToken;
 import com.safepass.safebuilding.common.dto.Pagination;
 import com.safepass.safebuilding.common.dto.ResponseObject;
 import com.safepass.safebuilding.common.exception.InvalidPageSizeException;
 import com.safepass.safebuilding.common.exception.MaxPageExceededException;
 import com.safepass.safebuilding.common.exception.NoSuchDataException;
+import com.safepass.safebuilding.common.jwt.entity.response.TokenResponse;
+import com.safepass.safebuilding.common.jwt.service.JwtService;
+import com.safepass.safebuilding.common.meta.CustomerStatus;
+import com.safepass.safebuilding.common.security.user.UserPrinciple;
 import com.safepass.safebuilding.common.utils.ModelMapperCustom;
 import com.safepass.safebuilding.common.validation.PaginationValidation;
 import com.safepass.safebuilding.customer.dto.CustomerDTO;
@@ -12,23 +18,17 @@ import com.safepass.safebuilding.customer.dto.CustomerDeviceDTO;
 import com.safepass.safebuilding.customer.entity.Customer;
 import com.safepass.safebuilding.customer.jdbc.CustomerJDBC;
 import com.safepass.safebuilding.customer.repository.CustomerRepository;
-import com.safepass.safebuilding.common.jwt.entity.response.TokenResponse;
-import com.safepass.safebuilding.common.jwt.service.JwtService;
-import com.safepass.safebuilding.common.meta.AdminStatus;
-import com.safepass.safebuilding.common.meta.CustomerStatus;
-import com.safepass.safebuilding.common.security.user.UserPrinciple;
 import com.safepass.safebuilding.customer.service.CustomerService;
 import com.safepass.safebuilding.device.dto.DeviceDTO;
 import com.safepass.safebuilding.device.entity.Device;
 import com.safepass.safebuilding.device.repository.DeviceRepository;
+import lombok.extern.log4j.Log4j2;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import lombok.extern.log4j.Log4j2;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -40,37 +40,35 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 @Service
 @Log4j2
 public class CustomerServiceImpl implements CustomerService {
 
-    @Override
-    public Optional<Customer> getCustomerById(UUID id) {
-        return customerRepository.findById(id);
-    }
-
-    private ModelMapper modelMapper;
-
-    private ModelMapperCustom modelMapperCustom = new ModelMapperCustom();
+    private final ModelMapper modelMapper;
+    private final ModelMapperCustom modelMapperCustom = new ModelMapperCustom();
     @Autowired
     private CustomerRepository customerRepository;
     @Autowired
     private AuthenticationManager authenticationManager;
     @Autowired
     private JwtService jwtService;
-
     @Autowired
     private PaginationValidation paginationValidation;
     @Autowired
     private DeviceRepository deviceRepository;
+    @Autowired
+    private CustomerJDBC customerJDBC;
 
     public CustomerServiceImpl(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
     }
 
-    @Autowired
-    private CustomerJDBC customerJDBC;
+    @Override
+    public Optional<Customer> getCustomerById(UUID id) {
+        return customerRepository.findById(id);
+    }
 
     public ResponseEntity<ResponseObject> getCustomerList(int page, int size) {
         try {
@@ -146,13 +144,22 @@ public class CustomerServiceImpl implements CustomerService {
      * Login with email for mobile
      *
      * @param email
+     * @param token
      * @return ResponseEntity<ResponseObject>
      */
     @Override
-    public ResponseEntity<ResponseObject> loginWithEmail(String email) {
+    public ResponseEntity<ResponseObject> loginWithEmail(String email, String token) throws ExecutionException, InterruptedException {
         ResponseObject responseObject = null;
         Customer customer = customerRepository.findCustomerByEmail(email);
         TokenResponse tokenResponse = null;
+        FirebaseToken firebaseToken = FirebaseAuth.getInstance().verifyIdTokenAsync(token).get();
+        String tokenEmail = firebaseToken.getEmail();
+        boolean verifyEmail = firebaseToken.isEmailVerified();
+
+        if (!tokenEmail.equals(email) || !(verifyEmail)) {
+            responseObject = new ResponseObject(HttpStatus.NOT_ACCEPTABLE.toString(), "Wrong credentials information", null, null);
+            return ResponseEntity.status(HttpStatus.OK).body(responseObject);
+        }
 
         if (customer == null) {
             log.error("Wrong credentials information");

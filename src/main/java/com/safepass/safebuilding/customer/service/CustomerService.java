@@ -10,11 +10,12 @@ import com.safepass.safebuilding.customer.entity.Customer;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 public interface CustomerService {
-    ResponseEntity<ResponseObject> login(String phoneOrEmail, String password);
+    ResponseEntity<ResponseObject> login(String phone, String password);
 
-    ResponseEntity<ResponseObject> loginWithEmail(String email);
+    ResponseEntity<ResponseObject> loginWithEmail(String email, String token) throws ExecutionException, InterruptedException;
     ResponseEntity<ResponseObject> getCustomerList(int page, int size);
     Optional<Customer> getCustomerById(UUID id);
 
