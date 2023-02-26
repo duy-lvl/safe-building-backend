@@ -1,6 +1,8 @@
 package com.safepass.safebuilding.customer.validation;
 
 import com.safepass.safebuilding.common.exception.InvalidDataException;
+import com.safepass.safebuilding.common.meta.CustomerStatus;
+import com.safepass.safebuilding.common.meta.Gender;
 import com.safepass.safebuilding.customer.dto.RequestObjectForCreateCustomer;
 import com.safepass.safebuilding.customer.dto.RequestObjectForUpdateCustomer;
 import org.springframework.stereotype.Service;
@@ -42,6 +44,16 @@ public class CustomerInfoValidation {
         }
         if (!requestObj.getDateOfBirth().matches(DATE_REGEX_PATTERN)) {
             throw new InvalidDataException("Wrong date format");
+        }
+        if (!(requestObj.getStatus().equals(CustomerStatus.ACTIVE.toString())
+                || requestObj.getStatus().equals(CustomerStatus.INACTIVE.toString()))) {
+            throw new InvalidDataException("Status must be " + CustomerStatus.values()[0] + " or " + CustomerStatus.values()[1] + "");
+        }
+        if (!(requestObj.getGender().equals(Gender.MALE.toString())
+                || requestObj.getGender().equals(Gender.FEMALE.toString())
+                || requestObj.getGender().equals(Gender.OTHER.toString()))) {
+            throw new InvalidDataException("Gender must be " + Gender.values()[0] + ", or " + Gender.values()[1]
+                    + ", or " + Gender.values()[2]);
         }
     }
 }
