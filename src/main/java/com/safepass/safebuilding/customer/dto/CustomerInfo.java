@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 public class CustomerInfo {
     private String id;
     private String phone;
+    private String email;
     private String fullname;
     private String address;
     private String dateOfBirth;

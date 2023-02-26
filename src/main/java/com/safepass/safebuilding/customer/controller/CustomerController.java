@@ -73,25 +73,28 @@ public class CustomerController {
             @RequestParam(name = "page", defaultValue = "1")  int page,
             @RequestParam(name = "size", defaultValue = "10") int size,
             @RequestBody RequestObjectForFilter requestObjectForFilter
-            ) throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException {
+    ) throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException {
         return customerService.filterCustomer(requestObjectForFilter, page, size);
     }
 
     @PostMapping("/create-customer")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<ResponseObject> addCustomer(@RequestBody RequestObjectForCreateCustomer requestObject) throws SQLException, InvalidDataException {
+    public ResponseEntity<ResponseObject> addCustomer(@RequestBody RequestObjectForCreateCustomer requestObject)
+            throws SQLException, InvalidDataException {
         return customerService.addCustomer(requestObject);
     }
 
     @PutMapping("/update-customer")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<ResponseObject> updateCustomer(@RequestBody RequestObjectForUpdateCustomer requestObject) {
-        return null;
+    public ResponseEntity<ResponseObject> updateCustomer(@RequestBody RequestObjectForUpdateCustomer requestObject)
+            throws InvalidDataException {
+        return customerService.updateCustomer(requestObject);
     }
 
     @GetMapping("/{customerId}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<ResponseObject> getCustomer(@PathVariable String customerId) throws NoSuchDataException {
+    public ResponseEntity<ResponseObject> getCustomer(@PathVariable String customerId)
+            throws NoSuchDataException {
         return customerService.getCustomer(customerId);
     }
 }

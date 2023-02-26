@@ -295,11 +295,29 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public ResponseEntity<ResponseObject> updateCustomer(RequestObjectForUpdateCustomer requestCustomer) throws InvalidDataException {
+    public ResponseEntity<ResponseObject> updateCustomer(RequestObjectForUpdateCustomer requestCustomer)
+            throws InvalidDataException
+    {
         customerInfoValidation.validateUpdate(requestCustomer);
 
+        Optional<Customer> temp = customerRepository.findById(UUID.fromString(requestCustomer.getId()));
+        if (temp.isPresent()) {
+            Customer customer = temp.get();
+            customer.setPhone(requestCustomer.getPhone());
+            customer.setEmail(requestCustomer.getEmail());
+            customer.setAddress(requestCustomer.getAddress());
+            customer.setGender(Gender.valueOf(requestCustomer.getGender()));
+            customer.setFullname(requestCustomer.getFullname());
+            customer.setDateOfBirth(Date.valueOf(requestCustomer.getDateOfBirth()));
+            customer.setCitizenId(requestCustomer.getCitizenId());
+            customer.setStatus(CustomerStatus.valueOf(requestCustomer.getStatus()));
 
-        return null;
+            customerRepository.save(customer);
+
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(new ResponseObject(HttpStatus.CREATED.toString(), "Successfully", null, null));
+        }
+        throw new InvalidDataException("Customer does not exist");
     }
 
     @Override
