@@ -1,7 +1,6 @@
 package com.safepass.safebuilding.flat.jdbc;
 
 import com.safepass.safebuilding.common.jdbc.Jdbc;
-import com.safepass.safebuilding.common.meta.FlatStatus;
 import com.safepass.safebuilding.flat.dto.AvailableFlatDTO;
 import com.safepass.safebuilding.flat.dto.FlatDTO;
 import org.springframework.beans.factory.annotation.Autowired;

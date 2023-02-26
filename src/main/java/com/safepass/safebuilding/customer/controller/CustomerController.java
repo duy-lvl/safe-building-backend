@@ -2,6 +2,9 @@ package com.safepass.safebuilding.customer.controller;
 
 import com.safepass.safebuilding.common.dto.ResponseObject;
 import com.safepass.safebuilding.common.exception.InvalidDataException;
+import com.safepass.safebuilding.common.exception.InvalidPageSizeException;
+import com.safepass.safebuilding.common.exception.MaxPageExceededException;
+import com.safepass.safebuilding.common.exception.NoSuchDataException;
 import com.safepass.safebuilding.customer.dto.RequestObjectForCreateCustomer;
 import com.safepass.safebuilding.customer.dto.RequestObjectForFilter;
 import com.safepass.safebuilding.customer.dto.RequestObjectForUpdateCustomer;
@@ -44,7 +47,7 @@ public class CustomerController {
     public ResponseEntity<ResponseObject> getList (
             @RequestParam(name = "page", defaultValue = "1")  int page,
             @RequestParam(name = "size", defaultValue = "10") int size
-    ) {
+    ) throws MaxPageExceededException, InvalidPageSizeException, NoSuchDataException {
         return customerService.getCustomerList(page, size);
     }
 
@@ -60,7 +63,7 @@ public class CustomerController {
     public ResponseEntity<ResponseObject> getAccountList(
             @RequestParam(name = "page", defaultValue = "1")  int page,
             @RequestParam(name = "size", defaultValue = "10") int size
-    ) {
+    ) throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException {
         return customerService.getAccountList(page, size);
     }
 
@@ -70,7 +73,7 @@ public class CustomerController {
             @RequestParam(name = "page", defaultValue = "1")  int page,
             @RequestParam(name = "size", defaultValue = "10") int size,
             @RequestBody RequestObjectForFilter requestObjectForFilter
-            ) {
+            ) throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException {
         return customerService.filterCustomer(requestObjectForFilter, page, size);
     }
 
@@ -88,7 +91,7 @@ public class CustomerController {
 
     @GetMapping("/{customerId}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<ResponseObject> getCustomer(@PathVariable String customerId) {
+    public ResponseEntity<ResponseObject> getCustomer(@PathVariable String customerId) throws NoSuchDataException {
         return customerService.getCustomer(customerId);
     }
 }

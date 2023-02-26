@@ -1,5 +1,10 @@
 package com.safepass.safebuilding.rent_contract.service.impl;
 
+import com.safepass.safebuilding.common.meta.RentContractStatus;
+import com.safepass.safebuilding.rent_contract.dto.RequestObjectForCreate;
+
+import java.util.UUID;
+
 public class RentContractServiceUtil {
 
     public static String constructQuery(String id, String customerId, String flatId, String url) {
@@ -25,5 +30,12 @@ public class RentContractServiceUtil {
                 "FROM building JOIN flat ON building.id=flat.building_id  \n" +
                 "\tJOIN rent_contract ON rent_contract.flat_id=flat.id     \n" +
                 "\tJOIN customer ON customer.id=rent_contract.customer_id \n";
+    }
+
+    public static String queryInsert(RequestObjectForCreate requestObj, String url) {
+        return "INSERT INTO rent_contract(id, contract, expiry_date, status, value, customer_id, flat_id)\n" +
+                "VALUES('" + UUID.randomUUID() + "', '" + url + "', '" + requestObj.getExpiryDate() + "', '" +
+                RentContractStatus.VALID + "', " + requestObj.getValue() + ", '" + requestObj.getCustomerId() +
+                "', '" + requestObj.getFlatId() +"')";
     }
 }

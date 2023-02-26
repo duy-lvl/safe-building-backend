@@ -19,11 +19,8 @@ public class CustomerInfoValidation {
                 throw new InvalidDataException("Email is invalid");
             }
         }
-        if (requestObj.getPassword() == null || requestObj.getExpiryDay() == null || requestObj.getFullName() == null) {
+        if (requestObj.getPassword() == null || requestObj.getFullName() == null) {
             throw new InvalidDataException("Field cannot be null");
-        }
-        if (requestObj.getValue() <= 0) {
-            throw new InvalidDataException("Value must be greater than 0");
         }
     }
 

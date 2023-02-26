@@ -43,4 +43,8 @@ public class RentContractJDBC extends Jdbc {
         });
 
     }
+
+    public boolean insertContract(String query) {
+        return jdbcTemplate.update(query) > 0;
+    }
 }

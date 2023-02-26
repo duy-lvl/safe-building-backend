@@ -1,6 +1,9 @@
 package com.safepass.safebuilding.flat.controller;
 
 import com.safepass.safebuilding.common.dto.ResponseObject;
+import com.safepass.safebuilding.common.exception.InvalidPageSizeException;
+import com.safepass.safebuilding.common.exception.MaxPageExceededException;
+import com.safepass.safebuilding.common.exception.NoSuchDataException;
 import com.safepass.safebuilding.flat.service.FlatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +22,7 @@ public class FlatController {
     public ResponseEntity<ResponseObject> getFlatList(
             @RequestParam(name = "page", defaultValue = "1")  int page,
             @RequestParam(name = "size", defaultValue = "10") int size
-    ) {
+    ) throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException {
         return flatService.getFlatList(page, size);
     }
 

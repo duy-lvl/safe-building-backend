@@ -1,11 +1,17 @@
 package com.safepass.safebuilding.rent_contract.controller;
 
 import com.safepass.safebuilding.common.dto.ResponseObject;
+import com.safepass.safebuilding.common.exception.InvalidDataException;
+import com.safepass.safebuilding.rent_contract.dto.RequestObjectForCreate;
 import com.safepass.safebuilding.rent_contract.service.RentContractService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.sql.SQLException;
 
 @RestController
 @RequestMapping(value = "/api/v1/rent-contracts")
@@ -22,4 +28,12 @@ public class RentContractController {
         return rentContractService.getList(page, size);
     }
 
+    @PostMapping("/create-contract")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<ResponseObject> createContract(
+            @RequestParam String requestContract,
+            @RequestParam MultipartFile[] files
+    ) throws IOException, SQLException, InvalidDataException {
+        return rentContractService.createContract(files, requestContract);
+    }
 }

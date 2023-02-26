@@ -2,13 +2,14 @@ package com.safepass.safebuilding.building.controller;
 
 import com.safepass.safebuilding.building.service.BuildingService;
 import com.safepass.safebuilding.common.dto.ResponseObject;
+import com.safepass.safebuilding.common.exception.InvalidPageSizeException;
+import com.safepass.safebuilding.common.exception.MaxPageExceededException;
+import com.safepass.safebuilding.common.exception.NoSuchDataException;
 import com.safepass.safebuilding.flat.service.FlatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.UUID;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -24,7 +25,7 @@ public class BuildingController {
     public ResponseEntity<ResponseObject> getBuildingList(
             @RequestParam(name = "page", defaultValue = "1")  int page,
             @RequestParam(name = "size", defaultValue = "10") int size
-    ) {
+    ) throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException {
         return buildingService.getBuildingList(page, size);
     }
 
@@ -34,12 +35,12 @@ public class BuildingController {
             @RequestParam(name = "page", defaultValue = "1")  int page,
             @RequestParam(name = "size", defaultValue = "10") int size,
             @RequestParam(name = "name") String name
-    ) {
+    ) throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException {
         return buildingService.searchBuildingByName(name, page, size);
     }
     @GetMapping("/get-available-buildings")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<ResponseObject> getAvailableBuildings() {
+    public ResponseEntity<ResponseObject> getAvailableBuildings() throws NoSuchDataException {
         return buildingService.getAvailableBuildings();
     }
 
@@ -47,7 +48,7 @@ public class BuildingController {
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ResponseObject> getFlatList(
             @PathVariable String buildingId
-    ) {
+    ) throws NoSuchDataException {
         return flatService.getAvailableFlatByBuilding(buildingId);
     }
 }

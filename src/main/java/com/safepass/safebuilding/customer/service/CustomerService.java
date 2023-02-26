@@ -2,6 +2,9 @@ package com.safepass.safebuilding.customer.service;
 
 import com.safepass.safebuilding.common.dto.ResponseObject;
 import com.safepass.safebuilding.common.exception.InvalidDataException;
+import com.safepass.safebuilding.common.exception.InvalidPageSizeException;
+import com.safepass.safebuilding.common.exception.MaxPageExceededException;
+import com.safepass.safebuilding.common.exception.NoSuchDataException;
 import com.safepass.safebuilding.customer.dto.RequestObjectForCreateCustomer;
 import com.safepass.safebuilding.customer.dto.RequestObjectForFilter;
 import com.safepass.safebuilding.customer.dto.RequestObjectForUpdateCustomer;
@@ -35,7 +38,7 @@ public interface CustomerService {
      * @param size {@code int}
      * @return ResponseEntity<ResponseObject>
      */
-    ResponseEntity<ResponseObject> getCustomerList(int page, int size);
+    ResponseEntity<ResponseObject> getCustomerList(int page, int size) throws MaxPageExceededException, NoSuchDataException, InvalidPageSizeException;
 
     /**
      * Get account list for account management screen
@@ -44,7 +47,7 @@ public interface CustomerService {
      * @param size {@code int}
      * @return ResponseEntity<ResponseObject>
      */
-    ResponseEntity<ResponseObject> getAccountList(int page, int size);
+    ResponseEntity<ResponseObject> getAccountList(int page, int size) throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException;
 
     /**
      * Add token to customer
@@ -67,7 +70,7 @@ public interface CustomerService {
      *
      * @return ResponseEntity<ResponseObject>
      */
-    ResponseEntity<ResponseObject> filterCustomer(RequestObjectForFilter requestObjectForFilter, int page, int size);
+    ResponseEntity<ResponseObject> filterCustomer(RequestObjectForFilter requestObjectForFilter, int page, int size) throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException;
 
     /**
      * Create a new customer, update flat status to UNAVAILABLE, create a rent contract
@@ -97,6 +100,6 @@ public interface CustomerService {
      *
      * @return ResponseEntity<ResponseObject>
      * */
-    ResponseEntity<ResponseObject> getCustomer(String id);
+    ResponseEntity<ResponseObject> getCustomer(String id) throws NoSuchDataException;
 
 }

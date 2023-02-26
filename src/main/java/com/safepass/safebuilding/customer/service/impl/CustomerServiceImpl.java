@@ -94,8 +94,8 @@ public class CustomerServiceImpl implements CustomerService {
     /**
      * {@inheritDoc}
      * */
-    public ResponseEntity<ResponseObject> getCustomerList(int page, int size) {
-        try {
+    public ResponseEntity<ResponseObject> getCustomerList(int page, int size) throws MaxPageExceededException, NoSuchDataException, InvalidPageSizeException {
+
             paginationValidation.validatePageSize(page, size);
 
             String queryTotalRow = CustomerServiceUtil.constructQueryForGetTotalRowGetAllCustomer();
@@ -116,15 +116,7 @@ public class CustomerServiceImpl implements CustomerService {
             ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.OK)
                     .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", pagination, customerDTOs));
             return responseEntity;
-        } catch (InvalidPageSizeException | MaxPageExceededException e) {
-            ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ResponseObject(HttpStatus.NOT_ACCEPTABLE.toString(), e.getMessage(), null, null));
-            return responseEntity;
-        } catch (NoSuchDataException e) {
-            ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ResponseObject(HttpStatus.NOT_FOUND.toString(), e.getMessage(), null, null));
-            return responseEntity;
-        }
+
     }
 
 
@@ -203,8 +195,8 @@ public class CustomerServiceImpl implements CustomerService {
      * {@inheritDoc}
      * */
     @Override
-    public ResponseEntity<ResponseObject> getAccountList(int page, int size) {
-        try {
+    public ResponseEntity<ResponseObject> getAccountList(int page, int size) throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException {
+
             paginationValidation.validatePageSize(page, size);
             Pageable pageable = PageRequest.of(page-1, size);
             Page<Customer> customerPage = customerRepository.findAll(pageable);
@@ -214,19 +206,10 @@ public class CustomerServiceImpl implements CustomerService {
             List<Customer> customers = customerPage.getContent();
             List<AccountDTO> accountDTOs = modelMapperCustom.mapList(customers, AccountDTO.class);
 
-
             ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.OK)
                     .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", pagination, accountDTOs));
             return responseEntity;
-        } catch (InvalidPageSizeException | MaxPageExceededException e) {
-            ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ResponseObject(HttpStatus.NOT_ACCEPTABLE.toString(), e.getMessage(), null, null));
-            return responseEntity;
-        } catch (NoSuchDataException e) {
-            ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ResponseObject(HttpStatus.NOT_FOUND.toString(), e.getMessage(), null, null));
-            return responseEntity;
-        }
+
     }
 
     /**
@@ -258,8 +241,8 @@ public class CustomerServiceImpl implements CustomerService {
      * {@inheritDoc}
      *
      * */
-    public ResponseEntity<ResponseObject> filterCustomer(RequestObjectForFilter requestObjectForFilter, int page, int size) {
-        try {
+    public ResponseEntity<ResponseObject> filterCustomer(RequestObjectForFilter requestObjectForFilter, int page, int size) throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException {
+
             paginationValidation.validatePageSize(page, size);
 
             String queryTotalRow = CustomerServiceUtil.filterTotalRow(requestObjectForFilter);
@@ -280,15 +263,7 @@ public class CustomerServiceImpl implements CustomerService {
             ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.OK)
                     .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", pagination, customerDTOs));
             return responseEntity;
-        } catch (InvalidPageSizeException | MaxPageExceededException e) {
-            ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ResponseObject(HttpStatus.NOT_ACCEPTABLE.toString(), e.getMessage(), null, null));
-            return responseEntity;
-        } catch (NoSuchDataException e) {
-            ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ResponseObject(HttpStatus.NOT_FOUND.toString(), e.getMessage(), null, null));
-            return responseEntity;
-        }
+
     }
 
     /**
@@ -297,47 +272,25 @@ public class CustomerServiceImpl implements CustomerService {
      */
     @Transactional(rollbackFor = {SQLException.class, IllegalArgumentException.class})
     public ResponseEntity<ResponseObject> addCustomer(RequestObjectForCreateCustomer requestCustomer) throws InvalidDataException, SQLException {
-
-
-            customerInfoValidation.validateCreate(requestCustomer);
+        customerInfoValidation.validateCreate(requestCustomer);
             UUID customerId = UUID.randomUUID();
 
-            Customer customer = Customer.builder()
-                    .id(customerId)
-                    .phone(requestCustomer.getPhone())
-                    .address(requestCustomer.getAddress())
-                    .dateJoin(Date.valueOf(LocalDate.now().toString()))
-                    .dateOfBirth(Date.valueOf(requestCustomer.getDateOfBirth()))
-                    .password(passwordEncoder.encode(requestCustomer.getPassword()))
-                    .fullname(requestCustomer.getFullName())
-                    .gender(Gender.valueOf(requestCustomer.getGender()))
-                    .status(CustomerStatus.ACTIVE)
-                    .build();
-            customer = customerRepository.save(customer);
+        Customer customer = Customer.builder()
+                .id(customerId)
+                .phone(requestCustomer.getPhone())
+                .address(requestCustomer.getAddress())
+                .dateJoin(Date.valueOf(LocalDate.now().toString()))
+                .dateOfBirth(Date.valueOf(requestCustomer.getDateOfBirth()))
+                .password(passwordEncoder.encode(requestCustomer.getPassword()))
+                .fullname(requestCustomer.getFullName())
+                .gender(Gender.valueOf(requestCustomer.getGender()))
+                .citizenId(requestCustomer.getCitizenId())
+                .status(CustomerStatus.ACTIVE)
+                .build();
+        customerRepository.save(customer);
 
-            UUID rentContractId = UUID.randomUUID();
-            UUID flatId = UUID.fromString(requestCustomer.getFlatId());
-            String queryUpdateFlatStatus = FlatServiceUtil.queryUpdateStatus(flatId, FlatStatus.UNAVAILABLE);
-            boolean checkUpdate = flatJDBC.updateStatus(queryUpdateFlatStatus);
-            if (!checkUpdate) {
-                throw new SQLException("Flat does not exist");
-            }
-            Flat flat = flatRepository.findById(flatId).get();
-
-
-
-            RentContract rentContract = RentContract.builder()
-                    .id(rentContractId)
-                    .customer(customer)
-                    .expiryDate(Date.valueOf(requestCustomer.getExpiryDay()))
-                    .status(RentContractStatus.VALID)
-                    .flat(flat)
-                    .value(requestCustomer.getValue())
-                    .build();
-            rentContractRepository.save(rentContract);
-
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(new ResponseObject(HttpStatus.CREATED.toString(), "Successfully", null, null));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ResponseObject(HttpStatus.CREATED.toString(), "Successfully", null, null));
 
     }
 
@@ -350,16 +303,14 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public ResponseEntity<ResponseObject> getCustomer(String id) {
+    public ResponseEntity<ResponseObject> getCustomer(String id) throws NoSuchDataException {
         Optional<Customer> customerOptional = customerRepository.findById(UUID.fromString(id));
         if (customerOptional.isPresent()) {
             Customer customer = customerOptional.get();
             CustomerInfo customerInfo = modelMapper.map(customer, CustomerInfo.class);
             return ResponseEntity.status(HttpStatus.OK)
-                    .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", null, null));
+                    .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", null, customerInfo));
         }
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(new ResponseObject(HttpStatus.NOT_FOUND.toString(), "Customer not found", null, null));
+        throw new NoSuchDataException("Customer not found");
     }
 }

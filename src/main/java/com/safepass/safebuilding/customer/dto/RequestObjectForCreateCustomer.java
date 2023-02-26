@@ -15,9 +15,7 @@ public class RequestObjectForCreateCustomer {
     private String password;
     private String address;
     private String dateOfBirth;
+    private String citizenId;
     private String gender;
-    private String flatId;
-    private String expiryDay;
-    private int value;
 
 }

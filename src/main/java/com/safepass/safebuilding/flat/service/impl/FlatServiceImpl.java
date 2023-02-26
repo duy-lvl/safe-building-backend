@@ -1,19 +1,15 @@
 package com.safepass.safebuilding.flat.service.impl;
 
-import com.safepass.safebuilding.building.dto.AvailableBuildingDTO;
-import com.safepass.safebuilding.building.entity.Building;
 import com.safepass.safebuilding.common.dto.Pagination;
 import com.safepass.safebuilding.common.dto.ResponseObject;
 import com.safepass.safebuilding.common.exception.InvalidPageSizeException;
 import com.safepass.safebuilding.common.exception.MaxPageExceededException;
 import com.safepass.safebuilding.common.exception.NoSuchDataException;
-import com.safepass.safebuilding.common.meta.BuildingStatus;
 import com.safepass.safebuilding.common.meta.FlatStatus;
 import com.safepass.safebuilding.common.utils.ModelMapperCustom;
 import com.safepass.safebuilding.common.validation.PaginationValidation;
 import com.safepass.safebuilding.flat.dto.AvailableFlatDTO;
 import com.safepass.safebuilding.flat.dto.FlatDTO;
-import com.safepass.safebuilding.flat.entity.Flat;
 import com.safepass.safebuilding.flat.jdbc.FlatJDBC;
 import com.safepass.safebuilding.flat.repository.FlatRepository;
 import com.safepass.safebuilding.flat.service.FlatService;
@@ -22,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,10 +30,9 @@ public class FlatServiceImpl implements FlatService {
     private PaginationValidation paginationValidation;
     @Autowired
     private FlatRepository flatRepository;
-    private ModelMapperCustom modelMapper = new ModelMapperCustom();
+//    private ModelMapperCustom modelMapper = new ModelMapperCustom();
     @Override
-    public ResponseEntity<ResponseObject> getFlatList(int page, int size){
-        try {
+    public ResponseEntity<ResponseObject> getFlatList(int page, int size) throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException {
 
             paginationValidation.validatePageSize(page, size);
             String totalRowQuery = FlatServiceUtil.construcQueryForTotalRow();
@@ -51,34 +47,30 @@ public class FlatServiceImpl implements FlatService {
             ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.OK)
                     .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", pagination, flatDTOs));
             return responseEntity;
-        } catch (InvalidPageSizeException | MaxPageExceededException e) {
-            ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ResponseObject(HttpStatus.NOT_ACCEPTABLE.toString(), e.getMessage(), null, null));
-            return responseEntity;
-        } catch (NoSuchDataException e) {
-            ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ResponseObject(HttpStatus.NOT_FOUND.toString(), e.getMessage(), null, null));
-            return responseEntity;
-        }
-
     }
 
     @Override
-    public ResponseEntity<ResponseObject> getAvailableFlatByBuilding(String buildingId) {
+    public ResponseEntity<ResponseObject> getAvailableFlatByBuilding(String buildingId) throws NoSuchDataException {
         String query = FlatServiceUtil.queryGetFlat(buildingId, FlatStatus.AVAILABLE);
         List<AvailableFlatDTO> flats = flatJDBC.getAvailableFlatByBuildingIdAndStatus(query);
         ResponseEntity<ResponseObject> responseEntity;
         if (flats.isEmpty()) {
-            responseEntity  = ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ResponseObject(HttpStatus.NOT_FOUND.toString(), "No building available", null, null));
+            throw new NoSuchDataException("No building found");
         } else {
-
-
             responseEntity = ResponseEntity.status(HttpStatus.OK)
                     .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", null, flats));
         }
-
         return responseEntity;
 
+    }
+
+    @Override
+    public void updateFlatStatus(UUID flatId, FlatStatus status) throws SQLException {
+
+        String queryUpdateFlatStatus = FlatServiceUtil.queryUpdateStatus(flatId, status);
+        boolean checkUpdate = flatJDBC.updateStatus(queryUpdateFlatStatus);
+        if (!checkUpdate) {
+            throw new SQLException("Flat does not exist");
+        }
     }
 }

@@ -34,8 +34,8 @@ public class BuildingServiceImpl implements BuildingService {
     private PaginationValidation paginationValidation;
 
     @Override
-    public ResponseEntity<ResponseObject> getBuildingList(int page, int size) {
-        try {
+    public ResponseEntity<ResponseObject> getBuildingList(int page, int size) throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException {
+
             paginationValidation.validatePageSize(page, size);
             Pageable pageRequest = PageRequest.of(page - 1, size);
             Page<Building> buildingPage = buildingRepository.findAll(pageRequest);
@@ -49,21 +49,13 @@ public class BuildingServiceImpl implements BuildingService {
             ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.OK)
                     .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", pagination, buildingDTOs));
             return responseEntity;
-        } catch (InvalidPageSizeException | MaxPageExceededException e) {
-            ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ResponseObject(HttpStatus.NOT_ACCEPTABLE.toString(), e.getMessage(), null, null));
-            return responseEntity;
-        } catch (NoSuchDataException e) {
-            ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ResponseObject(HttpStatus.NOT_FOUND.toString(), e.getMessage(), null, null));
-            return responseEntity;
-        }
+
 
 //        return service.getAll(page, size, buildingRepository, BuildingDTO.class);
     }
 
-    public ResponseEntity<ResponseObject> searchBuildingByName(String name, int page, int size) {
-        try {
+    public ResponseEntity<ResponseObject> searchBuildingByName(String name, int page, int size) throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException {
+
             paginationValidation.validatePageSize(page, size);
             Pageable pageRequest = PageRequest.of(page - 1, size);
             Page<Building> buildingPage = buildingRepository.findByNameContainsIgnoreCase(name, pageRequest);
@@ -77,24 +69,15 @@ public class BuildingServiceImpl implements BuildingService {
             ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.OK)
                     .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", pagination, buildingDTOs));
             return responseEntity;
-        } catch (InvalidPageSizeException | MaxPageExceededException e) {
-            ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ResponseObject(HttpStatus.NOT_ACCEPTABLE.toString(), e.getMessage(), null, null));
-            return responseEntity;
-        } catch (NoSuchDataException e) {
-            ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ResponseObject(HttpStatus.NOT_FOUND.toString(), e.getMessage(), null, null));
-            return responseEntity;
-        }
+
     }
 
     @Override
-    public ResponseEntity<ResponseObject> getAvailableBuildings() {
+    public ResponseEntity<ResponseObject> getAvailableBuildings() throws NoSuchDataException {
         List<Building> buildings = buildingRepository.findByStatusOrderByNameAsc(BuildingStatus.AVAILABLE);
         ResponseEntity<ResponseObject> responseEntity;
         if (buildings.isEmpty()) {
-            responseEntity  = ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ResponseObject(HttpStatus.NOT_FOUND.toString(), "No building available", null, null));
+           throw new NoSuchDataException("No building found");
         } else {
             List<AvailableBuildingDTO> buildingDTOs = modelMapper.mapList(buildings, AvailableBuildingDTO.class);
 
