@@ -11,10 +11,7 @@ import com.safepass.safebuilding.common.meta.Gender;
 import com.safepass.safebuilding.common.meta.RentContractStatus;
 import com.safepass.safebuilding.common.utils.ModelMapperCustom;
 import com.safepass.safebuilding.common.validation.PaginationValidation;
-import com.safepass.safebuilding.customer.dto.AccountDTO;
-import com.safepass.safebuilding.customer.dto.CustomerDTO;
-import com.safepass.safebuilding.customer.dto.RequestObjectForCreateCustomer;
-import com.safepass.safebuilding.customer.dto.RequestObjectForFilter;
+import com.safepass.safebuilding.customer.dto.*;
 import com.safepass.safebuilding.customer.entity.Customer;
 import com.safepass.safebuilding.customer.jdbc.CustomerJDBC;
 import com.safepass.safebuilding.customer.repository.CustomerRepository;
@@ -23,7 +20,7 @@ import com.safepass.safebuilding.common.jwt.service.JwtService;
 import com.safepass.safebuilding.common.meta.CustomerStatus;
 import com.safepass.safebuilding.common.security.user.UserPrinciple;
 import com.safepass.safebuilding.customer.service.CustomerService;
-import com.safepass.safebuilding.customer.validation.CustomerCreationInfoValidation;
+import com.safepass.safebuilding.customer.validation.CustomerInfoValidation;
 import com.safepass.safebuilding.device.dto.DeviceDTO;
 import com.safepass.safebuilding.device.entity.Device;
 import com.safepass.safebuilding.device.repository.DeviceRepository;
@@ -53,7 +50,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
@@ -93,9 +89,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Autowired
     private FlatJDBC flatJDBC;
     @Autowired
-    private CustomerCreationInfoValidation customerCreationInfoValidation;
-
-    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    private CustomerInfoValidation customerInfoValidation;
 
     /**
      * {@inheritDoc}
@@ -262,6 +256,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     /**
      * {@inheritDoc}
+     *
      * */
     public ResponseEntity<ResponseObject> filterCustomer(RequestObjectForFilter requestObjectForFilter, int page, int size) {
         try {
@@ -296,12 +291,15 @@ public class CustomerServiceImpl implements CustomerService {
         }
     }
 
-
-    @Transactional(rollbackFor = {SQLException.class})
+    /**
+     * {@inheritDoc}
+     *
+     */
+    @Transactional(rollbackFor = {SQLException.class, IllegalArgumentException.class})
     public ResponseEntity<ResponseObject> addCustomer(RequestObjectForCreateCustomer requestCustomer) throws InvalidDataException, SQLException {
 
 
-            customerCreationInfoValidation.validate(requestCustomer);
+            customerInfoValidation.validateCreate(requestCustomer);
             UUID customerId = UUID.randomUUID();
 
             Customer customer = Customer.builder()
@@ -341,6 +339,27 @@ public class CustomerServiceImpl implements CustomerService {
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(new ResponseObject(HttpStatus.CREATED.toString(), "Successfully", null, null));
 
+    }
 
+    @Override
+    public ResponseEntity<ResponseObject> updateCustomer(RequestObjectForUpdateCustomer requestCustomer) throws InvalidDataException {
+        customerInfoValidation.validateUpdate(requestCustomer);
+
+
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<ResponseObject> getCustomer(String id) {
+        Optional<Customer> customerOptional = customerRepository.findById(UUID.fromString(id));
+        if (customerOptional.isPresent()) {
+            Customer customer = customerOptional.get();
+            CustomerInfo customerInfo = modelMapper.map(customer, CustomerInfo.class);
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", null, null));
+        }
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ResponseObject(HttpStatus.NOT_FOUND.toString(), "Customer not found", null, null));
     }
 }

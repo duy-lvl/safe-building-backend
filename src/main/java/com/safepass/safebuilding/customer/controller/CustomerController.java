@@ -4,6 +4,7 @@ import com.safepass.safebuilding.common.dto.ResponseObject;
 import com.safepass.safebuilding.common.exception.InvalidDataException;
 import com.safepass.safebuilding.customer.dto.RequestObjectForCreateCustomer;
 import com.safepass.safebuilding.customer.dto.RequestObjectForFilter;
+import com.safepass.safebuilding.customer.dto.RequestObjectForUpdateCustomer;
 import com.safepass.safebuilding.customer.service.CustomerService;
 import com.safepass.safebuilding.device.service.DeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,5 +78,17 @@ public class CustomerController {
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ResponseObject> addCustomer(@RequestBody RequestObjectForCreateCustomer requestObject) throws SQLException, InvalidDataException {
         return customerService.addCustomer(requestObject);
+    }
+
+    @PutMapping("/update-customer")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<ResponseObject> updateCustomer(@RequestBody RequestObjectForUpdateCustomer requestObject) {
+        return null;
+    }
+
+    @GetMapping("/{customerId}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<ResponseObject> getCustomer(@PathVariable String customerId) {
+        return customerService.getCustomer(customerId);
     }
 }

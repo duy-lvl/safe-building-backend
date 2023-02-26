@@ -1,5 +1,6 @@
 package com.safepass.safebuilding.building.service.impl;
 
+import com.safepass.safebuilding.building.dto.AvailableBuildingDTO;
 import com.safepass.safebuilding.building.dto.BuildingDTO;
 import com.safepass.safebuilding.building.entity.Building;
 import com.safepass.safebuilding.common.exception.NoSuchDataException;
@@ -9,6 +10,7 @@ import com.safepass.safebuilding.common.dto.Pagination;
 import com.safepass.safebuilding.common.dto.ResponseObject;
 import com.safepass.safebuilding.common.exception.InvalidPageSizeException;
 import com.safepass.safebuilding.common.exception.MaxPageExceededException;
+import com.safepass.safebuilding.common.meta.BuildingStatus;
 import com.safepass.safebuilding.common.utils.ModelMapperCustom;
 import com.safepass.safebuilding.common.validation.PaginationValidation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -83,5 +86,25 @@ public class BuildingServiceImpl implements BuildingService {
                     .body(new ResponseObject(HttpStatus.NOT_FOUND.toString(), e.getMessage(), null, null));
             return responseEntity;
         }
+    }
+
+    @Override
+    public ResponseEntity<ResponseObject> getAvailableBuildings() {
+        List<Building> buildings = buildingRepository.findByStatusOrderByNameAsc(BuildingStatus.AVAILABLE);
+        ResponseEntity<ResponseObject> responseEntity;
+        if (buildings.isEmpty()) {
+            responseEntity  = ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ResponseObject(HttpStatus.NOT_FOUND.toString(), "No building available", null, null));
+        } else {
+            List<AvailableBuildingDTO> buildingDTOs = modelMapper.mapList(buildings, AvailableBuildingDTO.class);
+
+            responseEntity = ResponseEntity.status(HttpStatus.OK)
+                    .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", null, buildingDTOs));
+        }
+
+        return responseEntity;
+
+
+
     }
 }

@@ -6,4 +6,5 @@ import org.springframework.http.ResponseEntity;
 public interface BuildingService {
     ResponseEntity<ResponseObject> getBuildingList(int page, int size);
     ResponseEntity<ResponseObject> searchBuildingByName(String name, int page, int size);
+    public ResponseEntity<ResponseObject> getAvailableBuildings();
 }

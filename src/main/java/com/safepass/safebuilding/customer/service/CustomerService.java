@@ -4,9 +4,9 @@ import com.safepass.safebuilding.common.dto.ResponseObject;
 import com.safepass.safebuilding.common.exception.InvalidDataException;
 import com.safepass.safebuilding.customer.dto.RequestObjectForCreateCustomer;
 import com.safepass.safebuilding.customer.dto.RequestObjectForFilter;
+import com.safepass.safebuilding.customer.dto.RequestObjectForUpdateCustomer;
 import org.springframework.http.ResponseEntity;
 
-import java.io.IOException;
 import java.sql.SQLException;
 
 
@@ -69,5 +69,34 @@ public interface CustomerService {
      */
     ResponseEntity<ResponseObject> filterCustomer(RequestObjectForFilter requestObjectForFilter, int page, int size);
 
+    /**
+     * Create a new customer, update flat status to UNAVAILABLE, create a rent contract
+     *
+     * @param requestCustomer {@code RequestObjectForCreateCustomer}
+     *
+     * @return ResponseEntity<ResponseObject>
+     * @throws InvalidDataException
+     * @throws SQLException
+     */
     ResponseEntity<ResponseObject> addCustomer(RequestObjectForCreateCustomer requestCustomer) throws InvalidDataException, SQLException;
+
+    /**
+     * Update customer information
+     *
+     * @param requestCustomer {@code RequestObjectForUpdateCustomer}
+     *
+     * @return ResponseEntity<ResponseObject>
+     *
+     */
+    ResponseEntity<ResponseObject> updateCustomer(RequestObjectForUpdateCustomer requestCustomer) throws InvalidDataException;
+
+    /**
+     * Get customer by id
+     *
+     * @param id {@code String}
+     *
+     * @return ResponseEntity<ResponseObject>
+     * */
+    ResponseEntity<ResponseObject> getCustomer(String id);
+
 }

@@ -1,6 +1,8 @@
 package com.safepass.safebuilding.flat.jdbc;
 
 import com.safepass.safebuilding.common.jdbc.Jdbc;
+import com.safepass.safebuilding.common.meta.FlatStatus;
+import com.safepass.safebuilding.flat.dto.AvailableFlatDTO;
 import com.safepass.safebuilding.flat.dto.FlatDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -27,5 +29,14 @@ public class FlatJDBC extends Jdbc {
 
     public boolean updateStatus(String query) {
         return jdbcTemplate.update(query) > 0;
+    }
+
+    public List<AvailableFlatDTO> getAvailableFlatByBuildingIdAndStatus(String query) {
+        return jdbcTemplate.query(query, (rs, rowNum) -> {
+            AvailableFlatDTO flatDTO = new AvailableFlatDTO();
+            flatDTO.setId(rs.getString("id"));
+            flatDTO.setRoomNumber(rs.getInt("room_number"));
+            return flatDTO;
+        });
     }
 }
