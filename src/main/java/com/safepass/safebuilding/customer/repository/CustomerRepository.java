@@ -1,6 +1,7 @@
 package com.safepass.safebuilding.customer.repository;
 
 import com.safepass.safebuilding.admin.entity.Admin;
+import com.safepass.safebuilding.common.meta.CustomerStatus;
 import com.safepass.safebuilding.customer.entity.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -18,4 +19,5 @@ public interface CustomerRepository extends JpaRepository<Customer, UUID> {
     Admin loginCustomer(String phoneOrEmail, String password);
 
     Admin findCustomerByPhoneAndPassword(String phone, String password);
+
 }

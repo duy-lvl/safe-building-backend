@@ -1,5 +1,9 @@
 package com.safepass.safebuilding.flat.service.impl;
 
+import com.safepass.safebuilding.common.meta.FlatStatus;
+
+import java.util.UUID;
+
 public class FlatServiceUtil {
 
     public static String constructQueryForGetFlatList(int page, int size) {
@@ -13,5 +17,9 @@ public class FlatServiceUtil {
         return "SELECT count(room_number)\n" +
                 "FROM flat JOIN building ON flat.building_id = building.id\n" +
                 "\tJOIN flat_type ON flat.flat_type_id = flat_type.id";
+    }
+
+    public static String queryUpdateStatus(UUID id, FlatStatus status) {
+        return "UPDATE flat SET status = '" + status + "' WHERE id = '" + id.toString() + "'";
     }
 }

@@ -25,5 +25,7 @@ public class FlatJDBC extends Jdbc {
         });
     }
 
-
+    public boolean updateStatus(String query) {
+        return jdbcTemplate.update(query) > 0;
+    }
 }

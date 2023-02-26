@@ -41,4 +41,6 @@ public class CustomerServiceUtil {
                 + "  OR fullname LIKE \"%"+requestObjectForFilter.getSearchString()
                 +"%\" OR phone LIKE \"%"+requestObjectForFilter.getSearchString()+"%\")\n";
     }
+
+
 }

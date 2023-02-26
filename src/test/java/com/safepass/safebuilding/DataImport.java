@@ -2,6 +2,11 @@ package com.safepass.safebuilding;
 
 import com.github.javafaker.Faker;
 import com.safepass.safebuilding.common.meta.*;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Date;
@@ -559,4 +564,17 @@ public class DataImport {
 //    void Test() {
 //        System.out.println("https://storage.googleapis.com/safe-building.appspot.com/74bef04e-91bd-4396-bce7-be174df6d07ajpg".split("/")[4]);
 //    }
+
+    PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(12);
+
+    void Test() {
+//        if (passwordEncoder.encode("12345678").equals("$2a$12$xOXUkpChPTfs/WmRvNS3s.Wqz2Wn9GdWO1Ttiea.2pRhGmYvVI5UK")) {
+//            System.out.println("Equals");
+//        }else {
+//            System.out.println("Not");
+//        }
+
+        System.out.println(passwordEncoder.encode("12345678"));
+
+    }
 }

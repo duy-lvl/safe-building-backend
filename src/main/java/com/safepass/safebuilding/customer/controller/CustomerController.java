@@ -1,6 +1,8 @@
 package com.safepass.safebuilding.customer.controller;
 
 import com.safepass.safebuilding.common.dto.ResponseObject;
+import com.safepass.safebuilding.common.exception.InvalidDataException;
+import com.safepass.safebuilding.customer.dto.RequestObjectForCreateCustomer;
 import com.safepass.safebuilding.customer.dto.RequestObjectForFilter;
 import com.safepass.safebuilding.customer.service.CustomerService;
 import com.safepass.safebuilding.device.service.DeviceService;
@@ -12,6 +14,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.sql.SQLException;
+
 
 @RestController
 @RequestMapping(value = "/api/v1/customers")
@@ -66,5 +71,11 @@ public class CustomerController {
             @RequestBody RequestObjectForFilter requestObjectForFilter
             ) {
         return customerService.filterCustomer(requestObjectForFilter, page, size);
+    }
+
+    @PostMapping("/create-customer")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<ResponseObject> addCustomer(@RequestBody RequestObjectForCreateCustomer requestObject) throws SQLException, InvalidDataException {
+        return customerService.addCustomer(requestObject);
     }
 }

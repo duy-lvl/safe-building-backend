@@ -1,8 +1,13 @@
 package com.safepass.safebuilding.customer.service;
 
 import com.safepass.safebuilding.common.dto.ResponseObject;
+import com.safepass.safebuilding.common.exception.InvalidDataException;
+import com.safepass.safebuilding.customer.dto.RequestObjectForCreateCustomer;
 import com.safepass.safebuilding.customer.dto.RequestObjectForFilter;
 import org.springframework.http.ResponseEntity;
+
+import java.io.IOException;
+import java.sql.SQLException;
 
 
 public interface CustomerService {
@@ -63,4 +68,6 @@ public interface CustomerService {
      * @return ResponseEntity<ResponseObject>
      */
     ResponseEntity<ResponseObject> filterCustomer(RequestObjectForFilter requestObjectForFilter, int page, int size);
+
+    ResponseEntity<ResponseObject> addCustomer(RequestObjectForCreateCustomer requestCustomer) throws InvalidDataException, SQLException;
 }

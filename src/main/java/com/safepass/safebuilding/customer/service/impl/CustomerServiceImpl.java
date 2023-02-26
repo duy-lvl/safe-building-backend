@@ -2,13 +2,18 @@ package com.safepass.safebuilding.customer.service.impl;
 
 import com.safepass.safebuilding.common.dto.Pagination;
 import com.safepass.safebuilding.common.dto.ResponseObject;
+import com.safepass.safebuilding.common.exception.InvalidDataException;
 import com.safepass.safebuilding.common.exception.InvalidPageSizeException;
 import com.safepass.safebuilding.common.exception.MaxPageExceededException;
 import com.safepass.safebuilding.common.exception.NoSuchDataException;
+import com.safepass.safebuilding.common.meta.FlatStatus;
+import com.safepass.safebuilding.common.meta.Gender;
+import com.safepass.safebuilding.common.meta.RentContractStatus;
 import com.safepass.safebuilding.common.utils.ModelMapperCustom;
 import com.safepass.safebuilding.common.validation.PaginationValidation;
 import com.safepass.safebuilding.customer.dto.AccountDTO;
 import com.safepass.safebuilding.customer.dto.CustomerDTO;
+import com.safepass.safebuilding.customer.dto.RequestObjectForCreateCustomer;
 import com.safepass.safebuilding.customer.dto.RequestObjectForFilter;
 import com.safepass.safebuilding.customer.entity.Customer;
 import com.safepass.safebuilding.customer.jdbc.CustomerJDBC;
@@ -18,10 +23,17 @@ import com.safepass.safebuilding.common.jwt.service.JwtService;
 import com.safepass.safebuilding.common.meta.CustomerStatus;
 import com.safepass.safebuilding.common.security.user.UserPrinciple;
 import com.safepass.safebuilding.customer.service.CustomerService;
+import com.safepass.safebuilding.customer.validation.CustomerCreationInfoValidation;
 import com.safepass.safebuilding.device.dto.DeviceDTO;
 import com.safepass.safebuilding.device.entity.Device;
 import com.safepass.safebuilding.device.repository.DeviceRepository;
 import com.safepass.safebuilding.device.service.DeviceService;
+import com.safepass.safebuilding.flat.entity.Flat;
+import com.safepass.safebuilding.flat.jdbc.FlatJDBC;
+import com.safepass.safebuilding.flat.repository.FlatRepository;
+import com.safepass.safebuilding.flat.service.impl.FlatServiceUtil;
+import com.safepass.safebuilding.rent_contract.entity.RentContract;
+import com.safepass.safebuilding.rent_contract.repository.RentContractRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -36,8 +48,14 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -64,6 +82,20 @@ public class CustomerServiceImpl implements CustomerService {
     }
     @Autowired
     private CustomerJDBC customerJDBC;
+    @Autowired
+    private FlatRepository flatRepository;
+    @Autowired
+    private RentContractRepository rentContractRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private FlatJDBC flatJDBC;
+    @Autowired
+    private CustomerCreationInfoValidation customerCreationInfoValidation;
+
+    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
     /**
      * {@inheritDoc}
@@ -264,4 +296,51 @@ public class CustomerServiceImpl implements CustomerService {
         }
     }
 
+
+    @Transactional(rollbackFor = {SQLException.class})
+    public ResponseEntity<ResponseObject> addCustomer(RequestObjectForCreateCustomer requestCustomer) throws InvalidDataException, SQLException {
+
+
+            customerCreationInfoValidation.validate(requestCustomer);
+            UUID customerId = UUID.randomUUID();
+
+            Customer customer = Customer.builder()
+                    .id(customerId)
+                    .phone(requestCustomer.getPhone())
+                    .address(requestCustomer.getAddress())
+                    .dateJoin(Date.valueOf(LocalDate.now().toString()))
+                    .dateOfBirth(Date.valueOf(requestCustomer.getDateOfBirth()))
+                    .password(passwordEncoder.encode(requestCustomer.getPassword()))
+                    .fullname(requestCustomer.getFullName())
+                    .gender(Gender.valueOf(requestCustomer.getGender()))
+                    .status(CustomerStatus.ACTIVE)
+                    .build();
+            customer = customerRepository.save(customer);
+
+            UUID rentContractId = UUID.randomUUID();
+            UUID flatId = UUID.fromString(requestCustomer.getFlatId());
+            String queryUpdateFlatStatus = FlatServiceUtil.queryUpdateStatus(flatId, FlatStatus.UNAVAILABLE);
+            boolean checkUpdate = flatJDBC.updateStatus(queryUpdateFlatStatus);
+            if (!checkUpdate) {
+                throw new SQLException("Flat does not exist");
+            }
+            Flat flat = flatRepository.findById(flatId).get();
+
+
+
+            RentContract rentContract = RentContract.builder()
+                    .id(rentContractId)
+                    .customer(customer)
+                    .expiryDate(Date.valueOf(requestCustomer.getExpiryDay()))
+                    .status(RentContractStatus.VALID)
+                    .flat(flat)
+                    .value(requestCustomer.getValue())
+                    .build();
+            rentContractRepository.save(rentContract);
+
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(new ResponseObject(HttpStatus.CREATED.toString(), "Successfully", null, null));
+
+
+    }
 }

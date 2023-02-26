@@ -15,11 +15,25 @@ import java.util.Date;
 @Log4j2
 public class CustomExceptionHandler extends RuntimeException {
 
-    @ExceptionHandler(ResourceNotFoundException.class)
+    @ExceptionHandler({ResourceNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse resourceNotfoundException(Exception exception) {
         exception.printStackTrace();
         return new ErrorResponse(new Date(), HttpStatus.NOT_FOUND.toString(), exception.getMessage());
+    }
+
+    @ExceptionHandler({InvalidDataException.class})
+    @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
+    public ErrorResponse invalidData(Exception exception) {
+        exception.printStackTrace();
+        return new ErrorResponse(new Date(), HttpStatus.NOT_ACCEPTABLE.toString(), exception.getMessage());
+    }
+
+    @ExceptionHandler({Exception.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse exception(Exception exception) {
+        exception.printStackTrace();
+        return new ErrorResponse(new Date(), HttpStatus.BAD_REQUEST.toString(), exception.getMessage());
     }
 
 }
