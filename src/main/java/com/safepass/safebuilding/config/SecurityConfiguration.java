@@ -35,7 +35,8 @@ public class SecurityConfiguration {
             "/api/v1/auth/web/login-with-email",
             "/api/v1/auth/mobile/login",
             "/api/v1/auth/mobile/login-with-email",
-            "/api/v1/auth/login"
+            "/api/v1/auth/login",
+            "/api/v1/web/buildings/**"
     };
 
     @Bean

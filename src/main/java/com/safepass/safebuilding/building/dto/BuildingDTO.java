@@ -10,5 +10,6 @@ import lombok.*;
 @NoArgsConstructor
 public class BuildingDTO {
     private String name;
+    private String address;
     private BuildingStatus status;
 }

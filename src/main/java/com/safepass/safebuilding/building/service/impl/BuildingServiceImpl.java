@@ -1,7 +1,9 @@
 package com.safepass.safebuilding.building.service.impl;
 
 import com.safepass.safebuilding.building.dto.BuildingDTO;
+import com.safepass.safebuilding.building.entity.BuildingRequest;
 import com.safepass.safebuilding.building.entity.Building;
+import com.safepass.safebuilding.building.utils.BuildingUtils;
 import com.safepass.safebuilding.common.exception.NoSuchDataException;
 import com.safepass.safebuilding.building.repository.BuildingRepository;
 import com.safepass.safebuilding.building.service.BuildingService;
@@ -9,6 +11,7 @@ import com.safepass.safebuilding.common.dto.Pagination;
 import com.safepass.safebuilding.common.dto.ResponseObject;
 import com.safepass.safebuilding.common.exception.InvalidPageSizeException;
 import com.safepass.safebuilding.common.exception.MaxPageExceededException;
+import com.safepass.safebuilding.common.exception.ResourceNotFoundException;
 import com.safepass.safebuilding.common.utils.ModelMapperCustom;
 import com.safepass.safebuilding.common.validation.PaginationValidation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +28,8 @@ import java.util.List;
 public class BuildingServiceImpl implements BuildingService {
     @Autowired
     private BuildingRepository buildingRepository;
-
+    @Autowired
+    private BuildingUtils buildingUtils;
     private ModelMapperCustom modelMapper = new ModelMapperCustom();
     @Autowired
     private PaginationValidation paginationValidation;
@@ -43,17 +47,14 @@ public class BuildingServiceImpl implements BuildingService {
             List<Building> buildings = buildingPage.getContent();
             List<BuildingDTO> buildingDTOs = modelMapper.mapList(buildings, BuildingDTO.class);
 
-            ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.OK)
+            return ResponseEntity.status(HttpStatus.OK)
                     .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", pagination, buildingDTOs));
-            return responseEntity;
         } catch (InvalidPageSizeException | MaxPageExceededException e) {
-            ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ResponseObject(HttpStatus.NOT_ACCEPTABLE.toString(), e.getMessage(), null, null));
-            return responseEntity;
         } catch (NoSuchDataException e) {
-            ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            return  ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ResponseObject(HttpStatus.NOT_FOUND.toString(), e.getMessage(), null, null));
-            return responseEntity;
         }
 
 //        return service.getAll(page, size, buildingRepository, BuildingDTO.class);
@@ -71,17 +72,42 @@ public class BuildingServiceImpl implements BuildingService {
             List<Building> buildings = buildingPage.getContent();
             List<BuildingDTO> buildingDTOs = modelMapper.mapList(buildings, BuildingDTO.class);
 
-            ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.OK)
+            return ResponseEntity.status(HttpStatus.OK)
                     .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", pagination, buildingDTOs));
-            return responseEntity;
         } catch (InvalidPageSizeException | MaxPageExceededException e) {
-            ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ResponseObject(HttpStatus.NOT_ACCEPTABLE.toString(), e.getMessage(), null, null));
-            return responseEntity;
         } catch (NoSuchDataException e) {
-            ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ResponseObject(HttpStatus.NOT_FOUND.toString(), e.getMessage(), null, null));
-            return responseEntity;
+        }
+    }
+    public ResponseEntity<ResponseObject> getBuildingList(BuildingRequest buildingRequest) throws ResourceNotFoundException {
+        try {
+            String query = buildingUtils.COUNT_RECORD_QUERY +
+                    buildingUtils.appendSearchQuery(buildingRequest.getSearchKey()) ;
+                    buildingUtils.appendSortQuery(buildingRequest);
+            paginationValidation.validatePageSize(buildingRequest.getPage(), buildingRequest.getSize());
+            int totalRow = buildingUtils.getTotalRow(query);
+            int totalPage = (int) Math.ceil(1.0 * totalRow / buildingRequest.getSize());
+            Pagination pagination = new Pagination(buildingRequest.getPage(),  buildingRequest.getSize(), totalPage);
+            paginationValidation.validateMaxPageNumber(pagination);
+
+            query = buildingUtils.SELECT_BUILDINGS_QUERY +
+                    buildingUtils.appendSearchQuery(buildingRequest.getSearchKey()) +
+                    buildingUtils.appendSortQuery(buildingRequest) +
+                    buildingUtils.appendPagination(buildingRequest.getPage() - 1, buildingRequest.getSize());
+            List<Building> buildings = buildingUtils.getBuildingList(query);
+            List<BuildingDTO> buildingDTOs = modelMapper.mapList(buildings, BuildingDTO.class);
+
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", pagination, buildingDTOs));
+        } catch (InvalidPageSizeException | MaxPageExceededException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ResponseObject(HttpStatus.NOT_ACCEPTABLE.toString(), e.getMessage(), null, null));
+        } catch (NoSuchDataException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ResponseObject(HttpStatus.NOT_FOUND.toString(), e.getMessage(), null, null));
         }
     }
 }

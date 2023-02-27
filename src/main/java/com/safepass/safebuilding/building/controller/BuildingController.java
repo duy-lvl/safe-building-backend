@@ -1,5 +1,6 @@
 package com.safepass.safebuilding.building.controller;
 
+import com.safepass.safebuilding.building.entity.BuildingRequest;
 import com.safepass.safebuilding.building.service.BuildingService;
 import com.safepass.safebuilding.common.dto.ResponseObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ public class BuildingController {
     @GetMapping
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ResponseObject> getBuildingList(
-            @RequestParam(name = "page", defaultValue = "1")  int page,
+            @RequestParam(name = "page", defaultValue = "1") int page,
             @RequestParam(name = "size", defaultValue = "10") int size
     ) {
         return buildingService.getBuildingList(page, size);
@@ -26,10 +27,16 @@ public class BuildingController {
     @GetMapping("/find-building")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ResponseObject> findBuildingByName(
-            @RequestParam(name = "page", defaultValue = "1")  int page,
+            @RequestParam(name = "page", defaultValue = "1") int page,
             @RequestParam(name = "size", defaultValue = "10") int size,
             @RequestParam(name = "name") String name
     ) {
         return buildingService.searchBuildingByName(name, page, size);
+    }
+
+    @PostMapping("/get-building-list")
+    @PreAuthorize("permitAll()")
+    public ResponseEntity<ResponseObject> getBuildingListExtend(@RequestBody  BuildingRequest buildingRequest){
+        return buildingService.getBuildingList(buildingRequest);
     }
 }
