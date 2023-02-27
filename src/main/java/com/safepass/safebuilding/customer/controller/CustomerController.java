@@ -1,15 +1,20 @@
 package com.safepass.safebuilding.customer.controller;
 
 import com.safepass.safebuilding.common.dto.ResponseObject;
+import com.safepass.safebuilding.common.exception.InvalidDataException;
+import com.safepass.safebuilding.common.exception.InvalidPageSizeException;
+import com.safepass.safebuilding.common.exception.MaxPageExceededException;
+import com.safepass.safebuilding.common.exception.NoSuchDataException;
+import com.safepass.safebuilding.customer.dto.RequestObjectForCreateCustomer;
+import com.safepass.safebuilding.customer.dto.RequestObjectForFilter;
+import com.safepass.safebuilding.customer.dto.RequestObjectForUpdateCustomer;
 import com.safepass.safebuilding.customer.entity.Customer;
 import com.safepass.safebuilding.customer.service.CustomerService;
 import com.safepass.safebuilding.device.entity.Device;
 import com.safepass.safebuilding.device.service.DeviceService;
-import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,11 +22,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.sql.SQLException;
 import java.util.Optional;
 import java.util.UUID;
 
+
 @RestController
-@RequestMapping(value = "/api/v1/web/customers")
+@RequestMapping(value = "/api/v1/customers")
 public class CustomerController {
 
     @Autowired
@@ -36,17 +43,7 @@ public class CustomerController {
             @RequestParam(name = "token") String token,
             @PathVariable(name = "customerId") String customerId
     ) {
-        Optional<Customer> customer = customerService.getCustomerById(UUID.fromString(customerId));
-        if (customer.isPresent()) {
-            Device device = deviceService.addToken(customer.get(), token);
-            if (device != null) {
-                return ResponseEntity.status(HttpStatus.CREATED)
-                        .body(new ResponseObject(HttpStatus.CREATED.toString(), "Successfully", null, null));
-            }
-        }
-
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ResponseObject(HttpStatus.BAD_REQUEST.toString(), "Device existed", null, null));
+        return customerService.addDevice(customerId, token);
     }
 
 
@@ -55,7 +52,7 @@ public class CustomerController {
     public ResponseEntity<ResponseObject> getList (
             @RequestParam(name = "page", defaultValue = "1")  int page,
             @RequestParam(name = "size", defaultValue = "10") int size
-    ) {
+    ) throws MaxPageExceededException, InvalidPageSizeException, NoSuchDataException {
         return customerService.getCustomerList(page, size);
     }
 
@@ -65,14 +62,44 @@ public class CustomerController {
         return "Hello world customer";
     }
 
-    @GetMapping("/devices")
+
+    @GetMapping("/accounts")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<ResponseObject> getCustomerDevice(
+    public ResponseEntity<ResponseObject> getAccountList(
             @RequestParam(name = "page", defaultValue = "1")  int page,
             @RequestParam(name = "size", defaultValue = "10") int size
-    ) {
-
-        return customerService.getCustomerDeviceList(page, size);
+    ) throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException {
+        return customerService.getAccountList(page, size);
     }
 
+    @PostMapping("/filter")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<ResponseObject> filterCustomer(
+            @RequestParam(name = "page", defaultValue = "1")  int page,
+            @RequestParam(name = "size", defaultValue = "10") int size,
+            @RequestBody RequestObjectForFilter requestObjectForFilter
+    ) throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException {
+        return customerService.filterCustomer(requestObjectForFilter, page, size);
+    }
+
+    @PostMapping("/create-customer")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<ResponseObject> addCustomer(@RequestBody RequestObjectForCreateCustomer requestObject)
+            throws SQLException, InvalidDataException {
+        return customerService.addCustomer(requestObject);
+    }
+
+    @PutMapping("/update-customer")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<ResponseObject> updateCustomer(@RequestBody RequestObjectForUpdateCustomer requestObject)
+            throws InvalidDataException {
+        return customerService.updateCustomer(requestObject);
+    }
+
+    @GetMapping("/{customerId}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<ResponseObject> getCustomer(@PathVariable String customerId)
+            throws NoSuchDataException {
+        return customerService.getCustomer(customerId);
+    }
 }

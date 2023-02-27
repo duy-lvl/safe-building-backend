@@ -5,14 +5,24 @@ import com.google.firebase.auth.FirebaseToken;
 import com.safepass.safebuilding.admin.entity.Admin;
 import com.safepass.safebuilding.admin.repository.AdminRepository;
 import com.safepass.safebuilding.admin.service.AdminService;
+import com.safepass.safebuilding.common.dto.Pagination;
 import com.safepass.safebuilding.common.dto.ResponseObject;
+import com.safepass.safebuilding.common.exception.InvalidPageSizeException;
+import com.safepass.safebuilding.common.exception.MaxPageExceededException;
+import com.safepass.safebuilding.common.exception.NoSuchDataException;
 import com.safepass.safebuilding.common.jwt.entity.response.TokenResponse;
 import com.safepass.safebuilding.common.jwt.service.JwtService;
 import com.safepass.safebuilding.common.meta.AdminStatus;
 import com.safepass.safebuilding.common.security.user.UserPrinciple;
+import com.safepass.safebuilding.common.utils.ModelMapperCustom;
+import com.safepass.safebuilding.common.validation.PaginationValidation;
+import com.safepass.safebuilding.customer.dto.AccountDTO;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,6 +33,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 @Service
@@ -35,6 +46,10 @@ public class AdminServiceImpl implements AdminService {
     private AuthenticationManager authenticationManager;
     @Autowired
     private JwtService jwtService;
+    @Autowired
+    private PaginationValidation paginationValidation;
+    private final ModelMapperCustom modelMapperCustom = new ModelMapperCustom();
+
 
     public AdminServiceImpl(AdminRepository adminRepository, ModelMapper modelMapper) {
         this.adminRepository = adminRepository;
@@ -119,6 +134,30 @@ public class AdminServiceImpl implements AdminService {
             responseObject = new ResponseObject(HttpStatus.ACCEPTED.toString(), "Login successfully", null, userPrinciple);
         }
         return ResponseEntity.status(HttpStatus.OK).body(responseObject);
+    }
+
+    @Override
+    public ResponseEntity<ResponseObject> getAccountList(int page, int size) {
+        try {
+            paginationValidation.validatePageSize(page, size);
+            Pageable pageable = PageRequest.of(page - 1, size);
+            Page<Admin> adminPage = adminRepository.findAll(pageable);
+            int totalPage = adminPage.getTotalPages();
+            Pagination pagination = new Pagination(page, size, totalPage);
+            paginationValidation.validateMaxPageNumber(pagination);
+            List<Admin> admins = adminPage.getContent();
+            List<AccountDTO> accountDTOs = modelMapperCustom.mapList(admins, AccountDTO.class);
+
+
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", pagination, accountDTOs));
+        } catch (InvalidPageSizeException | MaxPageExceededException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ResponseObject(HttpStatus.NOT_ACCEPTABLE.toString(), e.getMessage(), null, null));
+        } catch (NoSuchDataException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ResponseObject(HttpStatus.NOT_FOUND.toString(), e.getMessage(), null, null));
+        }
     }
 
 

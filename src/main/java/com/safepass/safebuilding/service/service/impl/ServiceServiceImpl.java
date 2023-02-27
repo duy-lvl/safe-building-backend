@@ -30,8 +30,8 @@ public class ServiceServiceImpl implements ServiceService {
     @Autowired
     private PaginationValidation paginationValidation;
     @Override
-    public ResponseEntity<ResponseObject> getAllService(int page, int size) throws InvalidPageSizeException, MaxPageExceededException {
-        try {
+    public ResponseEntity<ResponseObject> getAllService(int page, int size) throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException {
+
             paginationValidation.validatePageSize(page, size);
             Pageable pageRequest = PageRequest.of(page - 1, size);
             Page<com.safepass.safebuilding.service.entity.Service> servicePage = serviceRepository.findAll(pageRequest);
@@ -45,14 +45,5 @@ public class ServiceServiceImpl implements ServiceService {
                     .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", pagination, serviceDTOs));
             return responseEntity;
 
-        } catch (InvalidPageSizeException | MaxPageExceededException e) {
-            ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ResponseObject(HttpStatus.NOT_ACCEPTABLE.toString(), e.getMessage(), null, null));
-            return responseEntity;
-        } catch (NoSuchDataException e) {
-            ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ResponseObject(HttpStatus.NOT_FOUND.toString(), e.getMessage(), null, null));
-            return responseEntity;
-        }
     }
 }

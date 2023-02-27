@@ -20,6 +20,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Builder
 public class Flat {
     @Id
     @GeneratedValue(generator = "UUID")

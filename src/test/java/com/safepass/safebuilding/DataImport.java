@@ -2,13 +2,13 @@ package com.safepass.safebuilding;
 
 import com.github.javafaker.Faker;
 import com.safepass.safebuilding.common.meta.*;
-import com.safepass.safebuilding.flat_type.entity.FlatType;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,7 +30,7 @@ public class DataImport {
     private List<UUID> billIds;
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
     private Faker faker = new Faker();
-    @Test
+//    @Test
     public String createAdmin() {
 
         List<String> sqls = new ArrayList<>();
@@ -68,11 +68,10 @@ public class DataImport {
             flatTypeIds.add(UUID.randomUUID());
         }
         for (int i = 0; i < 10; i++) {
-            StringBuilder sql = new StringBuilder("INSERT INTO flat_type (id, description, name, status) VALUES (\"");
+            StringBuilder sql = new StringBuilder("INSERT INTO flat_type (id, description, name) VALUES (\"");
             sql.append(flatTypeIds.get(i)).append("\", \"") //id
                     .append("Description ").append(i).append("\", \"") //description
-                    .append("Flat type ").append(i).append("\", \"") //name
-                    .append(FlatTypeStatus.ACTIVE).append("\");");
+                    .append("Flat type ").append(i).append("\");");
             sqls.add(sql.toString());
         }
         String output = "";
@@ -359,7 +358,7 @@ public class DataImport {
                             .append(faker.business().creditCardExpiry()).append("\", \"")
                             .append(RentContractStatus.VALID).append("\", ")
                             .append(random(5, 30)*1000000).append(", \"")
-                            .append(customerIds.get(count)).append("\", \"")
+                            .append(customerIds.get(random(0, customerIds.size()-1))).append("\", \"")
                             .append(flatId)
                             .append("\");");
                     sqls.add(sql.toString());
@@ -559,5 +558,23 @@ public class DataImport {
             System.out.println("An error occurred.");
             e.printStackTrace();
         }
+    }
+
+//    @Test
+//    void Test() {
+//        System.out.println("https://storage.googleapis.com/safe-building.appspot.com/74bef04e-91bd-4396-bce7-be174df6d07ajpg".split("/")[4]);
+//    }
+
+    PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(12);
+
+    void Test() {
+//        if (passwordEncoder.encode("12345678").equals("$2a$12$xOXUkpChPTfs/WmRvNS3s.Wqz2Wn9GdWO1Ttiea.2pRhGmYvVI5UK")) {
+//            System.out.println("Equals");
+//        }else {
+//            System.out.println("Not");
+//        }
+
+        System.out.println(passwordEncoder.encode("12345678"));
+
     }
 }

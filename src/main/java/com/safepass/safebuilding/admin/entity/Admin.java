@@ -8,6 +8,7 @@ import org.hibernate.annotations.Type;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import java.util.UUID;
+
 @Getter
 @Setter
 @ToString

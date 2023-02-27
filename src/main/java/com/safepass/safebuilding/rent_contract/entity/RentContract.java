@@ -1,6 +1,5 @@
 package com.safepass.safebuilding.rent_contract.entity;
 
-import com.safepass.safebuilding.bill.entity.Bill;
 import com.safepass.safebuilding.common.meta.RentContractStatus;
 import com.safepass.safebuilding.customer.entity.Customer;
 import com.safepass.safebuilding.flat.entity.Flat;
@@ -9,8 +8,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
-import java.sql.Date;
-import java.util.List;
+import java.util.Date;
 import java.util.UUID;
 @Getter
 @Setter
@@ -18,6 +16,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @ToString
 @Entity
+@Builder
 public class RentContract {
     @Id
     @GeneratedValue(generator = "UUID")

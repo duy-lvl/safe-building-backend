@@ -1,7 +1,5 @@
 package com.safepass.safebuilding.flat_type.entity;
 
-import com.safepass.safebuilding.common.meta.FlatTypeStatus;
-import com.safepass.safebuilding.flat.entity.Flat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,8 +26,5 @@ public class FlatType {
 
     private String name;
     private String description;
-
-    @Enumerated(EnumType.STRING)
-    private FlatTypeStatus status;
 
 }

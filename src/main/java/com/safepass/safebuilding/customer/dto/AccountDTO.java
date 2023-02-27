@@ -1,18 +1,19 @@
 package com.safepass.safebuilding.customer.dto;
 
-import com.safepass.safebuilding.device.dto.DeviceDTO;
+import com.safepass.safebuilding.common.meta.CustomerStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
 import java.util.UUID;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CustomerDeviceDTO {
-
-    private UUID customerId;
+public class AccountDTO {
+    private UUID id;
     private String fullname;
-    private List<DeviceDTO> device;
+    private String phone;
+    private String email;
+    private CustomerStatus status;
 }
