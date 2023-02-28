@@ -12,24 +12,29 @@ import org.springframework.http.ResponseEntity;
 
 import java.sql.SQLException;
 
+import com.safepass.safebuilding.customer.entity.Customer;
+
+import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 public interface CustomerService {
     /**
-     * Login with phone and password for mobile
+     * Login with phone and password / or email and password
      *
      * @param phoneOrEmail {@code String}
      * @param password {@code String}
      * @return ResponseEntity<ResponseObject>
      */
     ResponseEntity<ResponseObject> login(String phoneOrEmail, String password);
-
     /**
-     * Login with email for mobile
+     * Login with email
      *
      * @param email {@code String}
      * @return ResponseEntity<ResponseObject>
      */
-    ResponseEntity<ResponseObject> loginWithEmail(String email);
+    ResponseEntity<ResponseObject> loginWithEmail(String email, String token) throws ExecutionException, InterruptedException;
+
 
     /**
      * Get customer list for customer management screen

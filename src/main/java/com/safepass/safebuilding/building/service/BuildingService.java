@@ -1,5 +1,6 @@
 package com.safepass.safebuilding.building.service;
 
+import com.safepass.safebuilding.building.entity.BuildingRequest;
 import com.safepass.safebuilding.common.dto.ResponseObject;
 import com.safepass.safebuilding.common.exception.InvalidPageSizeException;
 import com.safepass.safebuilding.common.exception.MaxPageExceededException;
@@ -45,6 +46,9 @@ public interface BuildingService {
      *
      * @throws NoSuchDataException
      */
+
+    ResponseEntity<ResponseObject> getBuildingList(BuildingRequest buildingRequest) throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException;
+
 
     public ResponseEntity<ResponseObject> getAvailableBuildings() throws NoSuchDataException;
 }

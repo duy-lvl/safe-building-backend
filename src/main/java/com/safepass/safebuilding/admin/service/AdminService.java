@@ -4,9 +4,12 @@ package com.safepass.safebuilding.admin.service;
 import com.safepass.safebuilding.common.dto.ResponseObject;
 import org.springframework.http.ResponseEntity;
 
-public interface AdminService {
-    ResponseEntity<ResponseObject> login(String phoneOrEmail, String password);
+import java.util.concurrent.ExecutionException;
 
-    ResponseEntity<ResponseObject> loginWithEmail(String email);
+public interface AdminService {
+    ResponseEntity<ResponseObject> login(String phone, String password);
+
     ResponseEntity<ResponseObject> getAccountList(int page, int size);
+
+    ResponseEntity<ResponseObject> loginWithEmail(String email, String token) throws ExecutionException, InterruptedException;
 }

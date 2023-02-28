@@ -1,5 +1,6 @@
 package com.safepass.safebuilding.building.controller;
 
+import com.safepass.safebuilding.building.entity.BuildingRequest;
 import com.safepass.safebuilding.building.service.BuildingService;
 import com.safepass.safebuilding.common.dto.ResponseObject;
 import com.safepass.safebuilding.common.exception.InvalidPageSizeException;
@@ -23,7 +24,7 @@ public class BuildingController {
     @GetMapping
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ResponseObject> getBuildingList(
-            @RequestParam(name = "page", defaultValue = "1")  int page,
+            @RequestParam(name = "page", defaultValue = "1") int page,
             @RequestParam(name = "size", defaultValue = "10") int size
     ) throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException {
         return buildingService.getBuildingList(page, size);
@@ -32,11 +33,18 @@ public class BuildingController {
     @GetMapping("/find-building")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ResponseObject> findBuildingByName(
-            @RequestParam(name = "page", defaultValue = "1")  int page,
+            @RequestParam(name = "page", defaultValue = "1") int page,
             @RequestParam(name = "size", defaultValue = "10") int size,
             @RequestParam(name = "name") String name
     ) throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException {
         return buildingService.searchBuildingByName(name, page, size);
+    }
+
+    @PostMapping("/get-building-list")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<ResponseObject> getBuildingListExtend(@RequestBody  BuildingRequest buildingRequest)
+            throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException {
+        return buildingService.getBuildingList(buildingRequest);
     }
     @GetMapping("/get-available-buildings")
     @PreAuthorize("hasAuthority('ADMIN')")

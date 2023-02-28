@@ -12,5 +12,4 @@ public class SafeBuildingApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(SafeBuildingApplication.class, args);
 	}
-
 }

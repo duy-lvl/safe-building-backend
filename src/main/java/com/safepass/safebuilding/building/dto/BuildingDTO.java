@@ -11,5 +11,6 @@ import lombok.*;
 public class BuildingDTO {
     private String id;
     private String name;
+    private String address;
     private BuildingStatus status;
 }

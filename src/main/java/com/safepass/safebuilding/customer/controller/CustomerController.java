@@ -56,7 +56,7 @@ public class CustomerController {
     public String testApi() {
         return "Hello world customer";
     }
-    
+
 
     @GetMapping("/accounts")
     @PreAuthorize("hasAuthority('ADMIN')")

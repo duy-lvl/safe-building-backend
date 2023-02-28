@@ -11,4 +11,7 @@ public class LoginForm {
     private String phone;
     private String password;
     private String email;
+    private String token;
+    private boolean isWeb;
+    private boolean withEmail;
 }

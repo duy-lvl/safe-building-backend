@@ -1,5 +1,7 @@
 package com.safepass.safebuilding.admin.service.impl;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseToken;
 import com.safepass.safebuilding.admin.entity.Admin;
 import com.safepass.safebuilding.admin.repository.AdminRepository;
 import com.safepass.safebuilding.admin.service.AdminService;
@@ -30,9 +32,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 @Service
 @Log4j2
@@ -46,7 +48,7 @@ public class AdminServiceImpl implements AdminService {
     private JwtService jwtService;
     @Autowired
     private PaginationValidation paginationValidation;
-    private ModelMapperCustom modelMapperCustom = new ModelMapperCustom();
+    private final ModelMapperCustom modelMapperCustom = new ModelMapperCustom();
 
 
     public AdminServiceImpl(AdminRepository adminRepository, ModelMapper modelMapper) {
@@ -101,14 +103,21 @@ public class AdminServiceImpl implements AdminService {
      * Login with email for web
      *
      * @param email
+     * @param token
      * @return ResponseEntity<ResponseObject>
      */
     @Override
-    public ResponseEntity<ResponseObject> loginWithEmail(String email) {
+    public ResponseEntity<ResponseObject> loginWithEmail(String email, String token) throws ExecutionException, InterruptedException {
         ResponseObject responseObject = null;
         Admin admin = adminRepository.findAdminByEmail(email);
         TokenResponse tokenResponse = null;
-log.info("Login with email");
+        FirebaseToken firebaseToken = FirebaseAuth.getInstance().verifyIdTokenAsync(token).get();
+        String tokenEmail = firebaseToken.getEmail();
+        boolean verifyEmail = firebaseToken.isEmailVerified();
+        if (!tokenEmail.equals(email) || !(verifyEmail)) {
+            responseObject = new ResponseObject(HttpStatus.NOT_ACCEPTABLE.toString(), "Wrong credentials information", null, null);
+            return ResponseEntity.status(HttpStatus.OK).body(responseObject);
+        }
         if (admin == null) {
             log.error("Wrong credentials information");
             responseObject = new ResponseObject(HttpStatus.NOT_ACCEPTABLE.toString(), "Wrong credentials information", null, null);
@@ -124,15 +133,14 @@ log.info("Login with email");
             userPrinciple.setTokenResponse(tokenResponse);
             responseObject = new ResponseObject(HttpStatus.ACCEPTED.toString(), "Login successfully", null, userPrinciple);
         }
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(responseObject);
+        return ResponseEntity.status(HttpStatus.OK).body(responseObject);
     }
 
     @Override
     public ResponseEntity<ResponseObject> getAccountList(int page, int size) {
         try {
             paginationValidation.validatePageSize(page, size);
-            Pageable pageable = PageRequest.of(page-1, size);
+            Pageable pageable = PageRequest.of(page - 1, size);
             Page<Admin> adminPage = adminRepository.findAll(pageable);
             int totalPage = adminPage.getTotalPages();
             Pagination pagination = new Pagination(page, size, totalPage);
@@ -141,17 +149,14 @@ log.info("Login with email");
             List<AccountDTO> accountDTOs = modelMapperCustom.mapList(admins, AccountDTO.class);
 
 
-            ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.OK)
+            return ResponseEntity.status(HttpStatus.OK)
                     .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", pagination, accountDTOs));
-            return responseEntity;
         } catch (InvalidPageSizeException | MaxPageExceededException e) {
-            ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ResponseObject(HttpStatus.NOT_ACCEPTABLE.toString(), e.getMessage(), null, null));
-            return responseEntity;
         } catch (NoSuchDataException e) {
-            ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ResponseObject(HttpStatus.NOT_FOUND.toString(), e.getMessage(), null, null));
-            return responseEntity;
         }
     }
 
