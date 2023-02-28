@@ -6,9 +6,7 @@ import com.safepass.safebuilding.common.exception.InvalidDataException;
 import com.safepass.safebuilding.common.exception.InvalidPageSizeException;
 import com.safepass.safebuilding.common.exception.MaxPageExceededException;
 import com.safepass.safebuilding.common.exception.NoSuchDataException;
-import com.safepass.safebuilding.common.meta.FlatStatus;
 import com.safepass.safebuilding.common.meta.Gender;
-import com.safepass.safebuilding.common.meta.RentContractStatus;
 import com.safepass.safebuilding.common.utils.ModelMapperCustom;
 import com.safepass.safebuilding.common.validation.PaginationValidation;
 import com.safepass.safebuilding.customer.dto.*;
@@ -25,11 +23,8 @@ import com.safepass.safebuilding.device.dto.DeviceDTO;
 import com.safepass.safebuilding.device.entity.Device;
 import com.safepass.safebuilding.device.repository.DeviceRepository;
 import com.safepass.safebuilding.device.service.DeviceService;
-import com.safepass.safebuilding.flat.entity.Flat;
 import com.safepass.safebuilding.flat.jdbc.FlatJDBC;
 import com.safepass.safebuilding.flat.repository.FlatRepository;
-import com.safepass.safebuilding.flat.service.impl.FlatServiceUtil;
-import com.safepass.safebuilding.rent_contract.entity.RentContract;
 import com.safepass.safebuilding.rent_contract.repository.RentContractRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -271,7 +266,8 @@ public class CustomerServiceImpl implements CustomerService {
      *
      */
     @Transactional(rollbackFor = {SQLException.class, IllegalArgumentException.class})
-    public ResponseEntity<ResponseObject> addCustomer(RequestObjectForCreateCustomer requestCustomer) throws InvalidDataException, SQLException {
+    public ResponseEntity<ResponseObject> addCustomer(RequestObjectForCreateCustomer requestCustomer)
+            throws InvalidDataException {
         customerInfoValidation.validateCreate(requestCustomer);
             UUID customerId = UUID.randomUUID();
 
@@ -294,6 +290,10 @@ public class CustomerServiceImpl implements CustomerService {
 
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     */
     @Override
     public ResponseEntity<ResponseObject> updateCustomer(RequestObjectForUpdateCustomer requestCustomer)
             throws InvalidDataException
@@ -320,6 +320,10 @@ public class CustomerServiceImpl implements CustomerService {
         throw new InvalidDataException("Customer does not exist");
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     */
     @Override
     public ResponseEntity<ResponseObject> getCustomer(String id) throws NoSuchDataException {
         Optional<Customer> customerOptional = customerRepository.findById(UUID.fromString(id));

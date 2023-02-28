@@ -21,7 +21,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -33,9 +32,14 @@ public class BuildingServiceImpl implements BuildingService {
     @Autowired
     private PaginationValidation paginationValidation;
 
+    /**
+     * {@inheritDoc}
+     *
+     */
     @Override
-    public ResponseEntity<ResponseObject> getBuildingList(int page, int size) throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException {
-
+    public ResponseEntity<ResponseObject> getBuildingList(int page, int size)
+            throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException
+    {
             paginationValidation.validatePageSize(page, size);
             Pageable pageRequest = PageRequest.of(page - 1, size);
             Page<Building> buildingPage = buildingRepository.findAll(pageRequest);
@@ -44,18 +48,19 @@ public class BuildingServiceImpl implements BuildingService {
             paginationValidation.validateMaxPageNumber(pagination);
 
             List<Building> buildings = buildingPage.getContent();
-            List<BuildingDTO> buildingDTOs = modelMapper.mapList(buildings, BuildingDTO.class);
 
-            ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.OK)
-                    .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", pagination, buildingDTOs));
-            return responseEntity;
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", pagination, buildings));
 
-
-//        return service.getAll(page, size, buildingRepository, BuildingDTO.class);
     }
 
-    public ResponseEntity<ResponseObject> searchBuildingByName(String name, int page, int size) throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException {
-
+    /**
+     * {@inheritDoc}
+     *
+     */
+    public ResponseEntity<ResponseObject> searchBuildingByName(String name, int page, int size)
+            throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException
+    {
             paginationValidation.validatePageSize(page, size);
             Pageable pageRequest = PageRequest.of(page - 1, size);
             Page<Building> buildingPage = buildingRepository.findByNameContainsIgnoreCase(name, pageRequest);
@@ -72,6 +77,10 @@ public class BuildingServiceImpl implements BuildingService {
 
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     */
     @Override
     public ResponseEntity<ResponseObject> getAvailableBuildings() throws NoSuchDataException {
         List<Building> buildings = buildingRepository.findByStatusOrderByNameAsc(BuildingStatus.AVAILABLE);
@@ -86,8 +95,5 @@ public class BuildingServiceImpl implements BuildingService {
         }
 
         return responseEntity;
-
-
-
     }
 }

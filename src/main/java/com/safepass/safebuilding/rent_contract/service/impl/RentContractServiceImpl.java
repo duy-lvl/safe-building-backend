@@ -41,6 +41,10 @@ public class RentContractServiceImpl implements RentContractService {
     @Autowired
     private RentContractValidation rentContractValidation;
 
+    /**
+     * {@inheritDoc}
+     *
+     */
     @Override
     public ResponseEntity<ResponseObject> uploadFile(MultipartFile[] files, String customerId, String rentContractId, String flatId) throws IOException {
         String url = create(files);
@@ -57,6 +61,10 @@ public class RentContractServiceImpl implements RentContractService {
 
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     */
     public String create(MultipartFile[] files) throws IOException {
 
         String imageUrl = "";
@@ -68,11 +76,14 @@ public class RentContractServiceImpl implements RentContractService {
         return imageUrl;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     */
     @Override
     public ResponseEntity<ResponseObject> getList(int page, int size) {
         try {
             paginationValidation.validatePageSize(page, size);
-
 
             String queryTotalRow = RentContractServiceUtil.contructQueryGetAllTotalRow();
             long totalRow = rentContractJDBC.getTotalRow(queryTotalRow);
@@ -81,7 +92,6 @@ public class RentContractServiceImpl implements RentContractService {
             paginationValidation.validateMaxPageNumber(pagination);
             String queryGetList = RentContractServiceUtil.contructQueryGetAll(page - 1, size);
             List<RentContractDTO> rentContracts = rentContractJDBC.getList(queryGetList);
-
 
             ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.OK)
                     .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", pagination, rentContracts));
@@ -95,11 +105,12 @@ public class RentContractServiceImpl implements RentContractService {
                     .body(new ResponseObject(HttpStatus.NOT_FOUND.toString(), e.getMessage(), null, null));
             return responseEntity;
         }
-
-
     }
 
-
+    /**
+     * {@inheritDoc}
+     *
+     */
     @Override
     @Transactional(rollbackFor = {SQLException.class, IOException.class})
     public ResponseEntity<ResponseObject> createContract(MultipartFile[] files, String requestObject) throws IOException, SQLException, InvalidDataException {

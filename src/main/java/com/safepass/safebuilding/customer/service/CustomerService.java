@@ -37,8 +37,13 @@ public interface CustomerService {
      * @param page {@code int}
      * @param size {@code int}
      * @return ResponseEntity<ResponseObject>
+     *
+     * @throws InvalidPageSizeException
+     * @throws MaxPageExceededException
+     * @throws NoSuchDataException
      */
-    ResponseEntity<ResponseObject> getCustomerList(int page, int size) throws MaxPageExceededException, NoSuchDataException, InvalidPageSizeException;
+    ResponseEntity<ResponseObject> getCustomerList(int page, int size)
+            throws MaxPageExceededException, NoSuchDataException, InvalidPageSizeException;
 
     /**
      * Get account list for account management screen
@@ -46,8 +51,13 @@ public interface CustomerService {
      * @param page {@code int}
      * @param size {@code int}
      * @return ResponseEntity<ResponseObject>
+     *
+     * @throws InvalidPageSizeException
+     * @throws MaxPageExceededException
+     * @throws NoSuchDataException
      */
-    ResponseEntity<ResponseObject> getAccountList(int page, int size) throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException;
+    ResponseEntity<ResponseObject> getAccountList(int page, int size)
+            throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException;
 
     /**
      * Add token to customer
@@ -69,8 +79,14 @@ public interface CustomerService {
      * @param size {@code int}
      *
      * @return ResponseEntity<ResponseObject>
+     *
+     * @throws InvalidPageSizeException
+     * @throws MaxPageExceededException
+     * @throws NoSuchDataException
+     *
      */
-    ResponseEntity<ResponseObject> filterCustomer(RequestObjectForFilter requestObjectForFilter, int page, int size) throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException;
+    ResponseEntity<ResponseObject> filterCustomer(RequestObjectForFilter requestObjectForFilter, int page, int size)
+            throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException;
 
     /**
      * Create a new customer, update flat status to UNAVAILABLE, create a rent contract
@@ -78,10 +94,13 @@ public interface CustomerService {
      * @param requestCustomer {@code RequestObjectForCreateCustomer}
      *
      * @return ResponseEntity<ResponseObject>
+     *
      * @throws InvalidDataException
      * @throws SQLException
+     *
      */
-    ResponseEntity<ResponseObject> addCustomer(RequestObjectForCreateCustomer requestCustomer) throws InvalidDataException, SQLException;
+    ResponseEntity<ResponseObject> addCustomer(RequestObjectForCreateCustomer requestCustomer)
+            throws InvalidDataException, SQLException;
 
     /**
      * Update customer information
@@ -89,9 +108,10 @@ public interface CustomerService {
      * @param requestCustomer {@code RequestObjectForUpdateCustomer}
      *
      * @return ResponseEntity<ResponseObject>
-     *
+     * @throws InvalidDataException
      */
-    ResponseEntity<ResponseObject> updateCustomer(RequestObjectForUpdateCustomer requestCustomer) throws InvalidDataException;
+    ResponseEntity<ResponseObject> updateCustomer(RequestObjectForUpdateCustomer requestCustomer)
+            throws InvalidDataException;
 
     /**
      * Get customer by id
@@ -99,6 +119,7 @@ public interface CustomerService {
      * @param id {@code String}
      *
      * @return ResponseEntity<ResponseObject>
+     * @throws NoSuchDataException
      * */
     ResponseEntity<ResponseObject> getCustomer(String id) throws NoSuchDataException;
 

@@ -6,12 +6,10 @@ import com.safepass.safebuilding.common.exception.InvalidPageSizeException;
 import com.safepass.safebuilding.common.exception.MaxPageExceededException;
 import com.safepass.safebuilding.common.exception.NoSuchDataException;
 import com.safepass.safebuilding.common.meta.FlatStatus;
-import com.safepass.safebuilding.common.utils.ModelMapperCustom;
 import com.safepass.safebuilding.common.validation.PaginationValidation;
 import com.safepass.safebuilding.flat.dto.AvailableFlatDTO;
 import com.safepass.safebuilding.flat.dto.FlatDTO;
 import com.safepass.safebuilding.flat.jdbc.FlatJDBC;
-import com.safepass.safebuilding.flat.repository.FlatRepository;
 import com.safepass.safebuilding.flat.service.FlatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,12 +26,15 @@ public class FlatServiceImpl implements FlatService {
     private FlatJDBC flatJDBC;
     @Autowired
     private PaginationValidation paginationValidation;
-    @Autowired
-    private FlatRepository flatRepository;
-//    private ModelMapperCustom modelMapper = new ModelMapperCustom();
-    @Override
-    public ResponseEntity<ResponseObject> getFlatList(int page, int size) throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException {
 
+    /**
+     * {@inheritDoc}
+     *
+     */
+    @Override
+    public ResponseEntity<ResponseObject> getFlatList(int page, int size)
+            throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException
+    {
             paginationValidation.validatePageSize(page, size);
             String totalRowQuery = FlatServiceUtil.construcQueryForTotalRow();
             Long totalRow = flatJDBC.getTotalRow(totalRowQuery);
@@ -49,6 +50,10 @@ public class FlatServiceImpl implements FlatService {
             return responseEntity;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     */
     @Override
     public ResponseEntity<ResponseObject> getAvailableFlatByBuilding(String buildingId) throws NoSuchDataException {
         String query = FlatServiceUtil.queryGetFlat(buildingId, FlatStatus.AVAILABLE);
@@ -64,6 +69,10 @@ public class FlatServiceImpl implements FlatService {
 
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     */
     @Override
     public void updateFlatStatus(UUID flatId, FlatStatus status) throws SQLException {
 

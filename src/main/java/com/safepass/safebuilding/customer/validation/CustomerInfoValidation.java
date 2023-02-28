@@ -15,6 +15,8 @@ public class CustomerInfoValidation {
 
     public static final String DATE_REGEX_PATTERN = "^\\d{4}-\\d{2}-\\d{2}$";
 
+    public static final String PASSWORD_REGEX_PATTERN = "^(?=.*[0-9])(?=.*[a-zA-Z]).{8,}$";
+
     public void validateCreate(RequestObjectForCreateCustomer requestObj) throws InvalidDataException {
         if (!requestObj.getPhone().matches(PHONE_REGEX_PATTERN)) {
             throw new InvalidDataException("Phone number is invalid");
@@ -24,9 +26,23 @@ public class CustomerInfoValidation {
                 throw new InvalidDataException("Email is invalid");
             }
         }
-        if (requestObj.getPassword() == null || requestObj.getFullName() == null) {
+        if (!requestObj.getPassword().matches(PASSWORD_REGEX_PATTERN)) {
+            throw new InvalidDataException("Password must consist of number and character");
+        }
+        if (requestObj.getAddress() == null || requestObj.getFullName() == null ||
+                requestObj.getCitizenId() == null || requestObj.getGender() == null || requestObj.getDateOfBirth() == null) {
             throw new InvalidDataException("Field cannot be null");
         }
+        if (!requestObj.getDateOfBirth().matches(DATE_REGEX_PATTERN)) {
+            throw new InvalidDataException("Wrong date format");
+        }
+        if (!(requestObj.getGender().equals(Gender.MALE.toString())
+                || requestObj.getGender().equals(Gender.FEMALE.toString())
+                || requestObj.getGender().equals(Gender.OTHER.toString()))) {
+            throw new InvalidDataException("Gender must be " + Gender.values()[0] + ", or " + Gender.values()[1]
+                    + ", or " + Gender.values()[2]);
+        }
+
     }
 
     public void validateUpdate(RequestObjectForUpdateCustomer requestObj) throws InvalidDataException {
@@ -55,5 +71,17 @@ public class CustomerInfoValidation {
             throw new InvalidDataException("Gender must be " + Gender.values()[0] + ", or " + Gender.values()[1]
                     + ", or " + Gender.values()[2]);
         }
+        if (requestObj.getAddress() == null || requestObj.getFullname() == null || requestObj.getId() == null ||
+                requestObj.getCitizenId() == null || requestObj.getGender() == null || requestObj.getDateOfBirth() == null) {
+            throw new InvalidDataException("Field cannot be null");
+        }
+    }
+
+    public void validateCommon(RequestObjectForUpdateCustomer requestObj) throws InvalidDataException {
+
+
+
+
+
     }
 }

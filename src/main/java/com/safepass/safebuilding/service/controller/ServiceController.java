@@ -12,17 +12,26 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
-@RequestMapping(value = "/api/v1/web/services")
+@RequestMapping(value = "/api/v1/services")
 public class ServiceController {
     @Autowired
     private ServiceService serviceService;
 
     @GetMapping
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<ResponseObject> getAll(
+    public ResponseEntity<ResponseObject> adminGetList(
             @RequestParam(name = "page", defaultValue = "1")  int page,
             @RequestParam(name = "size", defaultValue = "10") int size
     ) throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException {
         return serviceService.getAllService(page, size);
+    }
+
+    @GetMapping("/get-list")
+    @PreAuthorize("hasAuthority('CUSTOMER')")
+    public ResponseEntity<ResponseObject> mobileGetList(
+            @RequestParam(name = "page", defaultValue = "1")  int page,
+            @RequestParam(name = "size", defaultValue = "10") int size
+    ) throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException {
+        return serviceService.getActiveServices(page, size);
     }
 }
