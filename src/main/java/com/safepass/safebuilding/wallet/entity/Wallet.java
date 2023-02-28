@@ -16,6 +16,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Builder
 public class Wallet {
     @Id
     @GeneratedValue(generator = "UUID")

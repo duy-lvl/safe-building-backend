@@ -18,4 +18,5 @@ public class ServiceDTO {
     private String description;
     private int price;
     private ServiceStatus status;
+    private String icon;
 }

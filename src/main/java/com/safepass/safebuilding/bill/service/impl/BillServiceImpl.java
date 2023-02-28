@@ -31,8 +31,9 @@ public class BillServiceImpl implements BillService {
     private BillRepository billRepository;
     private ModelMapperCustom modelMapperCustom = new ModelMapperCustom();
     @Override
-    public ResponseEntity<ResponseObject> getBillList(int page, int size) {
-        try {
+    public ResponseEntity<ResponseObject> getBillList(String customerId, int page, int size)
+            throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException
+    {
             paginationValidation.validatePageSize(page, size);
             Pageable pageable = PageRequest.of(page-1, size);
             Page<Bill> billPage = billRepository.findAll(pageable);
@@ -45,14 +46,6 @@ public class BillServiceImpl implements BillService {
             ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.OK)
                     .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", pagination, billDTOs));
             return responseEntity;
-        } catch (InvalidPageSizeException | MaxPageExceededException e) {
-            ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ResponseObject(HttpStatus.NOT_ACCEPTABLE.toString(), e.getMessage(), null, null));
-            return responseEntity;
-        } catch (NoSuchDataException e) {
-            ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ResponseObject(HttpStatus.NOT_FOUND.toString(), e.getMessage(), null, null));
-            return responseEntity;
-        }
+
     }
 }

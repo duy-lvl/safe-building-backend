@@ -12,6 +12,7 @@ import com.safepass.safebuilding.common.jwt.entity.response.TokenResponse;
 import com.safepass.safebuilding.common.jwt.service.JwtService;
 import com.safepass.safebuilding.common.meta.CustomerStatus;
 import com.safepass.safebuilding.common.meta.Gender;
+import com.safepass.safebuilding.common.meta.WalletStatus;
 import com.safepass.safebuilding.common.security.user.UserPrinciple;
 import com.safepass.safebuilding.common.utils.ModelMapperCustom;
 import com.safepass.safebuilding.common.validation.PaginationValidation;
@@ -25,6 +26,8 @@ import com.safepass.safebuilding.device.dto.DeviceDTO;
 import com.safepass.safebuilding.device.entity.Device;
 import com.safepass.safebuilding.device.repository.DeviceRepository;
 import com.safepass.safebuilding.device.service.DeviceService;
+import com.safepass.safebuilding.wallet.entity.Wallet;
+import com.safepass.safebuilding.wallet.repository.WalletRepository;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,7 +75,8 @@ public class CustomerServiceImpl implements CustomerService {
     private DeviceRepository deviceRepository;
     @Autowired
     private CustomerJDBC customerJDBC;
-
+    @Autowired
+    private WalletRepository walletRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -290,6 +294,14 @@ public class CustomerServiceImpl implements CustomerService {
                 .status(CustomerStatus.ACTIVE)
                 .build();
         customerRepository.save(customer);
+
+        Wallet wallet = Wallet.builder()
+                .customer(customer)
+                .id(UUID.randomUUID())
+                .amount(0)
+                .status(WalletStatus.ACTIVE)
+                .build();
+        walletRepository.save(wallet);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ResponseObject(HttpStatus.CREATED.toString(), "Successfully", null, null));

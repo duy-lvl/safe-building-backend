@@ -37,3 +37,4 @@ UPDATE `safe_building`.`flat` SET `status` = 'UNAVAILABLE' WHERE (`id` = '615405
 UPDATE `safe_building`.`flat` SET `status` = 'UNAVAILABLE' WHERE (`id` = '27457715-f6af-42d7-860a-19869565c37d');
 ALTER TABLE customer ADD UNIQUE (phone);
 ALTER TABLE building ADD address varchar(255);
+ALTER TABLE service ADD icon varchar(255);

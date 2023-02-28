@@ -9,7 +9,6 @@ import com.safepass.safebuilding.customer.dto.RequestObjectForCreateCustomer;
 import com.safepass.safebuilding.customer.dto.RequestObjectForFilter;
 import com.safepass.safebuilding.customer.dto.RequestObjectForUpdateCustomer;
 import com.safepass.safebuilding.customer.service.CustomerService;
-import com.safepass.safebuilding.device.service.DeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,8 +28,6 @@ public class CustomerController {
     @Autowired
     private CustomerService customerService;
 
-    @Autowired
-    private DeviceService deviceService;
 
     @PostMapping("/{customerId}/add-device")
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -58,14 +55,14 @@ public class CustomerController {
     }
 
 
-    @GetMapping("/accounts")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<ResponseObject> getAccountList(
-            @RequestParam(name = "page", defaultValue = "1")  int page,
-            @RequestParam(name = "size", defaultValue = "10") int size
-    ) throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException {
-        return customerService.getAccountList(page, size);
-    }
+//    @GetMapping("/accounts")
+//    @PreAuthorize("hasAuthority('ADMIN')")
+//    public ResponseEntity<ResponseObject> getAccountList(
+//            @RequestParam(name = "page", defaultValue = "1")  int page,
+//            @RequestParam(name = "size", defaultValue = "10") int size
+//    ) throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException {
+//        return customerService.getAccountList(page, size);
+//    }
 
     @PostMapping("/filter")
     @PreAuthorize("hasAuthority('ADMIN')")

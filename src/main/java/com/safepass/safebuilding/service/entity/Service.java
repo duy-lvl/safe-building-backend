@@ -25,6 +25,7 @@ public class Service {
     private String name;
     private String description;
     private int price;
+    private String icon;
 
     @Enumerated(EnumType.STRING)
     private ServiceStatus status;

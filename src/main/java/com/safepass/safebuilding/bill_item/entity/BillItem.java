@@ -7,6 +7,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.UUID;
 @Getter
 @Setter
@@ -26,11 +27,11 @@ public class BillItem {
     @ManyToOne
     private Bill bill;
 
-    //FK
-    @ManyToOne
-    private Service service;
-
     private int quantity;
     private int value;
+
+    //Join table
+    @ManyToOne
+    private Service service;
 
 }

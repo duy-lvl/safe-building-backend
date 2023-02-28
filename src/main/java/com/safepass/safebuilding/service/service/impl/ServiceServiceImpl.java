@@ -35,16 +35,16 @@ public class ServiceServiceImpl implements ServiceService {
     public ResponseEntity<ResponseObject> getAllService(int page, int size)
             throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException
     {
-            paginationValidation.validatePageSize(page, size);
-            Pageable pageRequest = PageRequest.of(page - 1, size);
-            Page<com.safepass.safebuilding.service.entity.Service> servicePage
-                    = serviceRepository.findByStatus(ServiceStatus.ACTIVE, pageRequest);
-            int totalPage = servicePage.getTotalPages();
-            Pagination pagination = new Pagination(page, size, totalPage);
-            paginationValidation.validateMaxPageNumber(pagination);
+        paginationValidation.validatePageSize(page, size);
+        Pageable pageRequest = PageRequest.of(page - 1, size);
+        Page<com.safepass.safebuilding.service.entity.Service> servicePage = serviceRepository.findAll(pageRequest);
 
-            List<com.safepass.safebuilding.service.entity.Service> services = servicePage.getContent();
-            List<ServiceDTO> serviceDTOs = modelMapper.mapList(services, ServiceDTO.class);
+        int totalPage = servicePage.getTotalPages();
+        Pagination pagination = new Pagination(page, size, totalPage);
+        paginationValidation.validateMaxPageNumber(pagination);
+
+        List<com.safepass.safebuilding.service.entity.Service> services = servicePage.getContent();
+        List<ServiceDTO> serviceDTOs = modelMapper.mapList(services, ServiceDTO.class);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", pagination, serviceDTOs));
 
@@ -55,15 +55,15 @@ public class ServiceServiceImpl implements ServiceService {
             throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException {
         paginationValidation.validatePageSize(page, size);
         Pageable pageRequest = PageRequest.of(page - 1, size);
-        Page<com.safepass.safebuilding.service.entity.Service> servicePage = serviceRepository.findAll(pageRequest);
+        Page<com.safepass.safebuilding.service.entity.Service> servicePage
+                = serviceRepository.findByStatus(ServiceStatus.ACTIVE, pageRequest);
         int totalPage = servicePage.getTotalPages();
         Pagination pagination = new Pagination(page, size, totalPage);
         paginationValidation.validateMaxPageNumber(pagination);
 
         List<com.safepass.safebuilding.service.entity.Service> services = servicePage.getContent();
         List<MobileServiceDTO> serviceDTOs = modelMapper.mapList(services, MobileServiceDTO.class);
-        ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.OK)
+        return ResponseEntity.status(HttpStatus.OK)
                 .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", pagination, serviceDTOs));
-        return responseEntity;
     }
 }

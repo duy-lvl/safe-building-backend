@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
-@RequestMapping(value = "/api/v1/services")
+@RequestMapping(value = "/api/v1")
 public class ServiceController {
     @Autowired
     private ServiceService serviceService;
 
-    @GetMapping
+    @GetMapping("/services")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ResponseObject> adminGetList(
             @RequestParam(name = "page", defaultValue = "1")  int page,
@@ -26,7 +26,7 @@ public class ServiceController {
         return serviceService.getAllService(page, size);
     }
 
-    @GetMapping("/get-list")
+    @GetMapping("/mobile/services")
     @PreAuthorize("hasAuthority('CUSTOMER')")
     public ResponseEntity<ResponseObject> mobileGetList(
             @RequestParam(name = "page", defaultValue = "1")  int page,
