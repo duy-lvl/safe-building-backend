@@ -2,6 +2,9 @@ package com.safepass.safebuilding.rent_contract.controller;
 
 import com.safepass.safebuilding.common.dto.ResponseObject;
 import com.safepass.safebuilding.common.exception.InvalidDataException;
+import com.safepass.safebuilding.common.exception.InvalidPageSizeException;
+import com.safepass.safebuilding.common.exception.MaxPageExceededException;
+import com.safepass.safebuilding.common.exception.NoSuchDataException;
 import com.safepass.safebuilding.rent_contract.dto.RequestObjectForCreate;
 import com.safepass.safebuilding.rent_contract.service.RentContractService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +27,7 @@ public class RentContractController {
     public ResponseEntity<ResponseObject> getList(
             @RequestParam(name = "page", defaultValue = "1")  int page,
             @RequestParam(name = "size", defaultValue = "10") int size
-    ) {
+    ) throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException {
         return rentContractService.getList(page, size);
     }
 

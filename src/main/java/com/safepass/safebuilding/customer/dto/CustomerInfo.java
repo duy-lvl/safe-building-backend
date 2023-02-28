@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 
 @Data
 @AllArgsConstructor
@@ -19,4 +21,6 @@ public class CustomerInfo {
     private String gender;
     private String citizenId;
     private CustomerStatus status;
+    private List<ContractDTO> contract; //contract and room_number
+
 }

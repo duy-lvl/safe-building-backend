@@ -81,30 +81,22 @@ public class RentContractServiceImpl implements RentContractService {
      *
      */
     @Override
-    public ResponseEntity<ResponseObject> getList(int page, int size) {
-        try {
-            paginationValidation.validatePageSize(page, size);
+    public ResponseEntity<ResponseObject> getList(int page, int size)
+            throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException
+    {
+        paginationValidation.validatePageSize(page, size);
 
-            String queryTotalRow = RentContractServiceUtil.contructQueryGetAllTotalRow();
-            long totalRow = rentContractJDBC.getTotalRow(queryTotalRow);
-            int totalPage = (int) Math.ceil(1.0 * totalRow / size);
-            Pagination pagination = new Pagination(page, size, totalPage);
-            paginationValidation.validateMaxPageNumber(pagination);
-            String queryGetList = RentContractServiceUtil.contructQueryGetAll(page - 1, size);
-            List<RentContractDTO> rentContracts = rentContractJDBC.getList(queryGetList);
+        String queryTotalRow = RentContractServiceUtil.contructQueryGetAllTotalRow();
+        long totalRow = rentContractJDBC.getTotalRow(queryTotalRow);
+        int totalPage = (int) Math.ceil(1.0 * totalRow / size);
+        Pagination pagination = new Pagination(page, size, totalPage);
+        paginationValidation.validateMaxPageNumber(pagination);
+        String queryGetList = RentContractServiceUtil.contructQueryGetAll(page - 1, size);
+        List<RentContractDTO> rentContracts = rentContractJDBC.getList(queryGetList);
 
-            ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.OK)
-                    .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", pagination, rentContracts));
-            return responseEntity;
-        } catch (InvalidPageSizeException | MaxPageExceededException e) {
-            ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ResponseObject(HttpStatus.NOT_ACCEPTABLE.toString(), e.getMessage(), null, null));
-            return responseEntity;
-        } catch (NoSuchDataException e) {
-            ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ResponseObject(HttpStatus.NOT_FOUND.toString(), e.getMessage(), null, null));
-            return responseEntity;
-        }
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", pagination, rentContracts));
+
     }
 
     /**

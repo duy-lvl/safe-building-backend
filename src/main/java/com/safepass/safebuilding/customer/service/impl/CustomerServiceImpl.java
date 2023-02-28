@@ -26,6 +26,8 @@ import com.safepass.safebuilding.device.dto.DeviceDTO;
 import com.safepass.safebuilding.device.entity.Device;
 import com.safepass.safebuilding.device.repository.DeviceRepository;
 import com.safepass.safebuilding.device.service.DeviceService;
+import com.safepass.safebuilding.rent_contract.entity.RentContract;
+import com.safepass.safebuilding.rent_contract.repository.RentContractRepository;
 import com.safepass.safebuilding.wallet.entity.Wallet;
 import com.safepass.safebuilding.wallet.repository.WalletRepository;
 import lombok.extern.log4j.Log4j2;
@@ -49,6 +51,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -79,7 +82,8 @@ public class CustomerServiceImpl implements CustomerService {
     private WalletRepository walletRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
-
+    @Autowired
+    private RentContractRepository rentContractRepository;
     @Autowired
     private CustomerInfoValidation customerInfoValidation;
 
@@ -348,6 +352,9 @@ public class CustomerServiceImpl implements CustomerService {
         if (customerOptional.isPresent()) {
             Customer customer = customerOptional.get();
             CustomerInfo customerInfo = modelMapper.map(customer, CustomerInfo.class);
+            String contractQuery = CustomerServiceUtil.getContracts(customer.getId().toString());
+            List<ContractDTO> contractDTOS = customerJDBC.getContracts(contractQuery);
+            customerInfo.setContract(contractDTOS);
             return ResponseEntity.status(HttpStatus.OK)
                     .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", null, customerInfo));
         }

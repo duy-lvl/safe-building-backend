@@ -2,6 +2,9 @@ package com.safepass.safebuilding.rent_contract.service;
 
 import com.safepass.safebuilding.common.dto.ResponseObject;
 import com.safepass.safebuilding.common.exception.InvalidDataException;
+import com.safepass.safebuilding.common.exception.InvalidPageSizeException;
+import com.safepass.safebuilding.common.exception.MaxPageExceededException;
+import com.safepass.safebuilding.common.exception.NoSuchDataException;
 import com.safepass.safebuilding.rent_contract.dto.RequestObjectForCreate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
@@ -42,7 +45,7 @@ public interface RentContractService {
      * @param size {@code int}
      * @return ResponseEntity<ResponseObject>
      */
-    ResponseEntity<ResponseObject> getList(int page, int size);
+    ResponseEntity<ResponseObject> getList(int page, int size) throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException;
     /**
      * Get account list for account management screen
      *
