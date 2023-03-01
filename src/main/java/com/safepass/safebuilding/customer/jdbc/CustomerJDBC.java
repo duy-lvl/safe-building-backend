@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.UUID;
 
 @Component
 public class CustomerJDBC extends Jdbc {
@@ -20,15 +21,12 @@ public class CustomerJDBC extends Jdbc {
     public List<CustomerDTO> getCustomerList(String query) {
         return jdbcTemplate.query(query, (rs, rowNum) -> {
             CustomerDTO customerDTO = new CustomerDTO();
-            customerDTO.setCustomerId(rs.getString("customer_id"));
+            customerDTO.setId(UUID.fromString(rs.getString("customer_id")));
             customerDTO.setCitizenId(rs.getString("citizen_id"));
             customerDTO.setFullname(rs.getString("fullname"));
-            customerDTO.setBuildingName(rs.getString("building_name"));
             customerDTO.setPhone(rs.getString("phone"));
-            customerDTO.setRoomNumber(rs.getInt("room_number"));
             customerDTO.setStatus(CustomerStatus.valueOf(rs.getString("customer_status")));
-            customerDTO.setBuildingId(rs.getString("building_id"));
-            return  customerDTO;
+            return customerDTO;
         });
     }
 

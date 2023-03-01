@@ -8,6 +8,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class RequestObjectForFilter {
-    private String searchString;
-    private String buildingId;
+    private int page;
+    private int size;
+    private String searchKey;
+    private String sortStatus;
+
 }

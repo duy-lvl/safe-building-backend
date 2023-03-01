@@ -67,11 +67,9 @@ public class CustomerController {
     @PostMapping("/filter")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ResponseObject> filterCustomer(
-            @RequestParam(name = "page", defaultValue = "1")  int page,
-            @RequestParam(name = "size", defaultValue = "10") int size,
             @RequestBody RequestObjectForFilter requestObjectForFilter
     ) throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException {
-        return customerService.filterCustomer(requestObjectForFilter, page, size);
+        return customerService.filterCustomer(requestObjectForFilter);
     }
 
     @PostMapping("/create-customer")

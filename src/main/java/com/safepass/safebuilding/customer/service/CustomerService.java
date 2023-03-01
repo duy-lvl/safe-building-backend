@@ -11,11 +11,6 @@ import com.safepass.safebuilding.customer.dto.RequestObjectForUpdateCustomer;
 import org.springframework.http.ResponseEntity;
 
 import java.sql.SQLException;
-
-import com.safepass.safebuilding.customer.entity.Customer;
-
-import java.util.Optional;
-import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 public interface CustomerService {
@@ -80,8 +75,6 @@ public interface CustomerService {
      * AND/OR customer status
      *
      * @param requestObjectForFilter {@code RequestObjectForFilter}
-     * @param page {@code int}
-     * @param size {@code int}
      *
      * @return ResponseEntity<ResponseObject>
      *
@@ -90,7 +83,7 @@ public interface CustomerService {
      * @throws NoSuchDataException
      *
      */
-    ResponseEntity<ResponseObject> filterCustomer(RequestObjectForFilter requestObjectForFilter, int page, int size)
+    ResponseEntity<ResponseObject> filterCustomer(RequestObjectForFilter requestObjectForFilter)
             throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException;
 
     /**

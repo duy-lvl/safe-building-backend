@@ -21,13 +21,12 @@ import com.safepass.safebuilding.customer.entity.Customer;
 import com.safepass.safebuilding.customer.jdbc.CustomerJDBC;
 import com.safepass.safebuilding.customer.repository.CustomerRepository;
 import com.safepass.safebuilding.customer.service.CustomerService;
+import com.safepass.safebuilding.customer.utils.CustomerUtils;
 import com.safepass.safebuilding.customer.validation.CustomerInfoValidation;
 import com.safepass.safebuilding.device.dto.DeviceDTO;
 import com.safepass.safebuilding.device.entity.Device;
 import com.safepass.safebuilding.device.repository.DeviceRepository;
 import com.safepass.safebuilding.device.service.DeviceService;
-import com.safepass.safebuilding.rent_contract.entity.RentContract;
-import com.safepass.safebuilding.rent_contract.repository.RentContractRepository;
 import com.safepass.safebuilding.wallet.entity.Wallet;
 import com.safepass.safebuilding.wallet.repository.WalletRepository;
 import lombok.extern.log4j.Log4j2;
@@ -51,7 +50,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -83,8 +81,6 @@ public class CustomerServiceImpl implements CustomerService {
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
-    private RentContractRepository rentContractRepository;
-    @Autowired
     private CustomerInfoValidation customerInfoValidation;
 
     public CustomerServiceImpl(ModelMapper modelMapper) {
@@ -99,25 +95,23 @@ public class CustomerServiceImpl implements CustomerService {
             throws MaxPageExceededException, NoSuchDataException, InvalidPageSizeException
     {
         paginationValidation.validatePageSize(page, size);
+        Pageable pageable = PageRequest.of(page-1,size);
+        Page<Customer> customerPage = customerRepository.findAll(pageable);
+        int totalPage = customerPage.getTotalPages();
 
-        String queryTotalRow = CustomerServiceUtil.constructQueryForGetTotalRowGetAllCustomer();
-        Long totalRow = customerJDBC.getTotalRow(queryTotalRow);
-
-        int totalPage = (int) Math.ceil(1.0 * totalRow / size);
         Pagination pagination = new Pagination(page, size, totalPage);
         paginationValidation.validateMaxPageNumber(pagination);
 
-        String queryGetAll = CustomerServiceUtil.constructQueryForGetAllCustomer(page - 1, size);
-        List<CustomerDTO> customerDTOs = customerJDBC.getCustomerList(queryGetAll);
+        List<Customer> customers = customerPage.getContent();
+        List<CustomerDTO> customerDTOs = modelMapperCustom.mapList(customers, CustomerDTO.class);
 
         for (CustomerDTO customer : customerDTOs) {
-            List<Device> devices = deviceRepository.findByCustomerId(UUID.fromString(customer.getCustomerId()));
+            List<Device> devices = deviceRepository.findByCustomerId(customer.getId());
             List<DeviceDTO> deviceDTOs = modelMapperCustom.mapList(devices, DeviceDTO.class);
             customer.setDevice(deviceDTOs);
         }
-        ResponseEntity<ResponseObject> responseEntity = ResponseEntity.status(HttpStatus.OK)
+        return ResponseEntity.status(HttpStatus.OK)
                 .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", pagination, customerDTOs));
-        return responseEntity;
 
     }
 
@@ -250,23 +244,25 @@ public class CustomerServiceImpl implements CustomerService {
     /**
      * {@inheritDoc}
      */
-    public ResponseEntity<ResponseObject> filterCustomer(RequestObjectForFilter requestObjectForFilter, int page, int size)
+    public ResponseEntity<ResponseObject> filterCustomer(RequestObjectForFilter requestObjectForFilter)
             throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException
     {
+        int page = requestObjectForFilter.getPage();
+        int size = requestObjectForFilter.getSize();
         paginationValidation.validatePageSize(page, size);
 
-        String queryTotalRow = CustomerServiceUtil.filterTotalRow(requestObjectForFilter);
+        String queryTotalRow = CustomerUtils.filterTotalRow(requestObjectForFilter);
         Long totalRow = customerJDBC.getTotalRow(queryTotalRow);
 
         int totalPage = (int) Math.ceil(1.0 * totalRow / size);
         Pagination pagination = new Pagination(page, size, totalPage);
         paginationValidation.validateMaxPageNumber(pagination);
 
-        String queryFilter = CustomerServiceUtil.constructQueryForFilter(requestObjectForFilter, page - 1, size);
+        String queryFilter = CustomerUtils.constructQueryForFilter(requestObjectForFilter, page - 1, size);
         List<CustomerDTO> customerDTOs = customerJDBC.getCustomerList(queryFilter);
 
         for (CustomerDTO customer : customerDTOs) {
-            List<Device> devices = deviceRepository.findByCustomerId(UUID.fromString(customer.getCustomerId()));
+            List<Device> devices = deviceRepository.findByCustomerId(customer.getId());
             List<DeviceDTO> deviceDTOs = modelMapperCustom.mapList(devices, DeviceDTO.class);
             customer.setDevice(deviceDTOs);
         }
@@ -352,7 +348,7 @@ public class CustomerServiceImpl implements CustomerService {
         if (customerOptional.isPresent()) {
             Customer customer = customerOptional.get();
             CustomerInfo customerInfo = modelMapper.map(customer, CustomerInfo.class);
-            String contractQuery = CustomerServiceUtil.getContracts(customer.getId().toString());
+            String contractQuery = CustomerUtils.getContracts(customer.getId().toString());
             List<ContractDTO> contractDTOS = customerJDBC.getContracts(contractQuery);
             customerInfo.setContract(contractDTOS);
             return ResponseEntity.status(HttpStatus.OK)

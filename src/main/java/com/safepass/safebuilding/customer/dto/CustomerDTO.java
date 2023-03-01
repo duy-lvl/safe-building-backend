@@ -7,18 +7,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class CustomerDTO {
-    private String customerId;
+    private UUID id;
     private String citizenId;
     private String fullname;
     private String phone;
-    private String buildingName;
-    private int roomNumber;
     private CustomerStatus status;
     private List<DeviceDTO> device;
-    private String buildingId;
 }
