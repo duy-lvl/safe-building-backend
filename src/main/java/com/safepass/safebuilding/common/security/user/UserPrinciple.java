@@ -35,8 +35,6 @@ public class UserPrinciple implements UserDetails  {
     private AdminStatus adminStatus;
     private TokenResponse tokenResponse;
     private Collection<? extends GrantedAuthority> authorities;
-    private String accessToken;
-    private String refreshToken;
 
     public static UserPrinciple adminBuild(Admin admin) {
         List<GrantedAuthority> authorities = new ArrayList<>();

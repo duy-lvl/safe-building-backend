@@ -28,7 +28,7 @@ public class BillItem {
     private Bill bill;
 
     private int quantity;
-    private int value;
+
 
     //Join table
     @ManyToOne

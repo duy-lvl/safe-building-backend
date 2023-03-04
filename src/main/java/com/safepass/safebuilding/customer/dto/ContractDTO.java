@@ -12,5 +12,4 @@ public class ContractDTO {
     private String link;
     private int roomNumber;
     private RentContractStatus status;
-
 }

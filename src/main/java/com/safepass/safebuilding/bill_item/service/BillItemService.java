@@ -4,5 +4,5 @@ import com.safepass.safebuilding.common.dto.ResponseObject;
 import org.springframework.http.ResponseEntity;
 
 public interface BillItemService {
-//    ResponseEntity<ResponseObject> getBillItem(String billId);
+    ResponseEntity<ResponseObject> getBillItem(String billId);
 }

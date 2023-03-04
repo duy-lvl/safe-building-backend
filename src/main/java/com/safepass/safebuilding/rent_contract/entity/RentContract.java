@@ -26,11 +26,11 @@ public class RentContract {
     private UUID id;
 
     //FK
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Customer customer;
 
     //FK
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Flat flat;
 
     private String contract;

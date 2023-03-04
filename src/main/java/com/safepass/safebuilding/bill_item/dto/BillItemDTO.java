@@ -10,9 +10,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BillItemDTO {
-    private UUID id;
-    private String service;
+    private String serviceName;
     private String icon;
     private int quantity;
-    private int value;
+    private int price;
 }

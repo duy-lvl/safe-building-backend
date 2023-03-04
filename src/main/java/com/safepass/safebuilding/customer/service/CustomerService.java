@@ -121,4 +121,13 @@ public interface CustomerService {
      * */
     ResponseEntity<ResponseObject> getCustomer(String id) throws NoSuchDataException;
 
+    /**
+     * Get customer contract by customer id
+     *
+     * @param id {@code String}
+     *
+     * @return ResponseEntity<ResponseObject>
+     * @throws NoSuchDataException
+     * */
+    ResponseEntity<ResponseObject> getCustomerContract(String id) throws NoSuchDataException;
 }

@@ -92,4 +92,11 @@ public class CustomerController {
             throws NoSuchDataException {
         return customerService.getCustomer(customerId);
     }
+
+    @GetMapping("/{customerId}/contracts")
+    @PreAuthorize("hasAuthority('CUSTOMER')")
+    public ResponseEntity<ResponseObject> getCustomerContracts(@PathVariable String customerId)
+            throws NoSuchDataException {
+        return customerService.getCustomerContract(customerId);
+    }
 }

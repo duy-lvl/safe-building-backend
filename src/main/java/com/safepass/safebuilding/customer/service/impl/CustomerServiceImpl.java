@@ -27,6 +27,8 @@ import com.safepass.safebuilding.device.dto.DeviceDTO;
 import com.safepass.safebuilding.device.entity.Device;
 import com.safepass.safebuilding.device.repository.DeviceRepository;
 import com.safepass.safebuilding.device.service.DeviceService;
+import com.safepass.safebuilding.rent_contract.entity.RentContract;
+import com.safepass.safebuilding.rent_contract.repository.RentContractRepository;
 import com.safepass.safebuilding.wallet.entity.Wallet;
 import com.safepass.safebuilding.wallet.repository.WalletRepository;
 import lombok.extern.log4j.Log4j2;
@@ -355,5 +357,15 @@ public class CustomerServiceImpl implements CustomerService {
                     .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", null, customerInfo));
         }
         throw new NoSuchDataException("Customer not found");
+    }
+
+    @Autowired
+    private RentContractRepository rentContractRepository;
+    @Override
+    public ResponseEntity<ResponseObject> getCustomerContract(String id) throws NoSuchDataException {
+        List<RentContract> rentContracts = rentContractRepository.findByCustomerId(UUID.fromString(id));
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", null, rentContracts));
     }
 }
