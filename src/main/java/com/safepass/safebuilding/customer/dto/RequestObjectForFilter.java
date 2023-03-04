@@ -11,6 +11,7 @@ public class RequestObjectForFilter {
     private int page;
     private int size;
     private String searchKey;
-    private String sortStatus;
+    private String sortBy;
+    private String order;
 
 }

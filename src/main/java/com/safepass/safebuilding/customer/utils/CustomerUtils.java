@@ -17,7 +17,7 @@ public class CustomerUtils {
                 + queryGet;
 
         query +=  appendSearchKey(requestObjectForFilter.getSearchKey());
-        query += appendSort(requestObjectForFilter.getSortStatus())
+        query += appendSort(requestObjectForFilter.getSortBy(), requestObjectForFilter.getOrder())
                 + " LIMIT " + size + " OFFSET " + page * size;
         return query;
     }
@@ -48,16 +48,18 @@ public class CustomerUtils {
         return sb;
     }
 
-    private static String appendSort(String sortStatus) {
+    private static String appendSort(String sortBy, String order) {
 
         String result = " ";
-        if (sortStatus == null || sortStatus.isBlank()) {
+        if (sortBy == null || sortBy.isBlank() || order == null || order.isBlank()) {
             return result;
         }
-        sortStatus = sortStatus.toUpperCase();
-        if (!"ASC".equals(sortStatus) && !"DESC".equals(sortStatus)) {
+        sortBy = sortBy.toLowerCase();
+        order = order.toUpperCase();
+        if (!"ASC".equals(order) && !"DESC".equals(order) && !"status".equals(sortBy)
+            && !"phone".equals(sortBy) && !"fullname".equals(sortBy)) {
             return result;
         }
-        return " ORDER BY status " + sortStatus + " ";
+        return " ORDER BY " + sortBy + " " + order + " ";
     }
 }
