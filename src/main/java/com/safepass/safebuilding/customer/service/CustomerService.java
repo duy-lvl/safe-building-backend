@@ -130,4 +130,6 @@ public interface CustomerService {
      * @throws NoSuchDataException
      * */
     ResponseEntity<ResponseObject> getCustomerContract(String id) throws NoSuchDataException;
+
+
 }

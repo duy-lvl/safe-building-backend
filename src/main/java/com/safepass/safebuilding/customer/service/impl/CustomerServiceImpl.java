@@ -30,7 +30,9 @@ import com.safepass.safebuilding.device.service.DeviceService;
 import com.safepass.safebuilding.rent_contract.entity.RentContract;
 import com.safepass.safebuilding.rent_contract.repository.RentContractRepository;
 import com.safepass.safebuilding.wallet.entity.Wallet;
+import com.safepass.safebuilding.wallet.jdbc.WalletJDBC;
 import com.safepass.safebuilding.wallet.repository.WalletRepository;
+import com.safepass.safebuilding.wallet.service.impl.WalletServiceUtil;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,6 +86,8 @@ public class CustomerServiceImpl implements CustomerService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private CustomerInfoValidation customerInfoValidation;
+    @Autowired
+    private WalletJDBC walletJDBC;
 
     public CustomerServiceImpl(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
@@ -277,9 +281,9 @@ public class CustomerServiceImpl implements CustomerService {
      * {@inheritDoc}
      *
      */
-    @Transactional(rollbackFor = {SQLException.class, IllegalArgumentException.class})
+//    @Transactional(rollbackFor = {SQLException.class, IllegalArgumentException.class, Exception.class})
     public ResponseEntity<ResponseObject> addCustomer(RequestObjectForCreateCustomer requestCustomer)
-            throws InvalidDataException {
+            throws InvalidDataException, SQLException {
         customerInfoValidation.validateCreate(requestCustomer);
         UUID customerId = UUID.randomUUID();
 
@@ -295,7 +299,7 @@ public class CustomerServiceImpl implements CustomerService {
                 .citizenId(requestCustomer.getCitizenId())
                 .status(CustomerStatus.ACTIVE)
                 .build();
-        customerRepository.save(customer);
+        customer = customerRepository.save(customer);
 
         Wallet wallet = Wallet.builder()
                 .customer(customer)
@@ -303,8 +307,12 @@ public class CustomerServiceImpl implements CustomerService {
                 .amount(0)
                 .status(WalletStatus.ACTIVE)
                 .build();
-        walletRepository.save(wallet);
 
+        String insertQuery = WalletServiceUtil.createInsert(wallet);
+        boolean checkInsert = walletJDBC.createWallet(insertQuery);
+        if (!checkInsert) {
+            throw new SQLException("Failed to create wallet");
+        }
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ResponseObject(HttpStatus.CREATED.toString(), "Successfully", null, null));
 

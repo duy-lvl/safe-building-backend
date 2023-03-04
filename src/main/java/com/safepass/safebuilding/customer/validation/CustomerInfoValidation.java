@@ -5,6 +5,8 @@ import com.safepass.safebuilding.common.meta.CustomerStatus;
 import com.safepass.safebuilding.common.meta.Gender;
 import com.safepass.safebuilding.customer.dto.RequestObjectForCreateCustomer;
 import com.safepass.safebuilding.customer.dto.RequestObjectForUpdateCustomer;
+import com.safepass.safebuilding.customer.repository.CustomerRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,9 +19,15 @@ public class CustomerInfoValidation {
 
     public static final String PASSWORD_REGEX_PATTERN = "^(?=.*[0-9])(?=.*[a-zA-Z]).{8,}$";
 
+    @Autowired
+    private CustomerRepository customerRepository;
+
     public void validateCreate(RequestObjectForCreateCustomer requestObj) throws InvalidDataException {
         if (!requestObj.getPhone().matches(PHONE_REGEX_PATTERN)) {
             throw new InvalidDataException("Phone number is invalid");
+        }
+        if (customerRepository.findCustomerByPhone(requestObj.getPhone()) != null) {
+            throw new InvalidDataException("Phone is existed");
         }
         if (requestObj.getEmail() != null) {
             if (!requestObj.getEmail().matches(EMAIL_REGEX_PATTERN)) {
