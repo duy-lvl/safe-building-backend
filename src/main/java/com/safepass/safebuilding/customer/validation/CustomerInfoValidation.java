@@ -29,17 +29,29 @@ public class CustomerInfoValidation {
         if (customerRepository.findCustomerByPhone(requestObj.getPhone()) != null) {
             throw new InvalidDataException("Phone is existed");
         }
+        String email = requestObj.getEmail();
         if (requestObj.getEmail() != null) {
-            if (!requestObj.getEmail().matches(EMAIL_REGEX_PATTERN)) {
+            if (!requestObj.getEmail().matches(EMAIL_REGEX_PATTERN) && !requestObj.getEmail().matches("")) {
                 throw new InvalidDataException("Email is invalid");
             }
         }
         if (!requestObj.getPassword().matches(PASSWORD_REGEX_PATTERN)) {
             throw new InvalidDataException("Password must consist of number and character");
         }
-        if (requestObj.getAddress() == null || requestObj.getFullName() == null ||
-                requestObj.getCitizenId() == null || requestObj.getGender() == null || requestObj.getDateOfBirth() == null) {
-            throw new InvalidDataException("Field cannot be null");
+        if (requestObj.getAddress() == null ||  requestObj.getAddress().matches("") ) {
+            throw new InvalidDataException("Address cannot be null");
+        }
+
+        if (requestObj.getFullName() == null || requestObj.getFullName().matches("")) {
+            throw new InvalidDataException("Full name cannot be null");
+        }
+
+        if (requestObj.getCitizenId() == null || requestObj.getCitizenId().matches("") ) {
+            throw new InvalidDataException("Citizen id cannot be null");
+        }
+
+        if (requestObj.getGender() == null || requestObj.getGender().matches("")) {
+            throw new InvalidDataException("Gender cannot be null");
         }
         if (!requestObj.getDateOfBirth().matches(DATE_REGEX_PATTERN)) {
             throw new InvalidDataException("Wrong date format");
@@ -58,13 +70,28 @@ public class CustomerInfoValidation {
             throw new InvalidDataException("Phone number is invalid");
         }
         if (requestObj.getEmail() != null) {
-            if (!requestObj.getEmail().matches(EMAIL_REGEX_PATTERN)) {
+            if (!requestObj.getEmail().matches(EMAIL_REGEX_PATTERN) && !requestObj.getEmail().matches("")) {
                 throw new InvalidDataException("Email is invalid");
             }
         }
-        if (requestObj.getAddress() == null || requestObj.getFullname() == null || requestObj.getId() == null ||
-            requestObj.getCitizenId() == null || requestObj.getGender() == null || requestObj.getDateOfBirth() == null) {
-            throw new InvalidDataException("Field cannot be null");
+        if (requestObj.getAddress() == null ||  requestObj.getAddress().matches("") ) {
+            throw new InvalidDataException("Address cannot be null");
+        }
+
+        if (requestObj.getFullname() == null || requestObj.getFullname().matches("")) {
+            throw new InvalidDataException("Full name cannot be null");
+        }
+
+        if (requestObj.getId() == null || requestObj.getId().matches("")) {
+            throw new InvalidDataException("ID cannot be null");
+        }
+
+        if (requestObj.getCitizenId() == null || requestObj.getCitizenId().matches("") ) {
+            throw new InvalidDataException("Citizen id cannot be null");
+        }
+
+        if (requestObj.getGender() == null || requestObj.getGender().matches("")) {
+            throw new InvalidDataException("Gender cannot be null");
         }
         if (!requestObj.getDateOfBirth().matches(DATE_REGEX_PATTERN)) {
             throw new InvalidDataException("Wrong date format");
