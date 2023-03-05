@@ -19,15 +19,15 @@ public class ImageController {
     @Autowired
     private RentContractService  rentContractService;
 
-    @PostMapping
-    public ResponseEntity<ResponseObject> uploadFile
-            (
-                    @NotNull @RequestParam(name = "file") MultipartFile[] files,
-                    @RequestParam(name = "customerId") String customerId,
-                    @RequestParam(name = "flatId") String flatId,
-                    @RequestParam(name = "rentContractId") String rentContractId
-            ) throws IOException {
-        return rentContractService.uploadFile(files, customerId, rentContractId, flatId);
-    }
+//    @PostMapping
+//    public ResponseEntity<ResponseObject> uploadFile
+//            (
+//                    @NotNull @RequestParam(name = "file") MultipartFile[] files,
+//                    @RequestParam(name = "customerId") String customerId,
+//                    @RequestParam(name = "flatId") String flatId,
+//                    @RequestParam(name = "rentContractId") String rentContractId
+//            ) throws IOException {
+//        return rentContractService.uploadFile(files, customerId, rentContractId, flatId);
+//    }
 
 }

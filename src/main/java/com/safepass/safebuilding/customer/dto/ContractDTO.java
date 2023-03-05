@@ -12,4 +12,5 @@ public class ContractDTO {
     private String link;
     private int roomNumber;
     private RentContractStatus status;
+    private String title;
 }

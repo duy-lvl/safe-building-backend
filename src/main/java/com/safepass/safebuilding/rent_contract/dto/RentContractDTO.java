@@ -16,6 +16,7 @@ public class RentContractDTO {
     private String customerName;
     private String expiryDate;
     private RentContractStatus status;
+    private String title;
     private String rentContractLink;
     private String customerId;
     private String flatId;

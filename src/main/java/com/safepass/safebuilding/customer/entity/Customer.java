@@ -36,9 +36,12 @@ public class Customer {
     private Gender gender;
 
     @Email
+    @Column(unique = true)
     private String email;
 
+    @Column(unique = true)
     private String phone;
+
     private String address;
     private String citizenId;
     private Date dateJoin;

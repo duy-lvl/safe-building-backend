@@ -37,6 +37,7 @@ public class RentContractJDBC extends Jdbc {
             rentContractDTO.setExpiryDate(sdf.format(rs.getDate("expiry_date")));
             rentContractDTO.setStatus(RentContractStatus.valueOf(rs.getString("status")));
             rentContractDTO.setRentContractLink(rs.getString("rent_contract_link"));
+            rentContractDTO.setTitle(rs.getString("title"));
             rentContractDTO.setCustomerId(rs.getString("customer_id"));
             rentContractDTO.setFlatId(rs.getString("flat_id"));
             return rentContractDTO;

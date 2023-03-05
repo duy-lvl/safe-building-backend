@@ -33,6 +33,7 @@ public class RentContract {
     @ManyToOne(fetch = FetchType.LAZY)
     private Flat flat;
 
+    private String title;
     private String contract;
     private Date expiryDate;
     private int value;

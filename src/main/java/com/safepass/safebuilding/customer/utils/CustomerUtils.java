@@ -29,7 +29,7 @@ public class CustomerUtils {
     }
 
     public static String getContracts(String customerId) {
-        return "SELECT flat.room_number AS room_number, rent_contract.contract AS link, rent_contract.status\n" +
+        return "SELECT flat.room_number AS room_number, rent_contract.contract AS link, rent_contract.status, rent_contract.title \n" +
                 "FROM building JOIN flat ON building.id = flat.building_id\n" +
                 "            JOIN rent_contract ON rent_contract.flat_id = flat.id\n" +
                 "WHERE customer_id = '" + customerId + "'";

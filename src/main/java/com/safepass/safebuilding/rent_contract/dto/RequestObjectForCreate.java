@@ -11,5 +11,6 @@ public class RequestObjectForCreate {
     private String customerId;
     private String flatId;
     private String expiryDate;
+    private String title;
     private int value;
 }
