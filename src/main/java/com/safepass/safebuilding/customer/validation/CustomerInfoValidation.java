@@ -5,6 +5,7 @@ import com.safepass.safebuilding.common.meta.CustomerStatus;
 import com.safepass.safebuilding.common.meta.Gender;
 import com.safepass.safebuilding.customer.dto.RequestObjectForCreateCustomer;
 import com.safepass.safebuilding.customer.dto.RequestObjectForUpdateCustomer;
+import com.safepass.safebuilding.customer.entity.Customer;
 import com.safepass.safebuilding.customer.repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,17 +24,22 @@ public class CustomerInfoValidation {
     private CustomerRepository customerRepository;
 
     public void validateCreate(RequestObjectForCreateCustomer requestObj) throws InvalidDataException {
-        if (!requestObj.getPhone().matches(PHONE_REGEX_PATTERN)) {
+        String phone = requestObj.getPhone();
+        if (!phone.matches(PHONE_REGEX_PATTERN)) {
             throw new InvalidDataException("Phone number is invalid");
         }
-        if (customerRepository.findCustomerByPhone(requestObj.getPhone()) != null) {
+        if (customerRepository.findCustomerByPhone(phone) != null) {
             throw new InvalidDataException("Phone is existed");
         }
         String email = requestObj.getEmail();
-        if (requestObj.getEmail() != null) {
-            if (!requestObj.getEmail().matches(EMAIL_REGEX_PATTERN) && !requestObj.getEmail().matches("")) {
+        if (email != null) {
+            if (!email.matches(EMAIL_REGEX_PATTERN) && !email.matches("")) {
                 throw new InvalidDataException("Email is invalid");
             }
+        }
+
+        if (customerRepository.findCustomerByEmail(email) != null) {
+            throw new InvalidDataException("Email existed");
         }
         if (!requestObj.getPassword().matches(PASSWORD_REGEX_PATTERN)) {
             throw new InvalidDataException("Password must consist of number and character");
@@ -66,12 +72,28 @@ public class CustomerInfoValidation {
     }
 
     public void validateUpdate(RequestObjectForUpdateCustomer requestObj) throws InvalidDataException {
-        if (!requestObj.getPhone().matches(PHONE_REGEX_PATTERN)) {
+        String phone = requestObj.getPhone();
+        String email = requestObj.getEmail();
+        if (!phone.matches(PHONE_REGEX_PATTERN)) {
             throw new InvalidDataException("Phone number is invalid");
         }
-        if (requestObj.getEmail() != null) {
-            if (!requestObj.getEmail().matches(EMAIL_REGEX_PATTERN) && !requestObj.getEmail().matches("")) {
+
+
+        if (email != null) {
+            if (!email.matches(EMAIL_REGEX_PATTERN) && !email.matches("")) {
                 throw new InvalidDataException("Email is invalid");
+            }
+        }
+        Customer customer = customerRepository.findCustomerByPhone(phone);
+        if (customer != null && !customer.getId().toString().equals(requestObj.getId())) {
+            if (customer.getPhone().equals(phone)) {
+                throw new InvalidDataException("Phone number existed");
+            }
+        }
+        customer = customerRepository.findCustomerByEmail(email);
+        if (customer != null &&  !customer.getId().toString().equals(requestObj.getId())) {
+            if (customer.getEmail().equals(email)) {
+                throw new InvalidDataException("Email existed");
             }
         }
         if (requestObj.getAddress() == null ||  requestObj.getAddress().matches("") ) {
