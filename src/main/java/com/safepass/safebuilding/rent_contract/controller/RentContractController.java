@@ -39,4 +39,13 @@ public class RentContractController {
     ) throws IOException, SQLException, InvalidDataException {
         return rentContractService.createContract(files, requestContract);
     }
+
+    @PutMapping("/edit-contract")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<ResponseObject> editContract(
+            @RequestParam String requestContract,
+            @RequestParam MultipartFile[] files
+    ) throws IOException, SQLException, InvalidDataException {
+        return rentContractService.updateContract(files, requestContract);
+    }
 }

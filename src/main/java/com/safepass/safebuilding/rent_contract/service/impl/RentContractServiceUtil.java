@@ -2,6 +2,7 @@ package com.safepass.safebuilding.rent_contract.service.impl;
 
 import com.safepass.safebuilding.common.meta.RentContractStatus;
 import com.safepass.safebuilding.rent_contract.dto.RequestObjectForCreate;
+import com.safepass.safebuilding.rent_contract.dto.RequestObjectForUpdate;
 
 import java.util.UUID;
 
@@ -38,5 +39,18 @@ public class RentContractServiceUtil {
                 "VALUES('" + UUID.randomUUID() + "', '" + requestObj.getTitle() + "', '" + url + "', '" +
                 requestObj.getExpiryDate() + "', '" + RentContractStatus.VALID + "', " + requestObj.getValue() +
                 ", '" + requestObj.getCustomerId() + "', '" + requestObj.getFlatId() +"')";
+    }
+
+    public static String queryUpdate(RequestObjectForUpdate requestObj, String url) {
+        String query = "UPDATE rent_contract SET title='" +requestObj.getTitle() +
+                "', value=" +requestObj.getValue() +
+                ", customer_id='" + requestObj.getCustomerId() +
+                "', flat_id='" + requestObj.getFlatId() +
+                "', expiry_date='" + requestObj.getExpiryDate();
+        if (requestObj.isChange()) {
+            query += "', contract='" + url;
+        }
+        query += "' WHERE id='" + requestObj.getContractId() + "'";
+        return query;
     }
 }

@@ -13,6 +13,7 @@ import com.safepass.safebuilding.common.validation.PaginationValidation;
 import com.safepass.safebuilding.flat.service.FlatService;
 import com.safepass.safebuilding.rent_contract.dto.RentContractDTO;
 import com.safepass.safebuilding.rent_contract.dto.RequestObjectForCreate;
+import com.safepass.safebuilding.rent_contract.dto.RequestObjectForUpdate;
 import com.safepass.safebuilding.rent_contract.jdbc.RentContractJDBC;
 import com.safepass.safebuilding.rent_contract.service.RentContractService;
 import com.safepass.safebuilding.rent_contract.validation.RentContractValidation;
@@ -118,6 +119,32 @@ public class RentContractServiceImpl implements RentContractService {
             throw new SQLException("Insert contract failed");
         }
 
+        flatService.updateFlatStatus(UUID.fromString(rentContractRequest.getFlatId()), FlatStatus.UNAVAILABLE);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ResponseObject(HttpStatus.CREATED.toString(), "Successfully", null, null));
+    }
+
+    @Override
+    public ResponseEntity<ResponseObject> updateContract(MultipartFile[] files, String requestObject)
+            throws IOException, SQLException, InvalidDataException {
+        Gson gson = new Gson();
+        RequestObjectForUpdate rentContractRequest = gson.fromJson(requestObject, RequestObjectForUpdate.class);
+
+        rentContractValidation.editValidation(rentContractRequest);
+        String url = rentContractRequest.getOldLink();
+        if (rentContractRequest.isChange()) {
+            //edit flat status
+            imageService.delete(url);
+            url = create(files);
+        }
+
+        String query = RentContractServiceUtil.queryUpdate(rentContractRequest, url);
+        boolean checkInsert = rentContractJDBC.insertContract(query);
+        if (!checkInsert) {
+            throw new SQLException("Update contract failed");
+        }
+
+        flatService.updateFlatStatus(UUID.fromString(rentContractRequest.getOldFlatId()), FlatStatus.AVAILABLE);
         flatService.updateFlatStatus(UUID.fromString(rentContractRequest.getFlatId()), FlatStatus.UNAVAILABLE);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ResponseObject(HttpStatus.CREATED.toString(), "Successfully", null, null));

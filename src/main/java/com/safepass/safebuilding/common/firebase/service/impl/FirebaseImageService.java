@@ -87,7 +87,7 @@ public class FirebaseImageService implements IImageService {
 
         Bucket bucket = StorageClient.getInstance().bucket();
 
-        if (StringUtils.isEmpty(name)) {
+        if (name.isEmpty()) {
             throw new IOException("invalid file name");
         }
 
