@@ -26,6 +26,8 @@ public class Building {
 
     private String name;
     private String address;
+    private int capacity;
+
     @Enumerated(EnumType.STRING)
     private BuildingStatus status;
 

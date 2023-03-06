@@ -36,8 +36,7 @@ public class Flat {
     private FlatStatus status;
 
     @Min(101)
-    @Max(999)
-    @UniqueElements
+    @Max(9999)
     private int roomNumber;
     //FK
     @ManyToOne

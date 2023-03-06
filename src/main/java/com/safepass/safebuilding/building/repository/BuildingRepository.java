@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -19,4 +20,6 @@ public interface BuildingRepository extends JpaRepository<Building, UUID> {
     Page<Building> findByNameContainsIgnoreCase(String name, Pageable pageable);
 
     List<Building> findByStatusOrderByNameAsc(BuildingStatus status);
+    Optional<Building> findBuildingById(UUID id);
+
 }

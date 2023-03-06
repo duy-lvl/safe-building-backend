@@ -1,7 +1,10 @@
 package com.safepass.safebuilding.flat.service.impl;
 
+import com.safepass.safebuilding.building.entity.Building;
+import com.safepass.safebuilding.building.repository.BuildingRepository;
 import com.safepass.safebuilding.common.dto.Pagination;
 import com.safepass.safebuilding.common.dto.ResponseObject;
+import com.safepass.safebuilding.common.exception.InvalidDataException;
 import com.safepass.safebuilding.common.exception.InvalidPageSizeException;
 import com.safepass.safebuilding.common.exception.MaxPageExceededException;
 import com.safepass.safebuilding.common.exception.NoSuchDataException;
@@ -9,8 +12,14 @@ import com.safepass.safebuilding.common.meta.FlatStatus;
 import com.safepass.safebuilding.common.validation.PaginationValidation;
 import com.safepass.safebuilding.flat.dto.AvailableFlatDTO;
 import com.safepass.safebuilding.flat.dto.FlatDTO;
+import com.safepass.safebuilding.flat.dto.RequestFlat;
+import com.safepass.safebuilding.flat.entity.Flat;
 import com.safepass.safebuilding.flat.jdbc.FlatJDBC;
+import com.safepass.safebuilding.flat.repository.FlatRepository;
 import com.safepass.safebuilding.flat.service.FlatService;
+import com.safepass.safebuilding.flat.validation.FlatValidation;
+import com.safepass.safebuilding.flat_type.entity.FlatType;
+import com.safepass.safebuilding.flat_type.repository.FlatTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +27,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -26,6 +36,11 @@ public class FlatServiceImpl implements FlatService {
     private FlatJDBC flatJDBC;
     @Autowired
     private PaginationValidation paginationValidation;
+
+    @Autowired
+    private FlatValidation flatValidation;
+    @Autowired
+    private FlatRepository flatRepository;
 
     /**
      * {@inheritDoc}
@@ -81,5 +96,18 @@ public class FlatServiceImpl implements FlatService {
         if (!checkUpdate) {
             throw new SQLException("Flat does not exist");
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     */
+    @Override
+    public ResponseEntity<ResponseObject> createFlat(RequestFlat requestFlat) throws InvalidDataException {
+        Flat flat = flatValidation.validateCreate(requestFlat);
+        flatRepository.save(flat);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ResponseObject(HttpStatus.CREATED.toString(), "Successfully", null, null));
+
     }
 }

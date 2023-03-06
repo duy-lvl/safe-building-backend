@@ -6,10 +6,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface FlatRepository extends JpaRepository<Flat, UUID> {
    List<Flat> findFlatByBuildingIdAndStatusOrderByRoomNumberAsc(UUID buildingId, FlatStatus status);
 
+   int countFlatByBuildingId(UUID buildingId);
+   Optional<Flat> findFlatByRoomNumberAndBuildingId(int roomNumber, UUID buildingId);
 }

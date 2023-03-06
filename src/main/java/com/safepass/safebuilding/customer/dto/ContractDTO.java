@@ -13,4 +13,6 @@ public class ContractDTO {
     private int roomNumber;
     private RentContractStatus status;
     private String title;
+    private String buildingName;
+    private String buildAddress;
 }

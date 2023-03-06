@@ -371,9 +371,10 @@ public class CustomerServiceImpl implements CustomerService {
     private RentContractRepository rentContractRepository;
     @Override
     public ResponseEntity<ResponseObject> getCustomerContract(String id) throws NoSuchDataException {
-        List<RentContract> rentContracts = rentContractRepository.findByCustomerId(UUID.fromString(id));
-
+//        List<RentContract> rentContracts = rentContractRepository.findByCustomerId(UUID.fromString(id));
+        String contractQuery = CustomerUtils.getContracts(id);
+        List<ContractDTO> contractDTOS = customerJDBC.getContracts(contractQuery);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", null, rentContracts));
+                .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", null, contractDTOS));
     }
 }

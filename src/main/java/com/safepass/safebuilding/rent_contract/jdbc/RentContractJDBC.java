@@ -40,6 +40,7 @@ public class RentContractJDBC extends Jdbc {
             rentContractDTO.setTitle(rs.getString("title"));
             rentContractDTO.setCustomerId(rs.getString("customer_id"));
             rentContractDTO.setFlatId(rs.getString("flat_id"));
+            rentContractDTO.setBuildingAddress(rs.getString("address"));
             return rentContractDTO;
         });
 

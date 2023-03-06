@@ -12,6 +12,7 @@ import java.util.Date;
 public class RentContractDTO {
     private String id;
     private String buildingName;
+    private String buildingAddress;
     private int roomNumber;
     private String customerName;
     private String expiryDate;

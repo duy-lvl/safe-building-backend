@@ -1,10 +1,12 @@
 package com.safepass.safebuilding.flat.service;
 
 import com.safepass.safebuilding.common.dto.ResponseObject;
+import com.safepass.safebuilding.common.exception.InvalidDataException;
 import com.safepass.safebuilding.common.exception.InvalidPageSizeException;
 import com.safepass.safebuilding.common.exception.MaxPageExceededException;
 import com.safepass.safebuilding.common.exception.NoSuchDataException;
 import com.safepass.safebuilding.common.meta.FlatStatus;
+import com.safepass.safebuilding.flat.dto.RequestFlat;
 import org.springframework.http.ResponseEntity;
 
 import java.sql.SQLException;
@@ -48,4 +50,12 @@ public interface FlatService {
      */
     void updateFlatStatus(UUID flatId, FlatStatus status) throws SQLException;
 
+    /**
+     * Create a flat
+     *
+     * @param requestFlat {@code RequestFlat}
+     * @Return ResponseEntity<ResponseObject>
+     */
+
+    ResponseEntity<ResponseObject> createFlat(RequestFlat requestFlat) throws InvalidDataException;
 }

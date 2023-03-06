@@ -37,6 +37,8 @@ public class CustomerJDBC extends Jdbc {
             contractDTO.setLink(rs.getString("link"));
             contractDTO.setStatus(RentContractStatus.valueOf(rs.getString("status")));
             contractDTO.setTitle(rs.getString("title"));
+            contractDTO.setBuildAddress(rs.getString("address"));
+            contractDTO.setBuildingName(rs.getString("name"));
             return contractDTO;
         });
     }
