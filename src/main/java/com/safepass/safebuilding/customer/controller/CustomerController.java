@@ -39,20 +39,20 @@ public class CustomerController {
     }
 
 
-    @GetMapping
-    @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<ResponseObject> getList (
-            @RequestParam(name = "page", defaultValue = "1")  int page,
-            @RequestParam(name = "size", defaultValue = "10") int size
-    ) throws MaxPageExceededException, InvalidPageSizeException, NoSuchDataException {
-        return customerService.getCustomerList(page, size);
-    }
+//    @GetMapping
+//    @PreAuthorize("hasAuthority('ADMIN')")
+//    public ResponseEntity<ResponseObject> getList (
+//            @RequestParam(name = "page", defaultValue = "1")  int page,
+//            @RequestParam(name = "size", defaultValue = "10") int size
+//    ) throws MaxPageExceededException, InvalidPageSizeException, NoSuchDataException {
+//        return customerService.getCustomerList(page, size);
+//    }
 
-    @GetMapping("/test")
-    @PreAuthorize("hasAuthority('CUSTOMER')")
-    public String testApi() {
-        return "Hello world customer";
-    }
+//    @GetMapping("/test")
+//    @PreAuthorize("hasAuthority('CUSTOMER')")
+//    public String testApi() {
+//        return "Hello world customer";
+//    }
 
 
 //    @GetMapping("/accounts")

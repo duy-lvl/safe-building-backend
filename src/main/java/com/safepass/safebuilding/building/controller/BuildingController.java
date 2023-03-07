@@ -23,24 +23,24 @@ public class BuildingController {
     @Autowired
     private FlatService flatService;
 
-    @GetMapping
-    @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<ResponseObject> getBuildingList(
-            @RequestParam(name = "page", defaultValue = "1") int page,
-            @RequestParam(name = "size", defaultValue = "10") int size
-    ) throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException {
-        return buildingService.getBuildingList(page, size);
-    }
+//    @GetMapping
+//    @PreAuthorize("hasAuthority('ADMIN')")
+//    public ResponseEntity<ResponseObject> getBuildingList(
+//            @RequestParam(name = "page", defaultValue = "1") int page,
+//            @RequestParam(name = "size", defaultValue = "10") int size
+//    ) throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException {
+//        return buildingService.getBuildingList(page, size);
+//    }
 
-    @GetMapping("/find-building")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<ResponseObject> findBuildingByName(
-            @RequestParam(name = "page", defaultValue = "1") int page,
-            @RequestParam(name = "size", defaultValue = "10") int size,
-            @RequestParam(name = "name") String name
-    ) throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException {
-        return buildingService.searchBuildingByName(name, page, size);
-    }
+//    @GetMapping("/find-building")
+//    @PreAuthorize("hasAuthority('ADMIN')")
+//    public ResponseEntity<ResponseObject> findBuildingByName(
+//            @RequestParam(name = "page", defaultValue = "1") int page,
+//            @RequestParam(name = "size", defaultValue = "10") int size,
+//            @RequestParam(name = "name") String name
+//    ) throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException {
+//        return buildingService.searchBuildingByName(name, page, size);
+//    }
 
     @GetMapping("/get-building-list")
     @PreAuthorize("hasAuthority('ADMIN')")
