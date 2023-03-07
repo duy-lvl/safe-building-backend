@@ -13,7 +13,7 @@ import java.util.UUID;
 
 @Component
 public class BuildingUtils {
-    public final String SELECT_BUILDINGS_QUERY = "SELECT DISTINCT id, name, address, status FROM building ";
+    public final String SELECT_BUILDINGS_QUERY = "SELECT DISTINCT id, name, address, status, capacity FROM building ";
     public final String COUNT_RECORD_QUERY = "SELECT DISTINCT COUNT(id) AS totalRow FROM safe_building.building ";
     private final RowMapper<Building> rowMapper = (rs, row) -> {
         Building building = new Building();
@@ -21,6 +21,7 @@ public class BuildingUtils {
         building.setName(rs.getString("name"));
         building.setAddress(rs.getString("address"));
         building.setStatus(BuildingStatus.valueOf(rs.getString("status")));
+        building.setCapacity(rs.getInt("capacity"));
         return building;
     };
     private final RowMapper<Integer> rowCountMapper = (rs, row) -> {
