@@ -30,14 +30,14 @@ public interface FlatService {
             throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException;
 
     /**
-     * Get all available flats in a building by building id
+     * Get all flats in a building by building id
      *
      * @param buildingId {@code String}
      * @return ResponseEntity<ResponseObject>
      *
      * @throws NoSuchDataException
      */
-    ResponseEntity<ResponseObject> getAvailableFlatByBuilding(String buildingId) throws NoSuchDataException;
+    ResponseEntity<ResponseObject> getFlatByBuilding(String buildingId) throws NoSuchDataException;
 
     /**
      * Update flat status

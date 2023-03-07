@@ -23,8 +23,8 @@ public class FlatServiceUtil {
         return "UPDATE flat SET status = '" + status + "' WHERE id = '" + id.toString() + "'";
     }
 
-    public static String queryGetFlat(String buildingId, FlatStatus status) {
-        return "SELECT id, room_number FROM flat WHERE building_id='" + buildingId + "' AND status='" + status
+    public static String queryGetFlat(String buildingId) {
+        return "SELECT id, room_number FROM flat WHERE building_id='" + buildingId
                 + "' ORDER BY room_number ASC";
     }
 }

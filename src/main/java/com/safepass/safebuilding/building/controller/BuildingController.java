@@ -55,18 +55,18 @@ public class BuildingController {
         BuildingGetRequest buildingGetRequest = new BuildingGetRequest(page, size, searchKey, sortBy, order);
         return buildingService.getBuildingList(buildingGetRequest);
     }
-    @GetMapping("/get-available-buildings")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<ResponseObject> getAvailableBuildings() throws NoSuchDataException {
-        return buildingService.getAvailableBuildings();
-    }
+//    @GetMapping("/get-available-buildings")
+//    @PreAuthorize("hasAuthority('ADMIN')")
+//    public ResponseEntity<ResponseObject> getAvailableBuildings() throws NoSuchDataException {
+//        return buildingService.getAvailableBuildings();
+//    }
 
-    @GetMapping("/{buildingId}/get-available-flats")
+    @GetMapping("/{buildingId}/get-flats")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ResponseObject> getFlatList(
             @PathVariable String buildingId
     ) throws NoSuchDataException {
-        return flatService.getAvailableFlatByBuilding(buildingId);
+        return flatService.getFlatByBuilding(buildingId);
     }
 
     @PostMapping("/add-building")

@@ -30,7 +30,7 @@ public class FlatJDBC extends Jdbc {
         return jdbcTemplate.update(query) > 0;
     }
 
-    public List<AvailableFlatDTO> getAvailableFlatByBuildingIdAndStatus(String query) {
+    public List<AvailableFlatDTO> getFlatByBuildingId(String query) {
         return jdbcTemplate.query(query, (rs, rowNum) -> {
             AvailableFlatDTO flatDTO = new AvailableFlatDTO();
             flatDTO.setId(rs.getString("id"));

@@ -70,9 +70,9 @@ public class FlatServiceImpl implements FlatService {
      *
      */
     @Override
-    public ResponseEntity<ResponseObject> getAvailableFlatByBuilding(String buildingId) throws NoSuchDataException {
-        String query = FlatServiceUtil.queryGetFlat(buildingId, FlatStatus.AVAILABLE);
-        List<AvailableFlatDTO> flats = flatJDBC.getAvailableFlatByBuildingIdAndStatus(query);
+    public ResponseEntity<ResponseObject> getFlatByBuilding(String buildingId) throws NoSuchDataException {
+        String query = FlatServiceUtil.queryGetFlat(buildingId);
+        List<AvailableFlatDTO> flats = flatJDBC.getFlatByBuildingId(query);
         ResponseEntity<ResponseObject> responseEntity;
         if (flats.isEmpty()) {
             throw new NoSuchDataException("No building found");
