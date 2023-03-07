@@ -149,8 +149,8 @@ public class BuildingServiceImpl implements BuildingService {
         building = buildingRepository.findBuildingByNameAndAddress(building.getName(), building.getAddress());
         if(building != null) {
             BuildingDTO buildingDTO = modelMapper.map(building, BuildingDTO.class) ;
-            responseObject = new ResponseObject(HttpStatus.OK.toString(), "New building is saved successfully.", null, buildingDTO );
-            return ResponseEntity.status(HttpStatus.OK).body(responseObject);
+            responseObject = new ResponseObject(HttpStatus.CREATED.toString(), "New building is saved successfully.", null, buildingDTO );
+            return ResponseEntity.status(HttpStatus.CREATED).body(responseObject);
         }  else {
             responseObject = new ResponseObject(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Fail to save new building.", null, null );
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseObject);
@@ -186,8 +186,8 @@ public class BuildingServiceImpl implements BuildingService {
 
         if(building.toString().equals(buildingRepository.findById(building.getId()).orElse(null).toString())){
             buildingDTO = modelMapper.map(building, BuildingDTO.class) ;
-            responseObject = new ResponseObject(HttpStatus.OK.toString(), "Building is updated successfully.", null, buildingDTO );
-            return ResponseEntity.status(HttpStatus.OK).body(responseObject);
+            responseObject = new ResponseObject(HttpStatus.CREATED.toString(), "Building is updated successfully.", null, buildingDTO );
+            return ResponseEntity.status(HttpStatus.CREATED).body(responseObject);
         }  else {
             responseObject = new ResponseObject(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Fail to update building.", null, null );
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseObject);
