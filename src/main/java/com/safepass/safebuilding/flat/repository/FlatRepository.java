@@ -12,6 +12,7 @@ import java.util.UUID;
 @Repository
 public interface FlatRepository extends JpaRepository<Flat, UUID> {
    List<Flat> findFlatByBuildingIdAndStatusOrderByRoomNumberAsc(UUID buildingId, FlatStatus status);
+   List<Flat> findFlatByBuildingId(UUID buildingId);
 
    int countFlatByBuildingId(UUID buildingId);
    Optional<Flat> findFlatByRoomNumberAndBuildingId(int roomNumber, UUID buildingId);

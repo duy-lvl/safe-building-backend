@@ -1,7 +1,7 @@
 package com.safepass.safebuilding.building.utils;
 
-import com.safepass.safebuilding.building.entity.BuildingRequest;
 import com.safepass.safebuilding.building.entity.Building;
+import com.safepass.safebuilding.building.dto.BuildingGetRequest;
 import com.safepass.safebuilding.common.meta.BuildingStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -13,8 +13,6 @@ import java.util.UUID;
 
 @Component
 public class BuildingUtils {
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
     public final String SELECT_BUILDINGS_QUERY = "SELECT DISTINCT id, name, address, status FROM building ";
     public final String COUNT_RECORD_QUERY = "SELECT DISTINCT COUNT(id) AS totalRow FROM safe_building.building ";
     private final RowMapper<Building> rowMapper = (rs, row) -> {
@@ -28,7 +26,8 @@ public class BuildingUtils {
     private final RowMapper<Integer> rowCountMapper = (rs, row) -> {
         return rs.getInt("totalRow");
     };
-
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     /**
      * append search query
@@ -77,7 +76,7 @@ public class BuildingUtils {
      * @return String
      */
     public String appendSearchQuery(String searchKey) {
-        if(searchKey == null){
+        if (searchKey == null) {
             searchKey = "";
         }
         StringBuilder sb = new StringBuilder();
@@ -90,39 +89,19 @@ public class BuildingUtils {
     /**
      * append sort query
      *
-     * @param buildingRequest
+     * @param buildingGetRequest
      * @return String
      */
-    public String appendSortQuery(BuildingRequest buildingRequest) {
-        String name = buildingRequest.getSortName();
-        String address = buildingRequest.getSortAddress();
-        String status = buildingRequest.getSortStatus();
-        boolean isNameValid = ("ASC").equalsIgnoreCase(name) || ("DESC").equalsIgnoreCase(name);
-        boolean isAddressValid = ("ASC").equalsIgnoreCase(address) || ("DESC").equalsIgnoreCase(address);
-        boolean isStatusValid = ("ASC").equalsIgnoreCase(status) || ("DESC").equalsIgnoreCase(status);
-        if(!isNameValid && !isAddressValid && !isStatusValid){
+    public String appendSortQuery(BuildingGetRequest buildingGetRequest) {
+        String sortBy = buildingGetRequest.getSortBy();
+        String order = buildingGetRequest.getOrder();
+        boolean isSortByValid = ("name").equalsIgnoreCase(sortBy) || ("address").equalsIgnoreCase(sortBy) || ("status").equalsIgnoreCase(sortBy);
+        boolean isOrderValid = ("ASC").equalsIgnoreCase(order) || ("DESC").equalsIgnoreCase(order);
+        if (!isSortByValid || !isOrderValid) {
             return " ";
         }
         StringBuilder sb = new StringBuilder();
-
-        sb.append(" ORDER BY ");
-
-
-        if (isNameValid) {
-            sb.append(" name ").append(name);
-            if ((isAddressValid)|| (isStatusValid)) {
-                sb.append(", ");
-            }
-        }
-        if (isAddressValid) {
-            sb.append(" address ").append(address);
-            if (isStatusValid) {
-                sb.append(", ");
-            }
-        }
-        if (isStatusValid) {
-            sb.append(" status ").append(status);
-        }
+        sb.append(" ORDER BY ").append(sortBy).append(" ").append(order).append(" ");
         return sb.toString();
     }
 

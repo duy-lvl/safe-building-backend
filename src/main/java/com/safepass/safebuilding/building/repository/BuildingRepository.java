@@ -13,10 +13,13 @@ import java.util.UUID;
 
 @Repository
 public interface BuildingRepository extends JpaRepository<Building, UUID> {
-//    @Cacheable(cacheNames = "BuildingPaginationList")
+    Building findBuildingByNameAndAddress(String name, String address);
+    Building findBuildingByNameAndAddressAndIdIsNotLike(String name, String address, UUID id);
+
+    //    @Cacheable(cacheNames = "BuildingPaginationList")
     Page<Building> findAll(Pageable pageable);
 
-//    @Cacheable(cacheNames = "Building")
+    //    @Cacheable(cacheNames = "Building")
     Page<Building> findByNameContainsIgnoreCase(String name, Pageable pageable);
 
     List<Building> findByStatusOrderByNameAsc(BuildingStatus status);
