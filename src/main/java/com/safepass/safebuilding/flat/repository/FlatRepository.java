@@ -11,5 +11,6 @@ import java.util.UUID;
 @Repository
 public interface FlatRepository extends JpaRepository<Flat, UUID> {
    List<Flat> findFlatByBuildingIdAndStatusOrderByRoomNumberAsc(UUID buildingId, FlatStatus status);
+   List<Flat> findFlatByBuildingId(UUID buildingId);
 
 }

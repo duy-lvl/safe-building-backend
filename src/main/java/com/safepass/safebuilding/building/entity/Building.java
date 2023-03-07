@@ -16,6 +16,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@ToString
 public class Building {
     @Id
     @GeneratedValue(generator = "UUID")
@@ -30,5 +31,8 @@ public class Building {
 
     @Enumerated(EnumType.STRING)
     private BuildingStatus status;
+
+    @Column(columnDefinition = "int default -1")
+    private int capacity;
 
 }

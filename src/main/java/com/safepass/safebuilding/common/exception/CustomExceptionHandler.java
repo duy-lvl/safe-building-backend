@@ -1,5 +1,6 @@
 package com.safepass.safebuilding.common.exception;
 
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.safepass.safebuilding.common.dto.ErrorResponse;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
@@ -77,6 +78,13 @@ public class CustomExceptionHandler extends RuntimeException {
         return new ErrorResponse(new Date(), HttpStatus.FORBIDDEN.toString(), "Expired token.");
     }
 
+    @ExceptionHandler(TokenExpiredException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse expiredTokenException(ExecutionException exception) {
+        exception.printStackTrace();
+        return new ErrorResponse(new Date(), HttpStatus.FORBIDDEN.toString(), "Expired token.");
+    }
+
     @ExceptionHandler(UnsupportedJwtException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResponse unsupportedJwtException(ExecutionException exception) {
@@ -87,7 +95,7 @@ public class CustomExceptionHandler extends RuntimeException {
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse illegalArgumentException(ExecutionException exception) {
-        exception.printStackTrace();
+//        exception.printStackTrace();
         return new ErrorResponse(new Date(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Illegal argument.");
     }
 
