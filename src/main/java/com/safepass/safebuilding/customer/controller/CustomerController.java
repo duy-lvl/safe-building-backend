@@ -64,11 +64,16 @@ public class CustomerController {
 //        return customerService.getAccountList(page, size);
 //    }
 
-    @PostMapping("/filter")
+    @GetMapping("/filter")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ResponseObject> filterCustomer(
-            @RequestBody RequestObjectForFilter requestObjectForFilter
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "") String searchKey,
+            @RequestParam(defaultValue = "") String sortBy,
+            @RequestParam(defaultValue = "") String order
     ) throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException {
+        RequestObjectForFilter requestObjectForFilter = new RequestObjectForFilter(page, size, searchKey, sortBy, order);
         return customerService.filterCustomer(requestObjectForFilter);
     }
 
