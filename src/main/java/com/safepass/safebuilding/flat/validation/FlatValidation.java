@@ -56,7 +56,7 @@ public class FlatValidation {
             Building building = btemp.get();
             int currentNumberOfFlat = flatRepository.countFlatByBuildingId(building.getId());
             if (currentNumberOfFlat >= building.getCapacity()) {
-                throw new InvalidDataException("Building max capacity exceeded");
+                throw new InvalidDataException("Building max capacity exceeded (Max capacity: " + building.getCapacity() + ")");
             }
             Optional<Flat> ftemp = flatRepository.findFlatByRoomNumberAndBuildingId(requestFlat.getRoomNumber(), building.getId());
             if (ftemp.isPresent()) {
@@ -66,7 +66,7 @@ public class FlatValidation {
             if (fttemp.isPresent()) {
                 FlatType flatType = fttemp.get();
 
-                Flat flat = Flat.builder()
+                return Flat.builder()
                         .id(UUID.randomUUID())
                         .status(FlatStatus.valueOf(requestFlat.getStatus()))
                         .detail(requestFlat.getDetail())
@@ -75,7 +75,6 @@ public class FlatValidation {
                         .building(building)
                         .flatType(flatType)
                         .build();
-                return flat;
             }
             throw new InvalidDataException("Flat type does not exist");
         }
