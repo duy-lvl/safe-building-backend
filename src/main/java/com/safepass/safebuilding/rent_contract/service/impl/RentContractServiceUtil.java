@@ -19,12 +19,22 @@ public class RentContractServiceUtil {
     public static String contructQueryGetAll(int page, int size) {
         return "SELECT rent_contract.id, building.name AS building_name, room_number, customer.fullname AS customer_name, rent_contract.title, \n" +
                 "\texpiry_date, rent_contract.status AS status, contract AS rent_contract_link, flat.id AS flat_id, customer.id AS customer_id," +
-                "\t building.address \n" +
+                "\t building.address, building.id AS building_id, rent_contract.start_date \n" +
                 "FROM building JOIN flat ON building.id=flat.building_id  \n" +
                 "\tJOIN rent_contract ON rent_contract.flat_id=flat.id     \n" +
                 "\tJOIN customer ON customer.id=rent_contract.customer_id \n" +
                 "ORDER BY rent_contract.status DESC, building_name ASC, room_number ASC " +
                 "LIMIT " + size + " OFFSET " + (page*size);
+    }
+
+    public static String contructQueryGetById(String id) {
+        return "SELECT rent_contract.id, building.name AS building_name, room_number, customer.fullname AS customer_name, rent_contract.title, \n" +
+                "\texpiry_date, rent_contract.status AS status, contract AS rent_contract_link, flat.id AS flat_id, customer.id AS customer_id," +
+                "\t building.id AS building_id, building.address, rent_contract.start_date \n" +
+                "FROM building JOIN flat ON building.id=flat.building_id  \n" +
+                "\tJOIN rent_contract ON rent_contract.flat_id=flat.id     \n" +
+                "\tJOIN customer ON customer.id=rent_contract.customer_id \n" +
+                "WHERE rent_contract.id = '" + id + "'";
     }
 
     public static String contructQueryGetAllTotalRow() {

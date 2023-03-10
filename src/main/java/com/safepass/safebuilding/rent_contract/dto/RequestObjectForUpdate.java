@@ -11,6 +11,7 @@ public class RequestObjectForUpdate {
     private String contractId;
     private String customerId;
     private String flatId;
+    private String startDate;
     private String expiryDate;
     private String title;
     private int value;

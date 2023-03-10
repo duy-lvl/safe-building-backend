@@ -61,4 +61,12 @@ public interface RentContractService {
             throws IOException, SQLException, InvalidDataException;
     ResponseEntity<ResponseObject> updateContract(MultipartFile[] files, String requestObject)
             throws IOException, SQLException, InvalidDataException;
+
+    /**
+     * Get contract by id
+     *
+     * @param id {@code String}
+     * @return ResponseEntity<ResponseObject>
+     */
+    ResponseEntity<ResponseObject> getContractById(String id);
 }

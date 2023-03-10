@@ -14,7 +14,6 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 @Entity
 @Builder
 public class RentContract {
@@ -35,6 +34,7 @@ public class RentContract {
 
     private String title;
     private String contract;
+    private Date startDate;
     private Date expiryDate;
     private int value;
 

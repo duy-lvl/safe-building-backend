@@ -35,12 +35,14 @@ public class RentContractJDBC extends Jdbc {
             rentContractDTO.setCustomerName(rs.getString("customer_name"));
             rentContractDTO.setRoomNumber(rs.getInt("room_number"));
             rentContractDTO.setExpiryDate(sdf.format(rs.getDate("expiry_date")));
+            rentContractDTO.setStartDate(sdf.format(rs.getDate("start_date")));
             rentContractDTO.setStatus(RentContractStatus.valueOf(rs.getString("status")));
             rentContractDTO.setRentContractLink(rs.getString("rent_contract_link"));
             rentContractDTO.setTitle(rs.getString("title"));
             rentContractDTO.setCustomerId(rs.getString("customer_id"));
             rentContractDTO.setFlatId(rs.getString("flat_id"));
             rentContractDTO.setBuildingAddress(rs.getString("address"));
+            rentContractDTO.setBuildingId(rs.getString("building_id"));
             return rentContractDTO;
         });
 
