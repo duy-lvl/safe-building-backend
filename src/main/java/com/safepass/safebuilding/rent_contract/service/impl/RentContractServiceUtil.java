@@ -19,7 +19,7 @@ public class RentContractServiceUtil {
     public static String contructQueryGetAll(int page, int size) {
         return "SELECT rent_contract.id, building.name AS building_name, room_number, customer.fullname AS customer_name, rent_contract.title, \n" +
                 "\texpiry_date, rent_contract.status AS status, contract AS rent_contract_link, flat.id AS flat_id, customer.id AS customer_id," +
-                "\t building.address, building.id AS building_id, rent_contract.start_date \n" +
+                "\t building.address, building.id AS building_id, rent_contract.start_date, rent_contract.value \n" +
                 "FROM building JOIN flat ON building.id=flat.building_id  \n" +
                 "\tJOIN rent_contract ON rent_contract.flat_id=flat.id     \n" +
                 "\tJOIN customer ON customer.id=rent_contract.customer_id \n" +
@@ -30,7 +30,7 @@ public class RentContractServiceUtil {
     public static String contructQueryGetById(String id) {
         return "SELECT rent_contract.id, building.name AS building_name, room_number, customer.fullname AS customer_name, rent_contract.title, \n" +
                 "\texpiry_date, rent_contract.status AS status, contract AS rent_contract_link, flat.id AS flat_id, customer.id AS customer_id," +
-                "\t building.id AS building_id, building.address, rent_contract.start_date \n" +
+                "\t building.id AS building_id, building.address, rent_contract.start_date, rent_contract.value \n" +
                 "FROM building JOIN flat ON building.id=flat.building_id  \n" +
                 "\tJOIN rent_contract ON rent_contract.flat_id=flat.id     \n" +
                 "\tJOIN customer ON customer.id=rent_contract.customer_id \n" +
@@ -45,10 +45,10 @@ public class RentContractServiceUtil {
     }
 
     public static String queryInsert(RequestObjectForCreate requestObj, String url) {
-        return "INSERT INTO rent_contract(id, title, contract, expiry_date, status, value, customer_id, flat_id)\n" +
+        return "INSERT INTO rent_contract(id, title, contract, expiry_date, status, value, customer_id, flat_id, start_date)\n" +
                 "VALUES('" + UUID.randomUUID() + "', '" + requestObj.getTitle() + "', '" + url + "', '" +
                 requestObj.getExpiryDate() + "', '" + RentContractStatus.VALID + "', " + requestObj.getValue() +
-                ", '" + requestObj.getCustomerId() + "', '" + requestObj.getFlatId() +"')";
+                ", '" + requestObj.getCustomerId() + "', '" + requestObj.getFlatId() + "', '" + requestObj.getStartDate() +"')";
     }
 
     public static String queryUpdate(RequestObjectForUpdate requestObj, String url) {
@@ -56,7 +56,8 @@ public class RentContractServiceUtil {
                 "', value=" +requestObj.getValue() +
                 ", customer_id='" + requestObj.getCustomerId() +
                 "', flat_id='" + requestObj.getFlatId() +
-                "', expiry_date='" + requestObj.getExpiryDate();
+                "', expiry_date='" + requestObj.getExpiryDate() +
+                "', start_date='" + requestObj.getStartDate();
         if (requestObj.isChange()) {
             query += "', contract='" + url;
         }
