@@ -1,6 +1,8 @@
 package com.safepass.safebuilding.customer.dto;
 
 import com.safepass.safebuilding.common.meta.CustomerStatus;
+import com.safepass.safebuilding.device.dto.DeviceDTO;
+import com.safepass.safebuilding.device.entity.Device;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -23,4 +25,5 @@ public class CustomerInfo {
     private CustomerStatus status;
     private List<ContractDTO> contract; //contract and room_number
     private String dateJoin;
+    private List<DeviceDTO> devices;
 }

@@ -361,6 +361,11 @@ public class CustomerServiceImpl implements CustomerService {
             String contractQuery = CustomerUtils.getContracts(customer.getId().toString());
             List<ContractDTO> contractDTOS = customerJDBC.getContracts(contractQuery);
             customerInfo.setContract(contractDTOS);
+
+            List<Device> devices = deviceRepository.findByCustomerId(UUID.fromString(customerInfo.getId()));
+            List<DeviceDTO> deviceDTOs = modelMapperCustom.mapList(devices, DeviceDTO.class);
+            customerInfo.setDevices(deviceDTOs);
+
             return ResponseEntity.status(HttpStatus.OK)
                     .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", null, customerInfo));
         }
