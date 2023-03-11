@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ContractDTO {
+    private String id;
     private String link;
     private int roomNumber;
     private RentContractStatus status;

@@ -31,6 +31,12 @@ public class RentContractController {
         return rentContractService.getList(page, size);
     }
 
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<ResponseObject> getById(@PathVariable String id) {
+        return rentContractService.getContractById(id);
+    }
+
     @PostMapping("/create-contract")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ResponseObject> createContract(

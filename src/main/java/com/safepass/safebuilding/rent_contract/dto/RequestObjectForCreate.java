@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 public class RequestObjectForCreate {
     private String customerId;
     private String flatId;
+    private String startDate;
     private String expiryDate;
     private String title;
     private int value;

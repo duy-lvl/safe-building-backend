@@ -39,6 +39,7 @@ public class CustomerJDBC extends Jdbc {
             contractDTO.setTitle(rs.getString("title"));
             contractDTO.setBuildAddress(rs.getString("address"));
             contractDTO.setBuildingName(rs.getString("name"));
+            contractDTO.setId(rs.getString("id"));
             return contractDTO;
         });
     }

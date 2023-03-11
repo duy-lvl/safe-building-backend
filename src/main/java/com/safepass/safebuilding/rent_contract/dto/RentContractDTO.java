@@ -15,10 +15,13 @@ public class RentContractDTO {
     private String buildingAddress;
     private int roomNumber;
     private String customerName;
+    private String startDate;
     private String expiryDate;
+    private int value;
     private RentContractStatus status;
     private String title;
     private String rentContractLink;
     private String customerId;
     private String flatId;
+    private String buildingId;
 }

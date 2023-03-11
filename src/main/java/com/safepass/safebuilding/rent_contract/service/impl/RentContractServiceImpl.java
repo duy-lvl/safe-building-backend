@@ -14,6 +14,7 @@ import com.safepass.safebuilding.flat.service.FlatService;
 import com.safepass.safebuilding.rent_contract.dto.RentContractDTO;
 import com.safepass.safebuilding.rent_contract.dto.RequestObjectForCreate;
 import com.safepass.safebuilding.rent_contract.dto.RequestObjectForUpdate;
+import com.safepass.safebuilding.rent_contract.entity.RentContract;
 import com.safepass.safebuilding.rent_contract.jdbc.RentContractJDBC;
 import com.safepass.safebuilding.rent_contract.service.RentContractService;
 import com.safepass.safebuilding.rent_contract.validation.RentContractValidation;
@@ -148,6 +149,15 @@ public class RentContractServiceImpl implements RentContractService {
         flatService.updateFlatStatus(UUID.fromString(rentContractRequest.getFlatId()), FlatStatus.UNAVAILABLE);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ResponseObject(HttpStatus.CREATED.toString(), "Successfully", null, null));
+    }
+
+    @Override
+    public ResponseEntity<ResponseObject> getContractById(String id) {
+        String query = RentContractServiceUtil.contructQueryGetById(id);
+        RentContractDTO rentContractDTO = rentContractJDBC.getList(query).get(0);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", null, rentContractDTO));
     }
 
 

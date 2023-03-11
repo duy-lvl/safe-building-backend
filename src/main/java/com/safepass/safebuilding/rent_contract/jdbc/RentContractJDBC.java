@@ -1,13 +1,9 @@
 package com.safepass.safebuilding.rent_contract.jdbc;
 
-import com.safepass.safebuilding.common.dto.ResponseObject;
 import com.safepass.safebuilding.common.jdbc.Jdbc;
 import com.safepass.safebuilding.common.meta.RentContractStatus;
 import com.safepass.safebuilding.rent_contract.dto.RentContractDTO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
@@ -35,12 +31,15 @@ public class RentContractJDBC extends Jdbc {
             rentContractDTO.setCustomerName(rs.getString("customer_name"));
             rentContractDTO.setRoomNumber(rs.getInt("room_number"));
             rentContractDTO.setExpiryDate(sdf.format(rs.getDate("expiry_date")));
+            rentContractDTO.setStartDate(sdf.format(rs.getDate("start_date")));
             rentContractDTO.setStatus(RentContractStatus.valueOf(rs.getString("status")));
             rentContractDTO.setRentContractLink(rs.getString("rent_contract_link"));
             rentContractDTO.setTitle(rs.getString("title"));
             rentContractDTO.setCustomerId(rs.getString("customer_id"));
             rentContractDTO.setFlatId(rs.getString("flat_id"));
             rentContractDTO.setBuildingAddress(rs.getString("address"));
+            rentContractDTO.setBuildingId(rs.getString("building_id"));
+            rentContractDTO.setValue(rs.getInt("value"));
             return rentContractDTO;
         });
 

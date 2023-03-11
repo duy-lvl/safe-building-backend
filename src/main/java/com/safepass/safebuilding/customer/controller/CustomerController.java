@@ -92,7 +92,8 @@ public class CustomerController {
     }
 
     @GetMapping("/{customerId}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'CUSTOMER')")
+
     public ResponseEntity<ResponseObject> getCustomer(@PathVariable String customerId)
             throws NoSuchDataException {
         return customerService.getCustomer(customerId);
