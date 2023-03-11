@@ -17,7 +17,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Entity
 @ToString
-public class Building {
+public class Building implements Serializable {
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")

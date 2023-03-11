@@ -3,6 +3,7 @@ package com.safepass.safebuilding.building.controller;
 import com.safepass.safebuilding.building.dto.BuildingDTO;
 import com.safepass.safebuilding.building.dto.BuildingGetRequest;
 import com.safepass.safebuilding.building.dto.BuildingPostRequest;
+import com.safepass.safebuilding.building.entity.Building;
 import com.safepass.safebuilding.building.service.BuildingService;
 import com.safepass.safebuilding.common.dto.ResponseObject;
 import com.safepass.safebuilding.common.exception.InvalidPageSizeException;
@@ -10,9 +11,13 @@ import com.safepass.safebuilding.common.exception.MaxPageExceededException;
 import com.safepass.safebuilding.common.exception.NoSuchDataException;
 import com.safepass.safebuilding.flat.service.FlatService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -79,5 +84,17 @@ public class BuildingController {
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ResponseObject> updateBuilding(@RequestBody BuildingDTO building) {
         return buildingService.updateBuilding(building);
+    }
+
+    @GetMapping("get-building-demo")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public Optional<Building> getBuildingDemo(@RequestParam String id){
+        return buildingService.getBuildingById(id);
+    }
+
+    @GetMapping("get-building-list-demo")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public List<Building> getBuildingListDemo(@RequestParam String name){
+        return buildingService.getListBuildingByName(name);
     }
 }

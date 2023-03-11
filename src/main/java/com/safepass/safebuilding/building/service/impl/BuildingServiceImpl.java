@@ -19,6 +19,8 @@ import com.safepass.safebuilding.common.utils.ModelMapperCustom;
 import com.safepass.safebuilding.common.validation.PaginationValidation;
 import com.safepass.safebuilding.flat.repository.FlatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -27,9 +29,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
+//@CacheConfig(cacheNames = {"building"})
 public class BuildingServiceImpl implements BuildingService {
     private final ModelMapperCustom modelMapper = new ModelMapperCustom();
     @Autowired
@@ -88,6 +92,7 @@ public class BuildingServiceImpl implements BuildingService {
     }
 
     @Override
+//    @Cacheable(key = "#buildingGetRequest")
     public ResponseEntity<ResponseObject> getBuildingList(BuildingGetRequest buildingGetRequest)
             throws ResourceNotFoundException, InvalidPageSizeException, NoSuchDataException, MaxPageExceededException
     {
@@ -192,5 +197,18 @@ public class BuildingServiceImpl implements BuildingService {
             responseObject = new ResponseObject(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Fail to update building.", null, null );
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseObject);
         }
+    }
+
+    @Override
+//    @Cacheable(key = "#id")
+    public Optional<Building> getBuildingById(String id){
+        System.out.println(buildingRepository.findBuildingById(UUID.fromString(id)));
+        return buildingRepository.findBuildingById(UUID.fromString(id));
+    }
+
+    @Override
+//    @Cacheable(key="#name")
+    public List<Building> getListBuildingByName(String name) {
+        return buildingRepository.findBuildingByNameContainsIgnoreCase(name);
     }
 }

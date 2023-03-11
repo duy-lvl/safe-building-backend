@@ -8,9 +8,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.*;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
+import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
@@ -19,6 +19,8 @@ import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.time.Duration;
+import java.util.Collections;
+import java.util.List;
 
 @Configuration
 @EnableCaching
@@ -37,7 +39,10 @@ public class RedisCacheConfig {
 
     @Bean
     public LettuceConnectionFactory redisConnectionFactory() {
-        RedisStandaloneConfiguration redisConfig = new RedisStandaloneConfiguration(hostName, 6379);
+        RedisStandaloneConfiguration redisConfig = new RedisStandaloneConfiguration("localhost", 6379);
+//        List<String> nodes = Collections.singletonList("safe-building-redis-cache.lthkk1.clustercfg.apne1.cache.amazonaws.com:6379");
+//        RedisClusterConfiguration clusterConfiguration = new RedisClusterConfiguration(nodes);
+//        return new LettuceConnectionFactory(clusterConfiguration);
         return new LettuceConnectionFactory(redisConfig);
     }
 

@@ -14,6 +14,7 @@ import java.util.UUID;
 @Repository
 public interface BuildingRepository extends JpaRepository<Building, UUID> {
     Building findBuildingByNameAndAddress(String name, String address);
+    List<Building> findBuildingByNameContainsIgnoreCase(String name);
     Building findBuildingByNameAndAddressAndIdIsNotLike(String name, String address, UUID id);
 
     //    @Cacheable(cacheNames = "BuildingPaginationList")
