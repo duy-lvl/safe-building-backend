@@ -22,5 +22,5 @@ public class CustomerInfo {
     private String citizenId;
     private CustomerStatus status;
     private List<ContractDTO> contract; //contract and room_number
-
+    private String dateJoin;
 }
