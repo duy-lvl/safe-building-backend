@@ -4,6 +4,9 @@ import com.safepass.safebuilding.building.entity.Building;
 import com.safepass.safebuilding.building.dto.BuildingGetRequest;
 import com.safepass.safebuilding.common.meta.BuildingStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
@@ -12,6 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Component
+@CacheConfig(cacheNames = {"building"})
 public class BuildingUtils {
     public final String SELECT_BUILDINGS_QUERY = "SELECT DISTINCT id, name, address, status, capacity FROM building ";
     public final String COUNT_RECORD_QUERY = "SELECT DISTINCT COUNT(id) AS totalRow FROM safe_building.building ";
@@ -133,6 +137,7 @@ public class BuildingUtils {
      * @param query
      * @return List<Building>
      */
+    @CachePut(key="#query")
     public List<Building> getBuildingList(String query) {
         return jdbcTemplate.query(query, rowMapper);
     }

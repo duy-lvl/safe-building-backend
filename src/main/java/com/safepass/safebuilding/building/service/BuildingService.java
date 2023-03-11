@@ -3,12 +3,16 @@ package com.safepass.safebuilding.building.service;
 import com.safepass.safebuilding.building.dto.BuildingDTO;
 import com.safepass.safebuilding.building.dto.BuildingPostRequest;
 import com.safepass.safebuilding.building.dto.BuildingGetRequest;
+import com.safepass.safebuilding.building.entity.Building;
 import com.safepass.safebuilding.common.dto.ResponseObject;
 import com.safepass.safebuilding.common.exception.InvalidPageSizeException;
 import com.safepass.safebuilding.common.exception.MaxPageExceededException;
 import com.safepass.safebuilding.common.exception.NoSuchDataException;
 import com.safepass.safebuilding.common.exception.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
+
+import java.util.List;
+import java.util.Optional;
 
 public interface BuildingService {
     /**
@@ -57,4 +61,8 @@ public interface BuildingService {
      * @return ResponseEntity<ResponseObject>
      */
     ResponseEntity<ResponseObject> updateBuilding(BuildingDTO buildingDTO);
+
+    public Optional<Building> getBuildingById(String id);
+
+    public List<Building> getListBuildingByName(String name);
 }
