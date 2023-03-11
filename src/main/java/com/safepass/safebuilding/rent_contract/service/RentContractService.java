@@ -57,7 +57,7 @@ public interface RentContractService {
      * @throws SQLException
      * @throws InvalidDataException
      */
-    ResponseEntity<ResponseObject> createContract(MultipartFile[] files, String requestObject)
+    ResponseEntity<ResponseObject> createContract(MultipartFile[] files, String requestObject, String deviceToken)
             throws IOException, SQLException, InvalidDataException;
     ResponseEntity<ResponseObject> updateContract(MultipartFile[] files, String requestObject)
             throws IOException, SQLException, InvalidDataException;

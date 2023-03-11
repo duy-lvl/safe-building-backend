@@ -7,6 +7,8 @@ import com.safepass.safebuilding.common.exception.InvalidDataException;
 import com.safepass.safebuilding.common.exception.InvalidPageSizeException;
 import com.safepass.safebuilding.common.exception.MaxPageExceededException;
 import com.safepass.safebuilding.common.exception.NoSuchDataException;
+import com.safepass.safebuilding.common.firebase.entity.NotificationMessage;
+import com.safepass.safebuilding.common.firebase.service.FirebaseMessagingService;
 import com.safepass.safebuilding.common.firebase.service.IImageService;
 import com.safepass.safebuilding.common.meta.FlatStatus;
 import com.safepass.safebuilding.common.validation.PaginationValidation;
@@ -27,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -42,6 +45,8 @@ public class RentContractServiceImpl implements RentContractService {
     private FlatService flatService;
     @Autowired
     private RentContractValidation rentContractValidation;
+    @Autowired
+    private FirebaseMessagingService firebaseMessagingService;
 
     /**
      * {@inheritDoc}
@@ -107,7 +112,8 @@ public class RentContractServiceImpl implements RentContractService {
      */
     @Override
     @Transactional(rollbackFor = {SQLException.class, IOException.class})
-    public ResponseEntity<ResponseObject> createContract(MultipartFile[] files, String requestObject) throws IOException, SQLException, InvalidDataException {
+    public ResponseEntity<ResponseObject> createContract(MultipartFile[] files, String requestObject, String deviceToken)
+            throws IOException, SQLException, InvalidDataException {
         Gson gson = new Gson();
         RequestObjectForCreate rentContractRequest = gson.fromJson(requestObject, RequestObjectForCreate.class);
 
@@ -121,6 +127,8 @@ public class RentContractServiceImpl implements RentContractService {
         }
 
         flatService.updateFlatStatus(UUID.fromString(rentContractRequest.getFlatId()), FlatStatus.UNAVAILABLE);
+        NotificationMessage notificationMessage = new NotificationMessage(deviceToken, "Thông báo từ Safe Building", "Bạn có hợp đồng mới", new HashMap<String, String>());
+        firebaseMessagingService.sendNotificationByToken(notificationMessage);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ResponseObject(HttpStatus.CREATED.toString(), "Successfully", null, null));
     }

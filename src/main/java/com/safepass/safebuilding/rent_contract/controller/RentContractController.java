@@ -41,9 +41,10 @@ public class RentContractController {
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ResponseObject> createContract(
             @RequestParam String requestContract,
+            @RequestParam String deviceToken,
             @RequestParam MultipartFile[] files
     ) throws IOException, SQLException, InvalidDataException {
-        return rentContractService.createContract(files, requestContract);
+        return rentContractService.createContract(files, requestContract, deviceToken);
     }
 
     @PutMapping("/edit-contract")
