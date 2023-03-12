@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class AvailableFlatDTO {
     private String id;
     private int roomNumber;
+    private int value;
 }

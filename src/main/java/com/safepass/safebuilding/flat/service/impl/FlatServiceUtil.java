@@ -24,7 +24,7 @@ public class FlatServiceUtil {
     }
 
     public static String queryGetFlat(String buildingId) {
-        return "SELECT id, room_number FROM flat WHERE building_id='" + buildingId
+        return "SELECT id, room_number, price FROM flat WHERE building_id='" + buildingId
                 + "' ORDER BY room_number ASC";
     }
 }

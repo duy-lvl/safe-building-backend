@@ -35,6 +35,7 @@ public class FlatJDBC extends Jdbc {
             AvailableFlatDTO flatDTO = new AvailableFlatDTO();
             flatDTO.setId(rs.getString("id"));
             flatDTO.setRoomNumber(rs.getInt("room_number"));
+            flatDTO.setValue(rs.getInt("price"));
             return flatDTO;
         });
     }
