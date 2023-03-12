@@ -11,6 +11,7 @@ import com.safepass.safebuilding.common.firebase.entity.NotificationMessage;
 import com.safepass.safebuilding.common.firebase.service.FirebaseMessagingService;
 import com.safepass.safebuilding.common.firebase.service.IImageService;
 import com.safepass.safebuilding.common.meta.FlatStatus;
+import com.safepass.safebuilding.common.meta.RentContractStatus;
 import com.safepass.safebuilding.common.validation.PaginationValidation;
 import com.safepass.safebuilding.flat.service.FlatService;
 import com.safepass.safebuilding.rent_contract.dto.RentContractDTO;
@@ -18,6 +19,7 @@ import com.safepass.safebuilding.rent_contract.dto.RequestObjectForCreate;
 import com.safepass.safebuilding.rent_contract.dto.RequestObjectForUpdate;
 import com.safepass.safebuilding.rent_contract.entity.RentContract;
 import com.safepass.safebuilding.rent_contract.jdbc.RentContractJDBC;
+import com.safepass.safebuilding.rent_contract.repository.RentContractRepository;
 import com.safepass.safebuilding.rent_contract.service.RentContractService;
 import com.safepass.safebuilding.rent_contract.validation.RentContractValidation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -47,6 +50,9 @@ public class RentContractServiceImpl implements RentContractService {
     private RentContractValidation rentContractValidation;
     @Autowired
     private FirebaseMessagingService firebaseMessagingService;
+
+    @Autowired
+    private RentContractRepository rentContractRepository;
 
     /**
      * {@inheritDoc}
@@ -131,6 +137,19 @@ public class RentContractServiceImpl implements RentContractService {
         firebaseMessagingService.sendNotificationByToken(notificationMessage);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ResponseObject(HttpStatus.CREATED.toString(), "Successfully", null, null));
+    }
+
+    @Override
+    public ResponseEntity<ResponseObject> deleteContract(String contractId) throws NoSuchDataException {
+        Optional<RentContract> rctemp = rentContractRepository.findRentContractById(UUID.fromString(contractId));
+        if (rctemp.isPresent()) {
+            RentContract rentContract = rctemp.get();
+            rentContract.setStatus(RentContractStatus.DELETED);
+            rentContractRepository.save(rentContract);
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ResponseObject(HttpStatus.OK.toString(), "Contract is deleted successfully", null, null));
+        }
+        throw new NoSuchDataException("Contract not found");
     }
 
     @Override

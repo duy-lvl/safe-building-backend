@@ -5,7 +5,6 @@ import com.safepass.safebuilding.common.exception.InvalidDataException;
 import com.safepass.safebuilding.common.exception.InvalidPageSizeException;
 import com.safepass.safebuilding.common.exception.MaxPageExceededException;
 import com.safepass.safebuilding.common.exception.NoSuchDataException;
-import com.safepass.safebuilding.rent_contract.dto.RequestObjectForCreate;
 import com.safepass.safebuilding.rent_contract.service.RentContractService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -47,12 +46,9 @@ public class RentContractController {
         return rentContractService.createContract(files, requestContract, deviceToken);
     }
 
-    @PutMapping("/edit-contract")
+    @DeleteMapping("/delete-contract/{contractId}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<ResponseObject> editContract(
-            @RequestParam String requestContract,
-            @RequestParam MultipartFile[] files
-    ) throws IOException, SQLException, InvalidDataException {
-        return rentContractService.updateContract(files, requestContract);
+    public ResponseEntity<ResponseObject> deleteContract(@PathVariable String contractId) throws NoSuchDataException {
+        return rentContractService.deleteContract(contractId);
     }
 }

@@ -5,7 +5,6 @@ import com.safepass.safebuilding.common.exception.InvalidDataException;
 import com.safepass.safebuilding.common.exception.InvalidPageSizeException;
 import com.safepass.safebuilding.common.exception.MaxPageExceededException;
 import com.safepass.safebuilding.common.exception.NoSuchDataException;
-import com.safepass.safebuilding.rent_contract.dto.RequestObjectForCreate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -57,8 +56,7 @@ public interface RentContractService {
      * @throws SQLException
      * @throws InvalidDataException
      */
-    ResponseEntity<ResponseObject> createContract(MultipartFile[] files, String requestObject, String deviceToken)
-            throws IOException, SQLException, InvalidDataException;
+
     ResponseEntity<ResponseObject> updateContract(MultipartFile[] files, String requestObject)
             throws IOException, SQLException, InvalidDataException;
 
@@ -69,4 +67,20 @@ public interface RentContractService {
      * @return ResponseEntity<ResponseObject>
      */
     ResponseEntity<ResponseObject> getContractById(String id);
+
+
+    /**
+     * Get account list for account management screen
+     *
+     * @param files {@code MultipartFile[]}
+     * @param requestObject {@code String}
+     * <p>Request object is a JSON string {customerId, flatId, expiryDate, value}</p>
+     * @return ResponseEntity<ResponseObject>
+     * @throws IOException
+     * @throws SQLException
+     * @throws InvalidDataException
+     */
+    ResponseEntity<ResponseObject> createContract(MultipartFile[] files, String requestObject, String deviceToken)
+            throws IOException, SQLException, InvalidDataException;
+    ResponseEntity<ResponseObject> deleteContract(String contractId) throws NoSuchDataException;
 }
