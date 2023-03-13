@@ -17,21 +17,32 @@ public class ServiceController {
     @Autowired
     private ServiceService serviceService;
 
-    @GetMapping("/services")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<ResponseObject> adminGetList(
-            @RequestParam(name = "page", defaultValue = "1")  int page,
-            @RequestParam(name = "size", defaultValue = "10") int size
-    ) throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException {
-        return serviceService.getAllService(page, size);
-    }
+//    @GetMapping("/services")
+//    @PreAuthorize("hasAuthority('ADMIN')")
+//    public ResponseEntity<ResponseObject> adminGetList(
+//            @RequestParam(name = "page", defaultValue = "1")  int page,
+//            @RequestParam(name = "size", defaultValue = "10") int size
+//    ) throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException {
+//        return serviceService.getAllService(page, size);
+//    }
 
     @GetMapping("/mobile/services")
     @PreAuthorize("hasAuthority('CUSTOMER')")
     public ResponseEntity<ResponseObject> mobileGetList(
             @RequestParam(name = "page", defaultValue = "1")  int page,
-            @RequestParam(name = "size", defaultValue = "10") int size
-    ) throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException {
+            @RequestParam(name = "size", defaultValue = "10") int size) {
         return serviceService.getActiveServices(page, size);
+    }
+
+    @GetMapping("/services")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<ResponseObject> searchService(
+            @RequestParam(name = "page", defaultValue = "1")  int page,
+            @RequestParam(name = "size", defaultValue = "10") int size,
+            @RequestParam(name = "searchKey", defaultValue = "") String searchKey,
+            @RequestParam(name = "sortBy", defaultValue = "") String sortBy,
+            @RequestParam(name = "order", defaultValue = "") String order
+    ) throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException {
+        return serviceService.getServiceList(page, size, searchKey, sortBy, order);
     }
 }

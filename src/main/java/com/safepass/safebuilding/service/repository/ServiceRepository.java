@@ -14,4 +14,6 @@ import java.util.UUID;
 public interface ServiceRepository extends JpaRepository<Service, UUID> {
     Page<Service> findByStatus(ServiceStatus status, Pageable pageable);
     Optional<Service> findServiceById(UUID id);
+
+
 }

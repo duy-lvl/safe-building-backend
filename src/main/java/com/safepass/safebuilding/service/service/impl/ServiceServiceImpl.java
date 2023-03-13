@@ -10,6 +10,7 @@ import com.safepass.safebuilding.common.utils.ModelMapperCustom;
 import com.safepass.safebuilding.common.validation.PaginationValidation;
 import com.safepass.safebuilding.service.dto.MobileServiceDTO;
 import com.safepass.safebuilding.service.dto.ServiceDTO;
+import com.safepass.safebuilding.service.jdbc.ServiceJdbc;
 import com.safepass.safebuilding.service.repository.ServiceRepository;
 import com.safepass.safebuilding.service.service.ServiceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,8 @@ public class ServiceServiceImpl implements ServiceService {
     private ModelMapperCustom modelMapper = new ModelMapperCustom();
     @Autowired
     private PaginationValidation paginationValidation;
+    @Autowired
+    private ServiceJdbc serviceJdbc;
     @Override
     public ResponseEntity<ResponseObject> getAllService(int page, int size)
             throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException
@@ -51,19 +54,44 @@ public class ServiceServiceImpl implements ServiceService {
     }
 
     @Override
-    public ResponseEntity<ResponseObject> getActiveServices(int page, int size)
-            throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException {
+    public ResponseEntity<ResponseObject> getActiveServices(int page, int size) {
+        try {
+            paginationValidation.validatePageSize(page, size);
+            Pageable pageRequest = PageRequest.of(page - 1, size);
+            Page<com.safepass.safebuilding.service.entity.Service> servicePage
+                    = serviceRepository.findByStatus(ServiceStatus.ACTIVE, pageRequest);
+            int totalPage = servicePage.getTotalPages();
+            Pagination pagination = new Pagination(page, size, totalPage);
+            paginationValidation.validateMaxPageNumber(pagination);
+
+            List<com.safepass.safebuilding.service.entity.Service> services = servicePage.getContent();
+            List<MobileServiceDTO> serviceDTOs = modelMapper.mapList(services, MobileServiceDTO.class);
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", pagination, serviceDTOs));
+        } catch (InvalidPageSizeException | MaxPageExceededException | NoSuchDataException e) {
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ResponseObject(HttpStatus.OK.toString(), "No data", null, null));
+        }
+    }
+
+    @Override
+    public ResponseEntity<ResponseObject> getServiceList(int page, int size, String searchKey, String sortBy, String order) throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException {
         paginationValidation.validatePageSize(page, size);
-        Pageable pageRequest = PageRequest.of(page - 1, size);
-        Page<com.safepass.safebuilding.service.entity.Service> servicePage
-                = serviceRepository.findByStatus(ServiceStatus.ACTIVE, pageRequest);
-        int totalPage = servicePage.getTotalPages();
+        String queryGet = ServiceServiceUtils.getQuery() +
+                ServiceServiceUtils.appendSearchQuery(searchKey) +
+                ServiceServiceUtils.appendSortQuery(sortBy, order) +
+                ServiceServiceUtils.appendPagination(page-1, size);
+
+        List<com.safepass.safebuilding.service.entity.Service> services = serviceJdbc.searchService(queryGet);
+        int totalRow = services.size();
+
+        int totalPage = (int) Math.ceil(1.0 * totalRow / size);
         Pagination pagination = new Pagination(page, size, totalPage);
         paginationValidation.validateMaxPageNumber(pagination);
 
-        List<com.safepass.safebuilding.service.entity.Service> services = servicePage.getContent();
-        List<MobileServiceDTO> serviceDTOs = modelMapper.mapList(services, MobileServiceDTO.class);
+
+//        List<ServiceDTO> serviceDTOs = modelMapper.mapList(services, ServiceDTO.class);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", pagination, serviceDTOs));
+                .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", pagination, services));
     }
 }

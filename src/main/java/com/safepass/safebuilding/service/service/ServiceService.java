@@ -11,6 +11,8 @@ public interface ServiceService {
     ResponseEntity<ResponseObject> getAllService(int page, int size)
             throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException;
 
-    ResponseEntity<ResponseObject> getActiveServices(int page, int size)
+    ResponseEntity<ResponseObject> getActiveServices(int page, int size);
+
+    ResponseEntity<ResponseObject> getServiceList(int page, int size, String searchKey, String sortBy, String order)
             throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException;
 }
