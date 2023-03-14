@@ -86,15 +86,15 @@ public class BuildingController {
         return buildingService.updateBuilding(building);
     }
 
-    @GetMapping("get-building-demo")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    public Optional<Building> getBuildingDemo(@RequestParam String id){
-        return buildingService.getBuildingById(id);
-    }
-
-    @GetMapping("get-building-list-demo")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    public List<Building> getBuildingListDemo(@RequestParam String name){
-        return buildingService.getListBuildingByName(name);
-    }
+//    @GetMapping("get-building-demo")
+//    @PreAuthorize("hasAuthority('ADMIN')")
+//    public Optional<Building> getBuildingDemo(@RequestParam String id){
+//        return buildingService.getBuildingById(id);
+//    }
+//
+//    @GetMapping("get-building-list-demo")
+//    @PreAuthorize("hasAuthority('ADMIN')")
+//    public List<Building> getBuildingListDemo(@RequestParam String name){
+//        return buildingService.getListBuildingByName(name);
+//    }
 }

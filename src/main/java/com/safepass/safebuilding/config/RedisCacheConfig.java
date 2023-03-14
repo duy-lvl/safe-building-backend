@@ -22,8 +22,8 @@ import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
 
-@Configuration
-@EnableCaching
+//@Configuration
+//@EnableCaching
 public class RedisCacheConfig {
     @Value("${host.name}")
     private String hostName;
