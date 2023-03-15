@@ -46,5 +46,14 @@ public interface IImageService {
         }
     }
 
+    /**
+     * Save file to firebase and get the link
+     *
+     * @param files {@code MultipartFile[]}
+     * @return ResponseEntity<ResponseObject>
+     *
+     * @throws IOException
+     */
+    String create(MultipartFile[] files) throws IOException;
 }
 

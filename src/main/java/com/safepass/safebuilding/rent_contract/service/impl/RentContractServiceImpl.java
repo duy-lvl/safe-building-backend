@@ -60,7 +60,7 @@ public class RentContractServiceImpl implements RentContractService {
      */
     @Override
     public ResponseEntity<ResponseObject> uploadFile(MultipartFile[] files, String customerId, String rentContractId, String flatId) throws IOException {
-        String url = create(files);
+        String url = imageService.create(files);
 
         String query = RentContractServiceUtil.constructQuery(rentContractId, customerId, flatId, url);
         boolean result = rentContractJDBC.uploadRentContract(query);
@@ -74,20 +74,8 @@ public class RentContractServiceImpl implements RentContractService {
 
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     */
-    public String create(MultipartFile[] files) throws IOException {
 
-        String imageUrl = "";
-        for (MultipartFile file : files) {
-            String fileName = imageService.save(file);
-            imageUrl = imageService.getImageUrl(fileName);
-        }
-        imageUrl = imageUrl.split("/")[4];
-        return imageUrl;
-    }
+
 
     /**
      * {@inheritDoc}
@@ -118,14 +106,14 @@ public class RentContractServiceImpl implements RentContractService {
      */
     @Override
     @Transactional(rollbackFor = {SQLException.class, IOException.class})
-    public ResponseEntity<ResponseObject> createContract(MultipartFile[] files, String requestObject, String deviceToken)
+    public ResponseEntity<ResponseObject> createContract(MultipartFile[] files, String requestObject, String[] deviceTokens)
             throws IOException, SQLException, InvalidDataException {
         Gson gson = new Gson();
         RequestObjectForCreate rentContractRequest = gson.fromJson(requestObject, RequestObjectForCreate.class);
 
         rentContractValidation.creationValidation(rentContractRequest);
 
-        String url = create(files);
+        String url = imageService.create(files);
         String query = RentContractServiceUtil.queryInsert(rentContractRequest, url);
         boolean checkInsert = rentContractJDBC.insertContract(query);
         if (!checkInsert) {
@@ -133,8 +121,11 @@ public class RentContractServiceImpl implements RentContractService {
         }
 
         flatService.updateFlatStatus(UUID.fromString(rentContractRequest.getFlatId()), FlatStatus.UNAVAILABLE);
-        NotificationMessage notificationMessage = new NotificationMessage(deviceToken, "Thông báo từ Safe Building", "Bạn có hợp đồng mới", new HashMap<String, String>());
-        firebaseMessagingService.sendNotificationByToken(notificationMessage);
+        for (String deviceToken: deviceTokens) {
+            NotificationMessage notificationMessage = new NotificationMessage(deviceToken, "Thông báo từ Safe Building", "Bạn có hợp đồng mới", new HashMap<String, String>());
+            firebaseMessagingService.sendNotificationByToken(notificationMessage);
+        }
+
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ResponseObject(HttpStatus.CREATED.toString(), "Successfully", null, null));
     }
@@ -163,7 +154,7 @@ public class RentContractServiceImpl implements RentContractService {
         if (rentContractRequest.isChange()) {
             //edit flat status
             imageService.delete(url);
-            url = create(files);
+            url = imageService.create(files);
         }
 
         String query = RentContractServiceUtil.queryUpdate(rentContractRequest, url);

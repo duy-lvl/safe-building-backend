@@ -100,6 +100,16 @@ public class FirebaseImageService implements IImageService {
         blob.delete();
     }
 
+    public String create(MultipartFile[] files) throws IOException {
+
+        String imageUrl = "";
+        for (MultipartFile file : files) {
+            String fileName = save(file);
+            imageUrl = getImageUrl(fileName);
+        }
+        imageUrl = imageUrl.split("/")[4];
+        return imageUrl;
+    }
     @Data
     @Configuration
     @ConfigurationProperties(prefix = "firebase")

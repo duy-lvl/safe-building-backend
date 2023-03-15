@@ -14,6 +14,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Builder
 public class Service {
     @Id
     @GeneratedValue(generator = "UUID")

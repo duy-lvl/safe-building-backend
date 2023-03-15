@@ -20,6 +20,7 @@ public class CustomerInfoValidation {
 
     public static final String PASSWORD_REGEX_PATTERN = "^(?=.*[0-9])(?=.*[a-zA-Z]).{8,}$";
 
+
     @Autowired
     private CustomerRepository customerRepository;
 

@@ -1,6 +1,7 @@
 package com.safepass.safebuilding.service.controller;
 
 import com.safepass.safebuilding.common.dto.ResponseObject;
+import com.safepass.safebuilding.common.exception.InvalidDataException;
 import com.safepass.safebuilding.common.exception.InvalidPageSizeException;
 import com.safepass.safebuilding.common.exception.MaxPageExceededException;
 import com.safepass.safebuilding.common.exception.NoSuchDataException;
@@ -9,6 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -44,5 +48,13 @@ public class ServiceController {
             @RequestParam(name = "order", defaultValue = "") String order
     ) throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException {
         return serviceService.getServiceList(page, size, searchKey, sortBy, order);
+    }
+
+    @PostMapping("/services/create")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<ResponseObject> createService(
+            @RequestParam MultipartFile[] icon,
+            @RequestParam String requestObject) throws IOException, InvalidDataException {
+        return serviceService.createService(icon, requestObject);
     }
 }

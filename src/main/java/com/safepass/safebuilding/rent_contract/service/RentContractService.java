@@ -27,15 +27,8 @@ public interface RentContractService {
      */
     ResponseEntity<ResponseObject> uploadFile(MultipartFile[] files, String customerId, String rentContractId, String flatId)
             throws IOException;
-    /**
-     * Save file to firebase and get the link
-     *
-     * @param files {@code MultipartFile[]}
-     * @return ResponseEntity<ResponseObject>
-     *
-     * @throws IOException
-     */
-    String create(MultipartFile[] files) throws IOException;
+
+
 
     /**
      * Get contract list
@@ -80,7 +73,7 @@ public interface RentContractService {
      * @throws SQLException
      * @throws InvalidDataException
      */
-    ResponseEntity<ResponseObject> createContract(MultipartFile[] files, String requestObject, String deviceToken)
+    ResponseEntity<ResponseObject> createContract(MultipartFile[] files, String requestObject, String[] deviceTokens)
             throws IOException, SQLException, InvalidDataException;
     ResponseEntity<ResponseObject> deleteContract(String contractId) throws NoSuchDataException;
 }
