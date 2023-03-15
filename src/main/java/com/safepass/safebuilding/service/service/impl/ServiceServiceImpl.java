@@ -13,6 +13,7 @@ import com.safepass.safebuilding.common.utils.ModelMapperCustom;
 import com.safepass.safebuilding.common.validation.PaginationValidation;
 import com.safepass.safebuilding.service.dto.MobileServiceDTO;
 import com.safepass.safebuilding.service.dto.RequestObjectForCreate;
+import com.safepass.safebuilding.service.dto.RequestObjectForUpdate;
 import com.safepass.safebuilding.service.dto.ServiceDTO;
 import com.safepass.safebuilding.service.entity.Service;
 import com.safepass.safebuilding.service.jdbc.ServiceJdbc;
@@ -30,7 +31,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+
 
 @org.springframework.stereotype.Service
 public class ServiceServiceImpl implements ServiceService {
@@ -114,6 +117,25 @@ public class ServiceServiceImpl implements ServiceService {
         String icon = imageService.create(iconImg);
         Service service = serviceValidation.validateCreate(serviceRequestObj);
         service.setIcon(icon);
+        serviceRepository.save(service);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ResponseObject(HttpStatus.CREATED.toString(), "Successfully", null, null));
+    }
+
+    @Override
+    public ResponseEntity<ResponseObject> getServiceById(String id) throws NoSuchDataException {
+        Optional<Service> stemp = serviceRepository.findServiceById(UUID.fromString(id));
+        if (stemp.isPresent()) {
+            Service service = stemp.get();
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", null, service));
+        }
+        throw new NoSuchDataException("Not found");
+    }
+
+    @Override
+    public ResponseEntity<ResponseObject> updateService(RequestObjectForUpdate requestObject) throws InvalidDataException {
+        Service service = serviceValidation.validateUpdate(requestObject);
         serviceRepository.save(service);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ResponseObject(HttpStatus.CREATED.toString(), "Successfully", null, null));

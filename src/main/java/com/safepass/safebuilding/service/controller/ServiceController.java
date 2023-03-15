@@ -5,6 +5,7 @@ import com.safepass.safebuilding.common.exception.InvalidDataException;
 import com.safepass.safebuilding.common.exception.InvalidPageSizeException;
 import com.safepass.safebuilding.common.exception.MaxPageExceededException;
 import com.safepass.safebuilding.common.exception.NoSuchDataException;
+import com.safepass.safebuilding.service.dto.RequestObjectForUpdate;
 import com.safepass.safebuilding.service.service.ServiceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -50,11 +51,25 @@ public class ServiceController {
         return serviceService.getServiceList(page, size, searchKey, sortBy, order);
     }
 
+    @GetMapping("/services/{serviceId}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<ResponseObject> searchServiceById(
+            @PathVariable String serviceId) throws NoSuchDataException {
+        return serviceService.getServiceById(serviceId);
+    }
     @PostMapping("/services/create")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ResponseObject> createService(
             @RequestParam MultipartFile[] icon,
             @RequestParam String requestObject) throws IOException, InvalidDataException {
         return serviceService.createService(icon, requestObject);
+    }
+
+    @PutMapping ("/services/update")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<ResponseObject> updateService(
+            @RequestBody RequestObjectForUpdate requestObject
+    ) throws InvalidDataException {
+        return serviceService.updateService(requestObject);
     }
 }
