@@ -92,17 +92,23 @@ public class ServiceServiceImpl implements ServiceService {
     @Override
     public ResponseEntity<ResponseObject> getServiceList(int page, int size, String searchKey, String sortBy, String order) throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException {
         paginationValidation.validatePageSize(page, size);
+        String queryTotalRow = ServiceServiceUtils.getTotalRow()+
+                ServiceServiceUtils.appendSearchQuery(searchKey) +
+                ServiceServiceUtils.appendSortQuery(sortBy, order) +
+                ServiceServiceUtils.appendPagination(page-1, size);
+        long totalRow = serviceJdbc.getTotalRow(queryTotalRow);
+        int totalPage = (int) Math.ceil(1.0 * totalRow / size);
+        Pagination pagination = new Pagination(page, size, totalPage);
+        paginationValidation.validateMaxPageNumber(pagination);
+
+
         String queryGet = ServiceServiceUtils.getQuery() +
                 ServiceServiceUtils.appendSearchQuery(searchKey) +
                 ServiceServiceUtils.appendSortQuery(sortBy, order) +
                 ServiceServiceUtils.appendPagination(page-1, size);
 
         List<Service> services = serviceJdbc.searchService(queryGet);
-        int totalRow = services.size();
 
-        int totalPage = (int) Math.ceil(1.0 * totalRow / size);
-        Pagination pagination = new Pagination(page, size, totalPage);
-        paginationValidation.validateMaxPageNumber(pagination);
 //        List<ServiceDTO> serviceDTOs = modelMapper.mapList(services, ServiceDTO.class);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", pagination, services));
@@ -139,5 +145,25 @@ public class ServiceServiceImpl implements ServiceService {
         serviceRepository.save(service);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ResponseObject(HttpStatus.CREATED.toString(), "Successfully", null, null));
+    }
+
+    @Override
+    public ResponseEntity<ResponseObject> updateIcon(String serviceId, MultipartFile[] newIcon) throws IOException, InvalidDataException {
+
+        Optional<Service> stemp = serviceRepository.findServiceById(UUID.fromString(serviceId));
+        if (stemp.isPresent()) {
+            Service service = stemp.get();
+            String oldLink = service.getIcon();
+            if (oldLink != null) {
+                imageService.delete(oldLink);
+            }
+
+            String newLink = imageService.create(newIcon);
+            service.setIcon(newLink);
+            serviceRepository.save(service);
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(new ResponseObject(HttpStatus.CREATED.toString(), "Successfully", null, null));
+        }
+        throw new InvalidDataException("Service does not exist");
     }
 }

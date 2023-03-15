@@ -72,4 +72,13 @@ public class ServiceController {
     ) throws InvalidDataException {
         return serviceService.updateService(requestObject);
     }
+
+    @PutMapping ("/services/update-icon")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<ResponseObject> updateServiceIcon(
+            @RequestParam String serviceId,
+            @RequestParam MultipartFile[] newIcon
+    ) throws IOException, InvalidDataException {
+        return serviceService.updateIcon(serviceId, newIcon);
+    }
 }

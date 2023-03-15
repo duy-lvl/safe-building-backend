@@ -27,4 +27,6 @@ public interface ServiceService {
     ResponseEntity<ResponseObject> getServiceById(String id) throws NoSuchDataException;
 
     ResponseEntity<ResponseObject> updateService(RequestObjectForUpdate requestObject) throws InvalidDataException;
+
+    ResponseEntity<ResponseObject> updateIcon(String serviceId, MultipartFile[] newIcon) throws IOException, InvalidDataException;
 }
