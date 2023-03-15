@@ -4,10 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
 @AllArgsConstructor
+@Data
 @NoArgsConstructor
-public class RentContractStatitics {
-    private String month;
+public class BillDTO {
+    private String date;
     private int value;
 }

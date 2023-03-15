@@ -6,5 +6,9 @@ import org.springframework.http.ResponseEntity;
 import java.sql.Date;
 
 public interface DashboardService {
-    ResponseEntity<ResponseObject> contractStatistic(int year);
+    ResponseEntity<ResponseObject> rentContractStatistics(int year);
+    ResponseEntity<ResponseObject> billStatistics(int year);
+
+    ResponseEntity<ResponseObject> rentContractStatistics();
+    ResponseEntity<ResponseObject> billStatistics();
 }
