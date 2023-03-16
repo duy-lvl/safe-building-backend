@@ -1,6 +1,8 @@
 package com.safepass.safebuilding.batch_job.service;
 
 import com.safepass.safebuilding.batch_job.info.TimerInfo;
+import com.safepass.safebuilding.batch_job.job.BillBatchJob;
+import com.safepass.safebuilding.batch_job.job.ContractBatchJob;
 import com.safepass.safebuilding.batch_job.utils.TimerUtils;
 import lombok.extern.log4j.Log4j2;
 import org.quartz.*;
@@ -19,25 +21,34 @@ import java.util.stream.Collectors;
 @Service
 public class SchedulerService {
     private final Scheduler scheduler;
+    private final String RUN_EVERYDAY_CRON_EXPRESSION = "0 0 0 ? * *";
 
     @Autowired
     public SchedulerService(Scheduler scheduler) {
         this.scheduler = scheduler;
     }
 
-    public void schedule(final Class jobClass, final TimerInfo info){
+    public void schedule(final Class jobClass, final TimerInfo info) {
         final JobDetail jobDetail = TimerUtils.buildJobDetail(jobClass, info);
         final Trigger trigger = TimerUtils.buildTrigger(jobClass, info);
 
-        try{
+        try {
             scheduler.scheduleJob(jobDetail, trigger);
-        }catch(SchedulerException e){
+        } catch (SchedulerException e) {
             log.error(e.getMessage());
         }
     }
 
-    public List<TimerInfo> getAllRunningTimers(){
-        try{
+    public Trigger triggerBuild(String identityName, String group, String cronSchedule) {
+        return TriggerBuilder
+                .newTrigger()
+                .withIdentity(identityName, group)
+                .withSchedule(CronScheduleBuilder.cronSchedule(cronSchedule))
+                .build();
+    }
+
+    public List<TimerInfo> getAllRunningTimers() {
+        try {
             return scheduler.getJobKeys(GroupMatcher.anyGroup())
                     .stream()
                     .map(jobKey -> {
@@ -51,43 +62,70 @@ public class SchedulerService {
                     })
                     .filter(Objects::nonNull)
                     .collect(Collectors.toList());
-        } catch (SchedulerException e){
+        } catch (SchedulerException e) {
             log.error(e.getMessage());
             return Collections.emptyList();
         }
     }
 
-    public TimerInfo getRunningTimer(String timerId){
-        try{
+    public TimerInfo getRunningTimer(String timerId) {
+        try {
             final JobDetail jobDetail = scheduler.getJobDetail(new JobKey(timerId));
-            if(jobDetail == null){
+            if (jobDetail == null) {
                 return null;
             }
             return (TimerInfo) jobDetail.getJobDataMap().get(timerId);
-        } catch (SchedulerException e){
+        } catch (SchedulerException e) {
             log.error(e.getMessage());
             return null;
         }
     }
 
-    public void updateTimer(final String timerId, final TimerInfo info){
+    public void updateTimer(final String timerId, final TimerInfo info) {
+        try {
+            final JobDetail jobDetail = scheduler.getJobDetail(new JobKey(timerId));
+            if (jobDetail == null) {
+                log.error("Fail to find timer with id: " + timerId);
+                return;
+            }
+            jobDetail.getJobDataMap().put(timerId, info);
+        } catch (final SchedulerException e) {
+            log.error(e.getMessage());
+        }
+    }
 
+    public void deleteTimer(final String timerId) {
+        try {
+            scheduler.deleteJob(new JobKey(timerId));
+        } catch (SchedulerException e) {
+            log.error(e.getMessage());
+        }
     }
 
     @PostConstruct
-    public void init(){
-        try{
+    public void init() {
+        try {
             scheduler.start();
-        } catch(SchedulerException e) {
+//            scheduler.getListenerManager().addTriggerListener(new SimpleTriggerListener(this));
+
+            JobDetail contractBatchJob = JobBuilder.newJob(ContractBatchJob.class).withIdentity("contractBatchJob").build();
+            Trigger contractTrigger = triggerBuild("contractTrigger", "contractGroup", RUN_EVERYDAY_CRON_EXPRESSION);
+
+            JobDetail billBatchJob = JobBuilder.newJob(BillBatchJob.class).withIdentity("billBatchJob").build();
+            Trigger billTrigger = triggerBuild("billTrigger", "billGroup", RUN_EVERYDAY_CRON_EXPRESSION);
+
+            scheduler.scheduleJob(contractBatchJob, contractTrigger);
+            scheduler.scheduleJob(billBatchJob, billTrigger);
+        } catch (SchedulerException e) {
             log.error(e.getMessage());
         }
     }
 
     @PreDestroy
-    public void preDestroy(){
+    public void preDestroy() {
         try {
             scheduler.shutdown();
-        } catch(SchedulerException e){
+        } catch (SchedulerException e) {
             log.error(e.getMessage());
         }
     }

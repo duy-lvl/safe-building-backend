@@ -151,7 +151,6 @@ public class RentContractServiceImpl implements RentContractService {
         }
         throw new NoSuchDataException("Contract not found");
     }
-
     @Override
     public ResponseEntity<ResponseObject> updateContract(MultipartFile[] files, String requestObject)
             throws IOException, SQLException, InvalidDataException {
