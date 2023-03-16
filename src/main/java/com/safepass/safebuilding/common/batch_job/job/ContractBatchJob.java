@@ -1,7 +1,7 @@
-package com.safepass.safebuilding.batch_job.job;
+package com.safepass.safebuilding.common.batch_job.job;
 
-import com.safepass.safebuilding.batch_job.entity.CustomerInfoBatchJob;
-import com.safepass.safebuilding.batch_job.jobUtils.ContractJobUtils;
+import com.safepass.safebuilding.common.batch_job.entity.CustomerInfoBatchJob;
+import com.safepass.safebuilding.common.batch_job.jobUtils.ContractJobUtils;
 import com.safepass.safebuilding.common.firebase.entity.NotificationMessage;
 import com.safepass.safebuilding.common.firebase.service.FirebaseMessagingService;
 import com.safepass.safebuilding.common.meta.FlatStatus;
@@ -18,7 +18,6 @@ import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 

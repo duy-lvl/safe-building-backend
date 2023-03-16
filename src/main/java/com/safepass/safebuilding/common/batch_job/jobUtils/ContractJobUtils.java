@@ -1,6 +1,6 @@
-package com.safepass.safebuilding.batch_job.jobUtils;
+package com.safepass.safebuilding.common.batch_job.jobUtils;
 
-import com.safepass.safebuilding.batch_job.entity.CustomerInfoBatchJob;
+import com.safepass.safebuilding.common.batch_job.entity.CustomerInfoBatchJob;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;

@@ -1,4 +1,4 @@
-package com.safepass.safebuilding.config;
+package com.safepass.safebuilding.common.config;
 
 import com.safepass.safebuilding.common.security.filter.CustomAuthenticationFilter;
 import com.safepass.safebuilding.common.security.filter.CustomAuthorizationFilter;

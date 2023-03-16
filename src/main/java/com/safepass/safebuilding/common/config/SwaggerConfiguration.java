@@ -1,4 +1,4 @@
-package com.safepass.safebuilding.config;
+package com.safepass.safebuilding.common.config;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;

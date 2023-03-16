@@ -1,9 +1,9 @@
-package com.safepass.safebuilding.batch_job.service;
+package com.safepass.safebuilding.common.batch_job.service;
 
-import com.safepass.safebuilding.batch_job.info.TimerInfo;
-import com.safepass.safebuilding.batch_job.job.BillBatchJob;
-import com.safepass.safebuilding.batch_job.job.ContractBatchJob;
-import com.safepass.safebuilding.batch_job.utils.TimerUtils;
+import com.safepass.safebuilding.common.batch_job.info.TimerInfo;
+import com.safepass.safebuilding.common.batch_job.job.BillBatchJob;
+import com.safepass.safebuilding.common.batch_job.job.ContractBatchJob;
+import com.safepass.safebuilding.common.batch_job.utils.TimerUtils;
 import lombok.extern.log4j.Log4j2;
 import org.quartz.*;
 import org.quartz.impl.matchers.GroupMatcher;

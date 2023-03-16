@@ -3,7 +3,6 @@ package com.safepass.safebuilding.building.controller;
 import com.safepass.safebuilding.building.dto.BuildingDTO;
 import com.safepass.safebuilding.building.dto.BuildingGetRequest;
 import com.safepass.safebuilding.building.dto.BuildingPostRequest;
-import com.safepass.safebuilding.building.entity.Building;
 import com.safepass.safebuilding.building.service.BuildingService;
 import com.safepass.safebuilding.common.dto.ResponseObject;
 import com.safepass.safebuilding.common.exception.InvalidPageSizeException;
@@ -11,13 +10,9 @@ import com.safepass.safebuilding.common.exception.MaxPageExceededException;
 import com.safepass.safebuilding.common.exception.NoSuchDataException;
 import com.safepass.safebuilding.flat.service.FlatService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -55,8 +50,7 @@ public class BuildingController {
             @RequestParam(name = "searchKey", required = false) String searchKey,
             @RequestParam(name = "sortBy", required = false) String sortBy,
             @RequestParam(name = "order", required = false) String order)
-            throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException
-    {
+            throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException {
         BuildingGetRequest buildingGetRequest = new BuildingGetRequest(page, size, searchKey, sortBy, order);
         return buildingService.getBuildingList(buildingGetRequest);
     }

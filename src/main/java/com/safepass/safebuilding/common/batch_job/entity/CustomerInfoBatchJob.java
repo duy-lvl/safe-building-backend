@@ -1,4 +1,4 @@
-package com.safepass.safebuilding.batch_job.entity;
+package com.safepass.safebuilding.common.batch_job.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

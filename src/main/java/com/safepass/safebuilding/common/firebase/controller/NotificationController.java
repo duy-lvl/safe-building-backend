@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/api/v1/notification")
 public class NotificationController {
@@ -18,5 +21,11 @@ public class NotificationController {
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     public String sendNotificationByToken(@RequestBody NotificationMessage notificationMessage) {
         return firebaseMessagingService.sendNotificationByToken(notificationMessage);
+    }
+
+    @PostMapping
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    public String sendNotificationByTokenForListCustomer(@RequestBody NotificationMessage message, @RequestBody List<UUID> customerIds){
+        return firebaseMessagingService.sendNotificationByToken(message, customerIds);
     }
 }

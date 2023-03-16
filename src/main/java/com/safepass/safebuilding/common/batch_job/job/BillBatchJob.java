@@ -1,7 +1,7 @@
-package com.safepass.safebuilding.batch_job.job;
+package com.safepass.safebuilding.common.batch_job.job;
 
-import com.safepass.safebuilding.batch_job.entity.CustomerInfoBatchJob;
-import com.safepass.safebuilding.batch_job.jobUtils.BilllJobUtils;
+import com.safepass.safebuilding.common.batch_job.entity.CustomerInfoBatchJob;
+import com.safepass.safebuilding.common.batch_job.jobUtils.BilllJobUtils;
 import com.safepass.safebuilding.bill.repository.BillRepository;
 import com.safepass.safebuilding.common.firebase.entity.NotificationMessage;
 import com.safepass.safebuilding.common.firebase.service.FirebaseMessagingService;

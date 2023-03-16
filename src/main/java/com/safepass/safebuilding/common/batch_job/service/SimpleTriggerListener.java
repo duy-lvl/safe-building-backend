@@ -1,10 +1,4 @@
-package com.safepass.safebuilding.batch_job.service;
-
-import com.safepass.safebuilding.batch_job.info.TimerInfo;
-import org.quartz.JobDataMap;
-import org.quartz.JobExecutionContext;
-import org.quartz.Trigger;
-import org.quartz.TriggerListener;
+package com.safepass.safebuilding.common.batch_job.service;
 
 public class SimpleTriggerListener  {
     public void hello(){

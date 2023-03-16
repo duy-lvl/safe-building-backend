@@ -1,6 +1,6 @@
-package com.safepass.safebuilding.batch_job.utils;
+package com.safepass.safebuilding.common.batch_job.utils;
 
-import com.safepass.safebuilding.batch_job.info.TimerInfo;
+import com.safepass.safebuilding.common.batch_job.info.TimerInfo;
 import org.quartz.*;
 
 import java.util.Date;
