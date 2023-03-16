@@ -1,8 +1,9 @@
 package com.safepass.safebuilding.dashboard.service.impl;
 
 import com.safepass.safebuilding.common.dto.ResponseObject;
-import com.safepass.safebuilding.dashboard.dto.BillDTO;
 import com.safepass.safebuilding.dashboard.dto.MonthStatistics;
+import com.safepass.safebuilding.dashboard.dto.ServiceStatistics;
+import com.safepass.safebuilding.dashboard.dto.Statistics;
 import com.safepass.safebuilding.dashboard.dto.YearStatitics;
 import com.safepass.safebuilding.dashboard.jdbc.DashboardJdbc;
 import com.safepass.safebuilding.dashboard.service.DashboardService;
@@ -13,14 +14,10 @@ import org.springframework.http.ResponseEntity;
 import java.time.LocalDate;
 import java.util.List;
 
-
 @org.springframework.stereotype.Service
 public class DashboardServiceImpl implements DashboardService {
-
-
     @Autowired
     private DashboardJdbc dashboardJdbc;
-
     private final LocalDate date = LocalDate.now();
     private final int year = date.getYear();
     private final int month = date.getMonthValue();
@@ -45,10 +42,9 @@ public class DashboardServiceImpl implements DashboardService {
             ys.setValue(0);
         }
         String query = DashboardServiceUtils.getContract(year);
-        List<String> rentContracts = dashboardJdbc.getContractStartDate(query);
-        for (String s: rentContracts) {
-            int month = getMonth(s);
-            yearStatitics.get(month-1).setValue(yearStatitics.get(month-1).getValue() + 1);
+        List<Statistics> rentContracts = dashboardJdbc.getContractStartDate(query);
+        for (Statistics rc: rentContracts) {
+            yearStatitics.get(rc.getKey() - 1).setValue(rc.getValue());
         }
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", null, yearStatitics));
@@ -61,10 +57,10 @@ public class DashboardServiceImpl implements DashboardService {
             ys.setValue(0);
         }
         String query = DashboardServiceUtils.getBill(year);
-        List<BillDTO> bills = dashboardJdbc.getBillDate(query);
-        for (BillDTO b: bills) {
-            int month = getMonth(b.getDate());
-            yearStatitics.get(month-1).setValue(yearStatitics.get(month-1).getValue() + b.getValue());
+        List<Statistics> bills = dashboardJdbc.getBillDate(query);
+
+        for (Statistics b : bills) {
+            yearStatitics.get(b.getKey() - 1).setValue(b.getValue());
         }
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", null, yearStatitics));
@@ -81,10 +77,10 @@ public class DashboardServiceImpl implements DashboardService {
             lastMonthQuery = DashboardServiceUtils.getContract(year, month-1);
         }
         MonthStatistics monthStatistics = new MonthStatistics();
-        List<String> thisMonthRentContracts = dashboardJdbc.getContractStartDate(thisMonthQuery);
-        List<String> lastMonthRentContracts = dashboardJdbc.getContractStartDate(lastMonthQuery);
-        int thisMonthTotal = thisMonthRentContracts.size();
-        int lastMonthTotal = lastMonthRentContracts.size();
+        List<Statistics> thisMonthContracts = dashboardJdbc.getBillDate(thisMonthQuery);
+        List<Statistics> lastMonthContracts = dashboardJdbc.getBillDate(lastMonthQuery);
+        int thisMonthTotal = thisMonthContracts.get(0).getValue();
+        int lastMonthTotal = lastMonthContracts.get(0).getValue();
         monthStatistics.setTotal(thisMonthTotal);
         String status;
         int percent;
@@ -109,6 +105,7 @@ public class DashboardServiceImpl implements DashboardService {
         
         String thisMonthQuery = DashboardServiceUtils.getBill(year, month);
         String lastMonthQuery;
+
         if (month == 1) {
             lastMonthQuery = DashboardServiceUtils.getBill(year-1, 12);
         }
@@ -116,16 +113,10 @@ public class DashboardServiceImpl implements DashboardService {
             lastMonthQuery = DashboardServiceUtils.getBill(year, month-1);
         }
         MonthStatistics monthStatistics = new MonthStatistics();
-        List<BillDTO> thisMonthBills = dashboardJdbc.getBillDate(thisMonthQuery);
-        List<BillDTO> lastMonthBills = dashboardJdbc.getBillDate(lastMonthQuery);
-        int thisMonthTotal = 0;
-        int lastMonthTotal = 0;
-        for (BillDTO b: thisMonthBills) {
-            thisMonthTotal += b.getValue();
-        }
-        for (BillDTO b: lastMonthBills) {
-            lastMonthTotal += b.getValue();
-        }
+        List<Statistics> thisMonthBills = dashboardJdbc.getBillDate(thisMonthQuery);
+        List<Statistics> lastMonthBills = dashboardJdbc.getBillDate(lastMonthQuery);
+        int thisMonthTotal = thisMonthBills.get(0).getValue();
+        int lastMonthTotal = lastMonthBills.get(0).getValue();
         String status;
         int percent;
         if (thisMonthTotal < lastMonthTotal) {
@@ -144,7 +135,15 @@ public class DashboardServiceImpl implements DashboardService {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", null, monthStatistics));
     }
-    
+
+    @Override
+    public ResponseEntity<ResponseObject> serviceStatistics(int year, int month) {
+        String query = DashboardServiceUtils.getService(year, month);
+        List<ServiceStatistics> serviceStatistics = dashboardJdbc.getService(query);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", null, serviceStatistics));
+    }
+
 
     public int getMonth(String date) {
 

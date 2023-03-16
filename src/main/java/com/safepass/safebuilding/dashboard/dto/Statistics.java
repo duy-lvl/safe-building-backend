@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @NoArgsConstructor
-public class BillDTO {
-    private String date;
+public class Statistics {
+    private int key;
     private int value;
 }

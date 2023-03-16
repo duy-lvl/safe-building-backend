@@ -11,4 +11,7 @@ public interface DashboardService {
 
     ResponseEntity<ResponseObject> rentContractStatistics();
     ResponseEntity<ResponseObject> billStatistics();
+
+    ResponseEntity<ResponseObject> serviceStatistics(int year, int month);
+
 }
