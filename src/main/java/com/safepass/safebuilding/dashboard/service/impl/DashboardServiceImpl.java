@@ -79,8 +79,14 @@ public class DashboardServiceImpl implements DashboardService {
         MonthStatistics monthStatistics = new MonthStatistics();
         List<Statistics> thisMonthContracts = dashboardJdbc.getBillDate(thisMonthQuery);
         List<Statistics> lastMonthContracts = dashboardJdbc.getBillDate(lastMonthQuery);
-        int thisMonthTotal = thisMonthContracts.get(0).getValue();
-        int lastMonthTotal = lastMonthContracts.get(0).getValue();
+        int thisMonthTotal = 0, lastMonthTotal = 0;
+        if (thisMonthContracts.size() > 0) {
+            thisMonthTotal = thisMonthContracts.get(0).getValue();
+        }
+
+        if (lastMonthContracts.size() > 0){
+            lastMonthTotal = lastMonthContracts.get(0).getValue();
+        }
         monthStatistics.setTotal(thisMonthTotal);
         String status;
         int percent;
@@ -115,8 +121,14 @@ public class DashboardServiceImpl implements DashboardService {
         MonthStatistics monthStatistics = new MonthStatistics();
         List<Statistics> thisMonthBills = dashboardJdbc.getBillDate(thisMonthQuery);
         List<Statistics> lastMonthBills = dashboardJdbc.getBillDate(lastMonthQuery);
-        int thisMonthTotal = thisMonthBills.get(0).getValue();
-        int lastMonthTotal = lastMonthBills.get(0).getValue();
+        int thisMonthTotal = 0, lastMonthTotal = 0;
+        if (thisMonthBills.size() > 0) {
+            thisMonthTotal = thisMonthBills.get(0).getValue();
+        }
+
+        if (lastMonthBills.size() > 0){
+            lastMonthTotal = lastMonthBills.get(0).getValue();
+        }
         String status;
         int percent;
         if (thisMonthTotal < lastMonthTotal) {

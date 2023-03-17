@@ -40,7 +40,7 @@ public class DashboardController {
 
     @GetMapping("/services")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<ResponseObject> revenueThisMonth(@RequestParam int year, @RequestParam int month) {
+    public ResponseEntity<ResponseObject> getServiceStatistics(@RequestParam int year, @RequestParam int month) {
         return dashboardService.serviceStatistics(year, month);
     }
 }
