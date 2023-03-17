@@ -77,8 +77,8 @@ public class DashboardServiceImpl implements DashboardService {
             lastMonthQuery = DashboardServiceUtils.getContract(year, month-1);
         }
         MonthStatistics monthStatistics = new MonthStatistics();
-        List<Statistics> thisMonthContracts = dashboardJdbc.getBillDate(thisMonthQuery);
-        List<Statistics> lastMonthContracts = dashboardJdbc.getBillDate(lastMonthQuery);
+        List<Statistics> thisMonthContracts = dashboardJdbc.getContractStartDate(thisMonthQuery);
+        List<Statistics> lastMonthContracts = dashboardJdbc.getContractStartDate(lastMonthQuery);
         int thisMonthTotal = 0, lastMonthTotal = 0;
         if (thisMonthContracts.size() > 0) {
             thisMonthTotal = thisMonthContracts.get(0).getValue();
