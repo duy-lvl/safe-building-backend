@@ -29,7 +29,7 @@ public class BillItem {
 
     private int quantity;
 
-
+    private int value;
     //Join table
     @ManyToOne
     private Service service;

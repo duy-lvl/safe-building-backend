@@ -23,7 +23,7 @@ public class NotificationController {
         return firebaseMessagingService.sendNotificationByToken(notificationMessage);
     }
 
-    @PostMapping("s")
+    @PostMapping()
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     public String sendNotificationByTokenForListCustomer(
             @RequestBody NotificationMessage message,
