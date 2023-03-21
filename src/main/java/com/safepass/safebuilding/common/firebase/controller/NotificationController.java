@@ -17,15 +17,18 @@ import java.util.UUID;
 public class NotificationController {
     @Autowired
     private FirebaseMessagingService firebaseMessagingService;
-    @PostMapping
+    @PostMapping("/send-notification")
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     public String sendNotificationByToken(@RequestBody NotificationMessage notificationMessage) {
         return firebaseMessagingService.sendNotificationByToken(notificationMessage);
     }
 
-    @PostMapping
+    @PostMapping("s")
     @PreAuthorize("hasAnyAuthority('ADMIN')")
-    public String sendNotificationByTokenForListCustomer(@RequestBody NotificationMessage message, @RequestBody List<UUID> customerIds){
+    public String sendNotificationByTokenForListCustomer(
+            @RequestBody NotificationMessage message,
+            @RequestBody List<UUID> customerIds
+    ){
         return firebaseMessagingService.sendNotificationByToken(message, customerIds);
     }
 }
