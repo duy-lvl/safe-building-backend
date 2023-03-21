@@ -12,7 +12,12 @@ import com.safepass.safebuilding.common.firebase.service.FirebaseMessagingServic
 import com.safepass.safebuilding.common.firebase.service.IImageService;
 import com.safepass.safebuilding.common.meta.FlatStatus;
 import com.safepass.safebuilding.common.meta.RentContractStatus;
+import com.safepass.safebuilding.common.service.MailSenderService;
 import com.safepass.safebuilding.common.validation.PaginationValidation;
+import com.safepass.safebuilding.customer.dto.CustomerInfo;
+import com.safepass.safebuilding.customer.entity.Customer;
+import com.safepass.safebuilding.customer.repository.CustomerRepository;
+import com.safepass.safebuilding.customer.service.CustomerService;
 import com.safepass.safebuilding.flat.service.FlatService;
 import com.safepass.safebuilding.rent_contract.dto.RentContractDTO;
 import com.safepass.safebuilding.rent_contract.dto.RequestObjectForCreate;
@@ -53,7 +58,10 @@ public class RentContractServiceImpl implements RentContractService {
 
     @Autowired
     private RentContractRepository rentContractRepository;
-
+    @Autowired
+    private CustomerRepository customerRepository;
+    @Autowired
+    private MailSenderService mailSenderService;
     /**
      * {@inheritDoc}
      *
@@ -120,12 +128,21 @@ public class RentContractServiceImpl implements RentContractService {
             throw new SQLException("Insert contract failed");
         }
 
-        flatService.updateFlatStatus(UUID.fromString(rentContractRequest.getFlatId()), FlatStatus.UNAVAILABLE);
-        for (String deviceToken: deviceTokens) {
-            NotificationMessage notificationMessage = new NotificationMessage(deviceToken, "Thông báo từ Safe Building", "Bạn có hợp đồng mới", new HashMap<String, String>());
-            firebaseMessagingService.sendNotificationByToken(notificationMessage);
-        }
 
+        flatService.updateFlatStatus(UUID.fromString(rentContractRequest.getFlatId()), FlatStatus.UNAVAILABLE);
+        Customer customer = customerRepository.findById(UUID.fromString(rentContractRequest.getCustomerId())).get();
+        String title = "Safe Building Notification";
+        String body = "Dear " + customer.getFullname() + ",\n" +
+                "Our system notices that you have bill(s) that is unpaid so please check your information and pay the bill as soon as possible." +
+                "\nThank you for spending time reading this letter.\nHave a good day.\nRegards,\nSafe Building Admin Team";
+        for (String deviceToken: deviceTokens) {
+            NotificationMessage notificationMessage = new NotificationMessage(deviceToken, title, body, new HashMap<String, String>());
+            firebaseMessagingService.sendNotificationByToken(notificationMessage);
+
+        }
+        if (customer.getEmail() != null) {
+            mailSenderService.sendMail(customer.getEmail(), title, body);
+        }
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ResponseObject(HttpStatus.CREATED.toString(), "Successfully", null, null));
     }
@@ -142,7 +159,6 @@ public class RentContractServiceImpl implements RentContractService {
         }
         throw new NoSuchDataException("Contract not found");
     }
-
     @Override
     public ResponseEntity<ResponseObject> updateContract(MultipartFile[] files, String requestObject)
             throws IOException, SQLException, InvalidDataException {

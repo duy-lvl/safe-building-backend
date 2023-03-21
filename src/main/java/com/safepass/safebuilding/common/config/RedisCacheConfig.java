@@ -1,4 +1,4 @@
-package com.safepass.safebuilding.config;
+package com.safepass.safebuilding.common.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
@@ -22,8 +22,8 @@ import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
 
-@Configuration
-@EnableCaching
+//@Configuration
+//@EnableCaching
 public class RedisCacheConfig {
     @Value("${host.name}")
     private String hostName;

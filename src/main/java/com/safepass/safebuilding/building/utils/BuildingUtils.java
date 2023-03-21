@@ -1,12 +1,11 @@
 package com.safepass.safebuilding.building.utils;
 
-import com.safepass.safebuilding.building.entity.Building;
 import com.safepass.safebuilding.building.dto.BuildingGetRequest;
+import com.safepass.safebuilding.building.entity.Building;
 import com.safepass.safebuilding.common.meta.BuildingStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
@@ -137,7 +136,7 @@ public class BuildingUtils {
      * @param query
      * @return List<Building>
      */
-    @CachePut(key="#query")
+    @CachePut(key = "#query")
     public List<Building> getBuildingList(String query) {
         return jdbcTemplate.query(query, rowMapper);
     }
