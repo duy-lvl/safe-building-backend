@@ -16,4 +16,6 @@ public interface RentContractRepository extends JpaRepository<RentContract, UUID
     Optional<RentContract> findRentContractById(UUID id);
 
     Optional<RentContract> findRentContractByFlatIdAndStatus(UUID id, RentContractStatus flatStatus);
+
+    List<RentContract> findAllByStatus(RentContractStatus status);
 }

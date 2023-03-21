@@ -27,8 +27,7 @@ public class NotificationController {
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     public String sendNotificationByTokenForListCustomer(
             @RequestBody NotificationMessage message,
-            @RequestBody List<UUID> customerIds
-    ){
+            @RequestBody List<UUID> customerIds){
         return firebaseMessagingService.sendNotificationByToken(message, customerIds);
     }
 }

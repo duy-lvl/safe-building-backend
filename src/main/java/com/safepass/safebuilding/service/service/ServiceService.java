@@ -5,6 +5,7 @@ import com.safepass.safebuilding.common.exception.InvalidDataException;
 import com.safepass.safebuilding.common.exception.InvalidPageSizeException;
 import com.safepass.safebuilding.common.exception.MaxPageExceededException;
 import com.safepass.safebuilding.common.exception.NoSuchDataException;
+import com.safepass.safebuilding.service.dto.AddServiceDTO;
 import com.safepass.safebuilding.service.dto.RequestObjectForUpdate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,4 +30,6 @@ public interface ServiceService {
     ResponseEntity<ResponseObject> updateService(RequestObjectForUpdate requestObject) throws InvalidDataException;
 
     ResponseEntity<ResponseObject> updateIcon(String serviceId, MultipartFile[] newIcon) throws IOException, InvalidDataException;
+
+    ResponseEntity<ResponseObject> addService(AddServiceDTO addServiceDTO);
 }

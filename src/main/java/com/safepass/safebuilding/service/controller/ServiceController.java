@@ -5,6 +5,7 @@ import com.safepass.safebuilding.common.exception.InvalidDataException;
 import com.safepass.safebuilding.common.exception.InvalidPageSizeException;
 import com.safepass.safebuilding.common.exception.MaxPageExceededException;
 import com.safepass.safebuilding.common.exception.NoSuchDataException;
+import com.safepass.safebuilding.service.dto.AddServiceDTO;
 import com.safepass.safebuilding.service.dto.RequestObjectForUpdate;
 import com.safepass.safebuilding.service.service.ServiceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,5 +81,11 @@ public class ServiceController {
             @RequestParam MultipartFile[] newIcon
     ) throws IOException, InvalidDataException {
         return serviceService.updateIcon(serviceId, newIcon);
+    }
+
+    @PostMapping("/mobile/services/add")
+    @PreAuthorize("hasAuthority('customer')")
+    public ResponseEntity<ResponseObject> addService(@RequestBody AddServiceDTO addServiceDTO){
+        return serviceService.addService(addServiceDTO);
     }
 }

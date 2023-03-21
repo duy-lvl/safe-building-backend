@@ -1,4 +1,4 @@
-package com.safepass.safebuilding.common.controller.bill.utils;
+package com.safepass.safebuilding.bill.utils;
 
 public class BillUtils {
 

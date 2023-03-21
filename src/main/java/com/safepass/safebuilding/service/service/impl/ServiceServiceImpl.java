@@ -1,6 +1,10 @@
 package com.safepass.safebuilding.service.service.impl;
 
 import com.google.gson.Gson;
+import com.safepass.safebuilding.bill.entity.Bill;
+import com.safepass.safebuilding.bill.repository.BillRepository;
+import com.safepass.safebuilding.bill_item.entity.BillItem;
+import com.safepass.safebuilding.bill_item.repository.BillItemRepository;
 import com.safepass.safebuilding.common.dto.Pagination;
 import com.safepass.safebuilding.common.dto.ResponseObject;
 import com.safepass.safebuilding.common.exception.InvalidDataException;
@@ -8,13 +12,13 @@ import com.safepass.safebuilding.common.exception.InvalidPageSizeException;
 import com.safepass.safebuilding.common.exception.MaxPageExceededException;
 import com.safepass.safebuilding.common.exception.NoSuchDataException;
 import com.safepass.safebuilding.common.firebase.service.IImageService;
+import com.safepass.safebuilding.common.meta.BillStatus;
 import com.safepass.safebuilding.common.meta.ServiceStatus;
 import com.safepass.safebuilding.common.utils.ModelMapperCustom;
 import com.safepass.safebuilding.common.validation.PaginationValidation;
-import com.safepass.safebuilding.service.dto.MobileServiceDTO;
-import com.safepass.safebuilding.service.dto.RequestObjectForCreate;
-import com.safepass.safebuilding.service.dto.RequestObjectForUpdate;
-import com.safepass.safebuilding.service.dto.ServiceDTO;
+import com.safepass.safebuilding.rent_contract.entity.RentContract;
+import com.safepass.safebuilding.rent_contract.repository.RentContractRepository;
+import com.safepass.safebuilding.service.dto.*;
 import com.safepass.safebuilding.service.entity.Service;
 import com.safepass.safebuilding.service.jdbc.ServiceJdbc;
 import com.safepass.safebuilding.service.repository.ServiceRepository;
@@ -27,9 +31,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.sql.Date;
+import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -50,6 +58,12 @@ public class ServiceServiceImpl implements ServiceService {
     private IImageService imageService;
     @Autowired
     private ServiceValidation serviceValidation;
+    @Autowired
+    private BillRepository billRepository;
+    @Autowired
+    private RentContractRepository rentContractRepository;
+    @Autowired
+    private BillItemRepository billItemRepository;
     @Override
     public ResponseEntity<ResponseObject> getAllService(int page, int size)
             throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException
@@ -165,5 +179,37 @@ public class ServiceServiceImpl implements ServiceService {
                     .body(new ResponseObject(HttpStatus.CREATED.toString(), "Successfully", null, null));
         }
         throw new InvalidDataException("Service does not exist");
+    }
+
+    @Override
+    @Transactional(rollbackFor = {SQLException.class, Exception.class})
+    public ResponseEntity<ResponseObject> addService(AddServiceDTO addServiceDTO) {
+        Date thisMonthStartDate = Date.valueOf(LocalDate.now().getYear() + "-" + LocalDate.now().getMonthValue() + "-01");
+        Optional<Bill> btemp = billRepository
+                .findBillByRentContractIdAndDateAfter(UUID.fromString(addServiceDTO.getContractId()), thisMonthStartDate);
+        Bill bill;
+        RentContract rentContract = rentContractRepository.findRentContractById(UUID.fromString(addServiceDTO.getContractId())).get();
+        if (!btemp.isPresent()) {
+            bill = new Bill(UUID.randomUUID(), rentContract, Date.valueOf(LocalDate.now()), rentContract.getValue(), BillStatus.UNPAID);
+            bill = billRepository.save(bill);
+        } else {
+            bill = btemp.get();
+        }
+        Service service = serviceRepository.findServiceById(UUID.fromString(addServiceDTO.getServiceid())).get();
+
+        BillItem billItem = new BillItem(
+                UUID.randomUUID(),
+                bill,
+                addServiceDTO.getQuantity(),
+                addServiceDTO.getQuantity()*service.getPrice(),
+                service
+        );
+        int billValue = bill.getValue();
+        billItemRepository.save(billItem);
+        billValue += addServiceDTO.getQuantity() * service.getPrice();
+        bill.setValue(billValue);
+        billRepository.save(bill);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ResponseObject(HttpStatus.CREATED.toString(), "Successfully", null, null));
     }
 }

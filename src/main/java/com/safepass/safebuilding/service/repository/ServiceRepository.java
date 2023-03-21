@@ -15,6 +15,6 @@ public interface ServiceRepository extends JpaRepository<Service, UUID> {
     Page<Service> findByStatus(ServiceStatus status, Pageable pageable);
     Optional<Service> findServiceById(UUID id);
 
-
+    Service findServiceByName(String name);
 
 }

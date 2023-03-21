@@ -1,7 +1,7 @@
-package com.safepass.safebuilding.common.controller.bill.controller;
+package com.safepass.safebuilding.bill.controller;
 
-import com.safepass.safebuilding.common.controller.bill.dto.BillCreate;
-import com.safepass.safebuilding.common.controller.bill.service.BillService;
+import com.safepass.safebuilding.bill.dto.BillCreate;
+import com.safepass.safebuilding.bill.service.BillService;
 import com.safepass.safebuilding.common.dto.ResponseObject;
 import com.safepass.safebuilding.common.exception.InvalidPageSizeException;
 import com.safepass.safebuilding.common.exception.MaxPageExceededException;
@@ -40,5 +40,11 @@ public class BillController {
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ResponseObject> createBill(@RequestBody BillCreate billCreate) throws NoSuchDataException {
         return billService.createBill(billCreate);
+    }
+
+    @PostMapping("/bills/create-bills")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<ResponseObject> createBill() throws NoSuchDataException {
+        return billService.createBill();
     }
 }

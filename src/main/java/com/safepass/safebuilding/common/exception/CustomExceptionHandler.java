@@ -1,6 +1,7 @@
 package com.safepass.safebuilding.common.exception;
 
 import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.google.firebase.messaging.FirebaseMessagingException;
 import com.safepass.safebuilding.common.dto.ErrorResponse;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
@@ -113,7 +114,12 @@ public class CustomExceptionHandler extends RuntimeException {
         return new ErrorResponse(new Date(), HttpStatus.NOT_ACCEPTABLE.toString(), exception.getMessage());
     }
 
-
+    @ExceptionHandler({FirebaseMessagingException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse exception(FirebaseMessagingException exception) {
+        exception.printStackTrace();
+        return new ErrorResponse(new Date(), HttpStatus.BAD_REQUEST.toString(), exception.getMessage());
+    }
     @ExceptionHandler({Exception.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse exception(Exception exception) {
