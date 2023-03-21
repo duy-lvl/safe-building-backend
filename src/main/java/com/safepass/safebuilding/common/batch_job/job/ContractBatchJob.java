@@ -19,7 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.UUID;
 
 @Log4j2
 @Component
@@ -44,6 +46,7 @@ public class ContractBatchJob implements Job {
     @Autowired
     ContractJobUtils contractJobUtils;
 
+    Hashtable<UUID, String> contractEmailTable;
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
 
@@ -53,12 +56,17 @@ public class ContractBatchJob implements Job {
         mainBody = "Our system notices that you have contract(s) due at the end of today so please check your information and contact us for the checkout process.";
         if (customerInfoBatchJobs.size() > 0) {
             log.info("Processing contract batch job 1.");
+            contractEmailTable = new Hashtable<>();
             for (int i = 0; i < customerInfoBatchJobs.size(); i++) {
                 customerInfo = customerInfoBatchJobs.get(i);
                 wholeBody = "Dear " + customerInfo.getFullname() + ",\n" + mainBody+endBody;
                 message = new NotificationMessage(customerInfo.getPhoneToken(), subject, wholeBody, new HashMap<String, String>());
 
-                mailSenderService.sendMail(customerInfo.getEmail(), subject, wholeBody);
+
+                if(contractEmailTable.get(customerInfo.getContractId()) == null){
+                    contractEmailTable.put(customerInfo.getContractId(),customerInfo.getEmail());
+                    mailSenderService.sendMail(customerInfo.getEmail(), subject, wholeBody);
+                }
                 firebaseMessagingService.sendNotificationByToken(message);
             }
         }
