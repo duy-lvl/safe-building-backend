@@ -14,9 +14,11 @@ public class TimerInfo {
     private boolean runForever;
     //the time in between starts, example set to 30s timer start every 30s
     private long repeatIntervalMs;
-    //how long to start after start the timer
+    //wait time after start the timer
     private long initialOffsetMs;
     //pass some data
     private String callbackData;
     private int remainingFireCount;
+    //if this is not null than totalFireCount, repeatIntervalMs does not matter
+    private String cronExpression;
 }
