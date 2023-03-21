@@ -1,6 +1,6 @@
-package com.safepass.safebuilding.bill.jdbc;
+package com.safepass.safebuilding.common.controller.bill.jdbc;
 
-import com.safepass.safebuilding.bill.dto.BillDTO;
+import com.safepass.safebuilding.common.controller.bill.dto.BillDTO;
 import com.safepass.safebuilding.common.jdbc.Jdbc;
 import com.safepass.safebuilding.common.meta.BillStatus;
 import org.springframework.beans.factory.annotation.Autowired;

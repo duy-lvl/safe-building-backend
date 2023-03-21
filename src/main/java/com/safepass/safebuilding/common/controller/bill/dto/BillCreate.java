@@ -1,4 +1,4 @@
-package com.safepass.safebuilding.bill.dto;
+package com.safepass.safebuilding.common.controller.bill.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,8 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BillCreate {
-    private String customerId;
     private ServiceDTO[] service;
-    private String contractId;
+    private String flatId;
 
 }

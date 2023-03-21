@@ -1,4 +1,4 @@
-package com.safepass.safebuilding.bill.dto;
+package com.safepass.safebuilding.common.controller.bill.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

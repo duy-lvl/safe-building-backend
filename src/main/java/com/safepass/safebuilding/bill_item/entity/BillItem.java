@@ -1,13 +1,12 @@
 package com.safepass.safebuilding.bill_item.entity;
 
-import com.safepass.safebuilding.bill.entity.Bill;
+import com.safepass.safebuilding.common.controller.bill.entity.Bill;
 import com.safepass.safebuilding.service.entity.Service;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
-import java.util.List;
 import java.util.UUID;
 @Getter
 @Setter

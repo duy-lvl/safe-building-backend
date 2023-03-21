@@ -1,6 +1,6 @@
 package com.safepass.safebuilding.transaction.entity;
 
-import com.safepass.safebuilding.bill.entity.Bill;
+import com.safepass.safebuilding.common.controller.bill.entity.Bill;
 import com.safepass.safebuilding.wallet.entity.Wallet;
 import com.safepass.safebuilding.common.meta.TransactionStatus;
 import lombok.*;

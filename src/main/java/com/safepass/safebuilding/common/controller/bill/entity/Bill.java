@@ -1,4 +1,4 @@
-package com.safepass.safebuilding.bill.entity;
+package com.safepass.safebuilding.common.controller.bill.entity;
 
 import com.safepass.safebuilding.common.meta.BillStatus;
 import com.safepass.safebuilding.rent_contract.entity.RentContract;

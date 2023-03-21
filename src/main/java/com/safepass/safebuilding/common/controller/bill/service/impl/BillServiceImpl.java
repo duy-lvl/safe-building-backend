@@ -1,13 +1,13 @@
-package com.safepass.safebuilding.bill.service.impl;
+package com.safepass.safebuilding.common.controller.bill.service.impl;
 
-import com.safepass.safebuilding.bill.dto.BillCreate;
-import com.safepass.safebuilding.bill.dto.BillDTO;
-import com.safepass.safebuilding.bill.dto.ServiceDTO;
-import com.safepass.safebuilding.bill.entity.Bill;
-import com.safepass.safebuilding.bill.jdbc.BillJDBC;
-import com.safepass.safebuilding.bill.repository.BillRepository;
-import com.safepass.safebuilding.bill.service.BillService;
-import com.safepass.safebuilding.bill.utils.BillUtils;
+import com.safepass.safebuilding.common.controller.bill.dto.BillCreate;
+import com.safepass.safebuilding.common.controller.bill.dto.BillDTO;
+import com.safepass.safebuilding.common.controller.bill.dto.ServiceDTO;
+import com.safepass.safebuilding.common.controller.bill.entity.Bill;
+import com.safepass.safebuilding.common.controller.bill.jdbc.BillJDBC;
+import com.safepass.safebuilding.common.controller.bill.repository.BillRepository;
+import com.safepass.safebuilding.common.controller.bill.service.BillService;
+import com.safepass.safebuilding.common.controller.bill.utils.BillUtils;
 import com.safepass.safebuilding.bill_item.entity.BillItem;
 import com.safepass.safebuilding.bill_item.repository.BillItemRepository;
 import com.safepass.safebuilding.building.entity.Building;
@@ -20,6 +20,7 @@ import com.safepass.safebuilding.common.exception.NoSuchDataException;
 import com.safepass.safebuilding.common.firebase.entity.NotificationMessage;
 import com.safepass.safebuilding.common.firebase.service.FirebaseMessagingService;
 import com.safepass.safebuilding.common.meta.BillStatus;
+import com.safepass.safebuilding.common.meta.RentContractStatus;
 import com.safepass.safebuilding.common.service.MailSenderService;
 import com.safepass.safebuilding.common.utils.ModelMapperCustom;
 import com.safepass.safebuilding.common.validation.PaginationValidation;
@@ -103,15 +104,15 @@ public class BillServiceImpl implements BillService {
         paginationValidation.validateMaxPageNumber(pagination);
 
         List<Bill> bills = billPage.getContent();
-        List<com.safepass.safebuilding.bill.dto.Bill> dtoBills =
-                modelMapperCustom.mapList(bills, com.safepass.safebuilding.bill.dto.Bill.class);
+        List<com.safepass.safebuilding.common.controller.bill.dto.Bill> dtoBills =
+                modelMapperCustom.mapList(bills, com.safepass.safebuilding.common.controller.bill.dto.Bill.class);
         for (int i = 0; i < bills.size(); i++) {
             RentContract rentContract = rentContractRepository
                     .findRentContractById(bills.get(i).getRentContract().getId()).get();
             Flat flat = flatRepository.findById(rentContract.getFlat().getId()).get();
             Building building = buildingRepository.findBuildingById(flat.getBuilding().getId()).get();
             Customer customer = customerRepository.findById(rentContract.getCustomer().getId()).get();
-            com.safepass.safebuilding.bill.dto.Bill dtoBill = dtoBills.get(i);
+            com.safepass.safebuilding.common.controller.bill.dto.Bill dtoBill = dtoBills.get(i);
             dtoBill.setBuildingName(building.getName());
             dtoBill.setRoom_number(flat.getRoomNumber());
             dtoBill.setCustomerName(customer.getFullname());
@@ -123,10 +124,18 @@ public class BillServiceImpl implements BillService {
     @Transactional(rollbackFor = {SQLException.class, Exception.class})
     @Override
     public ResponseEntity<ResponseObject> createBill(BillCreate billCreate) throws NoSuchDataException {
-        Optional<RentContract> rctemp = rentContractRepository.findRentContractById(UUID.fromString(billCreate.getContractId()));
+
+        Optional<RentContract> rctemp = rentContractRepository
+                .findRentContractByFlatIdAndStatus(
+                        UUID.fromString(billCreate.getFlatId()),
+                        RentContractStatus.VALID
+                );
+
+
         if (rctemp.isPresent()) {
 
             RentContract rentContract = rctemp.get();
+            UUID rentContractId = rentContract.getId();
             int value = rentContract.getValue();
             ServiceDTO[] serviceDTOS = billCreate.getService();
             List<BillItem> billItems = new ArrayList<>();
@@ -155,9 +164,9 @@ public class BillServiceImpl implements BillService {
             for (BillItem bi: billItems) {
                 billItemRepository.save(bi);
             }
-            String customerId = billCreate.getCustomerId();;
-            List<Device> devices = deviceRepository.findByCustomerId(UUID.fromString(customerId));
-            Customer customer = customerRepository.findById(UUID.fromString(customerId)).get();
+            UUID customerId = rentContract.getCustomer().getId();
+            List<Device> devices = deviceRepository.findByCustomerId(customerId);
+            Customer customer = customerRepository.findById(customerId).get();
 
             String title = "Safe Building Notification";
             String body = "Dear " + customer.getFullname() + ",\n" +
