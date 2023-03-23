@@ -8,10 +8,13 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface DeviceRepository extends JpaRepository<Device, UUID> {
     List<Device> findByCustomerId(UUID customerId);
     List<Device> findDeviceByCustomerId(UUID customerId);
+
+    Optional<Device> findDeviceByCustomerIdAndToken(UUID customerId, String token);
 }

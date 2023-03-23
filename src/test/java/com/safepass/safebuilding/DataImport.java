@@ -2,6 +2,7 @@ package com.safepass.safebuilding;
 
 import com.github.javafaker.Faker;
 import com.safepass.safebuilding.common.meta.*;
+import org.joda.time.Days;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -11,6 +12,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -341,7 +343,32 @@ public class DataImport {
 //        createBuilding();
 //        createFlatType();
 //        createFlat();
-
+        List<String> expiryDates = List.of("2023-07-23",
+                "2025-09-22",
+                "2023-07-01",
+                "2024-06-02",
+                "2025-10-20",
+                "2025-02-22",
+                "2023-09-30",
+                "2025-12-03",
+                "2023-05-11",
+                "2025-08-19",
+                "2023-09-16",
+                "2025-02-20",
+                "2025-03-14",
+                "2024-04-30",
+                "2025-08-01",
+                "2025-01-23",
+                "2024-07-11",
+                "2024-06-07",
+                "2024-03-26",
+                "2024-06-14",
+                "2023-07-24",
+                "2024-12-08",
+                "2024-07-12",
+                "2023-05-24",
+                "2025-09-20"
+        );
         List<String> sqls = new ArrayList<>();
         rentContractIds = new ArrayList<>();
         for (UUID flatId : flatIds) {
@@ -352,10 +379,11 @@ public class DataImport {
                 if (count < customerIds.size()) {
                     UUID rentContractId = UUID.randomUUID();
                     rentContractIds.add(rentContractId);
-                    StringBuilder sql = new StringBuilder("INSERT INTO rent_contract (id, contract, expiry_date, status, value, customer_id, flat_id) VALUES (\"");
+                    StringBuilder sql = new StringBuilder("INSERT INTO rent_contract (id, contract, start_date, expiry_date, status, value, customer_id, flat_id) VALUES (\"");
                     sql.append(rentContractId).append("\", \"")
                             .append(faker.business().creditCardNumber()).append("\", \"")
                             .append(faker.business().creditCardExpiry()).append("\", \"")
+                            .append(expiryDates.get(random(0, expiryDates.size()-1))).append("\", \"")
                             .append(RentContractStatus.VALID).append("\", ")
                             .append(random(5, 30)*1000000).append(", \"")
                             .append(customerIds.get(random(0, customerIds.size()-1))).append("\", \"")

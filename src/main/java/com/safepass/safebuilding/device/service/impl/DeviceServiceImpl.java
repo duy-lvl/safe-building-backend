@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -18,15 +19,9 @@ public class DeviceServiceImpl implements DeviceService {
     @Override
     public Device addToken(Customer customer, String token) {
         Device device = new Device(UUID.randomUUID(), token, customer);
-        List<Device> devices = deviceRepository.findByCustomerId(customer.getId());
-        boolean isExist = false;
-        for (Device d: devices) {
-            if (token.equals(d.getToken())) {
-                isExist = true;
-                break;
-            }
-        }
-        if (!isExist) {
+        Optional<Device> deviceOptional = deviceRepository.findDeviceByCustomerIdAndToken(customer.getId(), token);
+
+        if (deviceOptional.isEmpty()) {
             return deviceRepository.save(device);
         }
         else {

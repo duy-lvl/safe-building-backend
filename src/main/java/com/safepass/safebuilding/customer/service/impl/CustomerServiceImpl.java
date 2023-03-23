@@ -231,7 +231,10 @@ public class CustomerServiceImpl implements CustomerService {
     public ResponseEntity<ResponseObject> addDevice(String customerId, String token) {
         Optional<Customer> customer = getCustomerById(UUID.fromString(customerId));
         if (customer.isPresent()) {
+
+
             Device device = deviceService.addToken(customer.get(), token);
+
             if (device != null) {
                 return ResponseEntity.status(HttpStatus.CREATED)
                         .body(new ResponseObject(HttpStatus.CREATED.toString(), "Successfully", null, null));
