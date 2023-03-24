@@ -34,4 +34,5 @@ public class Wallet {
     @Enumerated(EnumType.STRING)
     private WalletStatus status;
 
+
 }

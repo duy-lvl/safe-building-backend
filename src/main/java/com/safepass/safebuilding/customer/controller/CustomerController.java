@@ -30,7 +30,7 @@ public class CustomerController {
 
 
     @PostMapping("/{customerId}/add-device")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('CUSTOMER')")
     public ResponseEntity<ResponseObject> addDevice (
             @RequestParam(name = "token") String token,
             @PathVariable(name = "customerId") String customerId

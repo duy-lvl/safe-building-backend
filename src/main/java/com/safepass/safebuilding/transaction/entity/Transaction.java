@@ -35,4 +35,10 @@ public class Transaction {
 
     @OneToOne
     private Bill bill;
+
+    private String type;
+    private int accountBalance;
+
+    @ManyToOne
+    private Wallet wallet;
 }
