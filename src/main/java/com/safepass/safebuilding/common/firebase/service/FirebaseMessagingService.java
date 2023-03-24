@@ -4,12 +4,14 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
+import com.safepass.safebuilding.common.firebase.entity.MultipleDeviceNotification;
 import com.safepass.safebuilding.common.firebase.entity.NotificationMessage;
 import com.safepass.safebuilding.device.entity.Device;
 import com.safepass.safebuilding.device.repository.DeviceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -48,30 +50,31 @@ public class FirebaseMessagingService {
 
     /**
      * send push notification for multiple customers at the same time.
-     * @param notificationMessage
-     * @param customerIds
+     * @param multipleDeviceNotification
      * @return String
      */
-    public String sendNotificationByToken(NotificationMessage notificationMessage, List<UUID> customerIds) {
-        Device device;
+    public String sendNotificationByToken(MultipleDeviceNotification multipleDeviceNotification) {
         Notification notification = Notification.builder()
-                .setTitle(notificationMessage.getTitle())
-                .setBody(notificationMessage.getBody())
+                .setTitle(multipleDeviceNotification.getTitle())
+                .setBody(multipleDeviceNotification.getBody())
                 .build();
         Message message ;
-
+        List<UUID> customerIds = multipleDeviceNotification.getCustomerIdList();
+        List<Device> devices = new ArrayList<>();
         try {
             if(customerIds.size() > 0){
                 for (int i = 0; i < customerIds.size(); i++) {
-                    device = deviceRepository.findById(customerIds.get(i)).get();
-                    if(device != null){
+                    devices.addAll(deviceRepository.findDeviceByCustomerId(customerIds.get(i)));
+                }
+            }
+            if(devices.size() > 0){
+                for (int i = 0; i < devices.size(); i++) {
                         message = Message.builder()
-                                .setToken(device.getToken())
+                                .setToken(devices.get(i).getToken())
                                 .setNotification(notification)
-                                .putAllData(notificationMessage.getData())
+                                .putAllData(multipleDeviceNotification.getData())
                                 .build();
                         firebaseMessaging.send(message);
-                    }
                 }
             }
             return "Send notification successfully";

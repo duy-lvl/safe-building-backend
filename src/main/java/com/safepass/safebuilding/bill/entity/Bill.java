@@ -31,6 +31,4 @@ public class Bill {
 
     @Enumerated(EnumType.STRING)
     private BillStatus status;
-
-
 }

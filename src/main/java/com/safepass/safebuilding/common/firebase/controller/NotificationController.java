@@ -1,5 +1,6 @@
 package com.safepass.safebuilding.common.firebase.controller;
 
+import com.safepass.safebuilding.common.firebase.entity.MultipleDeviceNotification;
 import com.safepass.safebuilding.common.firebase.entity.NotificationMessage;
 import com.safepass.safebuilding.common.firebase.service.FirebaseMessagingService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,11 +24,10 @@ public class NotificationController {
         return firebaseMessagingService.sendNotificationByToken(notificationMessage);
     }
 
-    @PostMapping()
+    @PostMapping("/send-notification-for-multiple-customer")
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     public String sendNotificationByTokenForListCustomer(
-            @RequestBody NotificationMessage message,
-            @RequestBody List<UUID> customerIds){
-        return firebaseMessagingService.sendNotificationByToken(message, customerIds);
+            @RequestBody MultipleDeviceNotification multipleDeviceNotification){
+        return firebaseMessagingService.sendNotificationByToken(multipleDeviceNotification);
     }
 }
