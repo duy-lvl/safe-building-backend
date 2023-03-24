@@ -24,9 +24,6 @@ public class Transaction {
     @Type(type = "org.hibernate.type.UUIDCharType")
     private UUID id;
 
-    //FK
-    @ManyToOne
-    private Wallet wallet;
 
     private Date date;
 
