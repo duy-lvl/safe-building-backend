@@ -102,7 +102,7 @@ public class SchedulerService {
         }
     }
 
-//    @PostConstruct
+    @PostConstruct
     public void init() {
         try {
             scheduler.start();
@@ -121,7 +121,7 @@ public class SchedulerService {
         }
     }
 
-//    @PreDestroy
+    @PreDestroy
     public void preDestroy() {
         try {
             scheduler.shutdown();
