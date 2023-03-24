@@ -6,6 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
 
@@ -55,5 +56,7 @@ public interface IImageService {
      * @throws IOException
      */
     String create(MultipartFile[] files) throws IOException;
+
+    String save(File file, byte[] bytes, String contentType) throws IOException;
 }
 

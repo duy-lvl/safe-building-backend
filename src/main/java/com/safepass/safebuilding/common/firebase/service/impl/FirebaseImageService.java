@@ -19,6 +19,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 
 @Service
@@ -68,6 +69,17 @@ public class FirebaseImageService implements IImageService {
         return name;
     }
 
+    public String save(File file, byte[] bytes, String contentType) throws IOException {
+
+        Bucket bucket = StorageClient.getInstance().bucket();
+
+        String name = generateFileName(file.getName());
+
+        bucket.create(name, bytes, contentType);
+
+        return name;
+    }
+
     @Override
     public String save(BufferedImage bufferedImage, String originalFileName) throws IOException {
 
@@ -110,6 +122,8 @@ public class FirebaseImageService implements IImageService {
         imageUrl = imageUrl.split("/")[4];
         return imageUrl;
     }
+
+
     @Data
     @Configuration
     @ConfigurationProperties(prefix = "firebase")

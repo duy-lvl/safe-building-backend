@@ -3,6 +3,7 @@ package com.safepass.safebuilding.common.excel.controller;
 import com.google.common.net.HttpHeaders;
 import com.safepass.safebuilding.common.dto.ResponseObject;
 import com.safepass.safebuilding.common.excel.service.ExcelFileService;
+import com.safepass.safebuilding.common.exception.NoSuchDataException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -30,12 +31,8 @@ public class ExcelController {
     }
 
     @GetMapping("get-template-excel-file")
-    public ResponseEntity<byte[]> downloadTemplateFile(@RequestParam UUID buildingId) throws IOException {
-        excelFileService.createFileForMonthlyBill(buildingId);
-        Path path = Paths.get("src/main/resources/MonthlyBill" + buildingId + ".xlsx");
-        byte[] data = Files.readAllBytes(path);
+    public ResponseEntity<ResponseObject> downloadTemplateFile(@RequestParam UUID buildingId) throws IOException, NoSuchDataException {
+        return excelFileService.createFileForMonthlyBill(buildingId);
 
-        return ResponseEntity.ok().contentType(MediaType.parseMediaType(String.valueOf(com.google.common.net.MediaType.MICROSOFT_EXCEL)))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; fileName=\"MonthlyBill.xlsx" + "\"").body(data);
     }
 }

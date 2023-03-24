@@ -1,5 +1,6 @@
 package com.safepass.safebuilding.common.excel.service;
 
+import com.google.common.net.HttpHeaders;
 import com.safepass.safebuilding.bill.entity.Bill;
 import com.safepass.safebuilding.bill.repository.BillRepository;
 import com.safepass.safebuilding.bill_item.entity.BillItem;
@@ -9,6 +10,7 @@ import com.safepass.safebuilding.building.repository.BuildingRepository;
 import com.safepass.safebuilding.common.dto.ResponseObject;
 import com.safepass.safebuilding.common.excel.entity.Info;
 import com.safepass.safebuilding.common.excel.utils.ExcelUtils;
+import com.safepass.safebuilding.common.firebase.service.IImageService;
 import com.safepass.safebuilding.common.meta.BillStatus;
 import com.safepass.safebuilding.rent_contract.entity.RentContract;
 import com.safepass.safebuilding.rent_contract.repository.RentContractRepository;
@@ -17,14 +19,19 @@ import com.safepass.safebuilding.service.repository.ServiceRepository;
 import lombok.extern.log4j.Log4j2;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.tomcat.util.http.fileupload.FileItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.*;
@@ -45,6 +52,8 @@ public class ExcelFileService {
     private BillItemRepository billItemRepository;
     @Autowired
     private ServiceRepository serviceRepository;
+    @Autowired
+    private IImageService imageService;
 
     public ResponseEntity<ResponseObject> uploadFileForMonthlyBill(MultipartFile uploadFile) throws IOException {
         boolean checkBill = false;
@@ -147,10 +156,10 @@ public class ExcelFileService {
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseObject(HttpStatus.CREATED.toString(), "Successfully", null, null));
     }
 
-    public void createFileForMonthlyBill(UUID buildingId) throws IOException {
+    public ResponseEntity<ResponseObject> createFileForMonthlyBill(UUID buildingId) throws IOException {
         Building building = buildingRepository.findBuildingById(buildingId).orElse(null);
         if (building == null) {
-            return;
+            return null;
         }
         List<Info> infos = excelUtils.getListInfoForExcel(building.getId());
         Workbook workbook = null;
@@ -227,6 +236,18 @@ public class ExcelFileService {
             if (workbook != null) {
                 workbook.close();
             }
+
+            Path path = Paths.get("src/main/resources/MonthlyBill" + buildingId + ".xlsx");
+            byte[] data = Files.readAllBytes(path);
+            File file = new File("src/main/resources/MonthlyBill" + buildingId + ".xlsx");
+
+            String contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            String url = imageService.save(file, data, contentType);
+            if (file.exists()){
+                file.delete();
+            }
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", null, url));
         }
 
 
