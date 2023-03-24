@@ -25,9 +25,12 @@ public class RentContractController {
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ResponseObject> getList(
             @RequestParam(name = "page", defaultValue = "1")  int page,
-            @RequestParam(name = "size", defaultValue = "10") int size
+            @RequestParam(name = "size", defaultValue = "10") int size,
+            @RequestParam(defaultValue = "") String searchKey,
+            @RequestParam(defaultValue = "") String sortBy,
+            @RequestParam(defaultValue = "") String order
     ) throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException {
-        return rentContractService.getList(page, size);
+        return rentContractService.getList(page, size, searchKey, sortBy, order);
     }
 
     @GetMapping("/{id}")
