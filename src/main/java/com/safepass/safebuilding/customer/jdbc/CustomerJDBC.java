@@ -7,6 +7,8 @@ import com.safepass.safebuilding.common.meta.RentContractStatus;
 import com.safepass.safebuilding.customer.dto.ContractDTO;
 import com.safepass.safebuilding.customer.dto.CustomerDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
@@ -14,10 +16,13 @@ import java.util.List;
 import java.util.UUID;
 
 @Component
+@CacheConfig(cacheNames = {"customer"})
 public class CustomerJDBC extends Jdbc {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+
+    @CachePut(key = "#query")
     public List<CustomerDTO> getCustomerList(String query) {
         return jdbcTemplate.query(query, (rs, rowNum) -> {
             CustomerDTO customerDTO = new CustomerDTO();
@@ -30,6 +35,7 @@ public class CustomerJDBC extends Jdbc {
         });
     }
 
+    @CachePut(key = "#query")
     public List<ContractDTO> getContracts(String query) {
         return jdbcTemplate.query(query, (rs, rowNum) -> {
             ContractDTO contractDTO = new ContractDTO();

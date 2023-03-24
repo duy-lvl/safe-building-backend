@@ -4,6 +4,8 @@ import com.safepass.safebuilding.common.jdbc.Jdbc;
 import com.safepass.safebuilding.common.meta.RentContractStatus;
 import com.safepass.safebuilding.rent_contract.dto.RentContractDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
@@ -11,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 @Component
+@CacheConfig(cacheNames = {"contract"})
 public class RentContractJDBC extends Jdbc {
 
     @Autowired
@@ -23,6 +26,7 @@ public class RentContractJDBC extends Jdbc {
         return jdbcTemplate.update(query) > 0;
     }
 
+    @CachePut(key = "#query")
     public List<RentContractDTO> getList(String query) {
         return jdbcTemplate.query(query, (rs, rowNum) -> {
             RentContractDTO rentContractDTO = new RentContractDTO();

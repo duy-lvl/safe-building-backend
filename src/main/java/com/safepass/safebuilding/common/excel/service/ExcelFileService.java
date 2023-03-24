@@ -109,16 +109,32 @@ public class ExcelFileService {
                             bill = billRepository.save(bill);
 
                             Service service = serviceRepository.findServiceByName("Electricity");
-                            BillItem billItem = new BillItem(UUID.randomUUID(), bill, electricBill, electricBill * service.getPrice(), service);
+                            BillItem billItem = new BillItem(UUID.randomUUID(), bill, electricBill, electricBill , service);
                             billItemRepository.save(billItem);
                             billValue += electricBill * service.getPrice();
 
 
                             service = serviceRepository.findServiceByName("Water");
-                            billItem = new BillItem(UUID.randomUUID(), bill, waterBill, waterBill * service.getPrice(), service);
+                            billItem = new BillItem(UUID.randomUUID(), bill, waterBill, waterBill , service);
                             billItemRepository.save(billItem);
                             billValue += waterBill * service.getPrice();
 
+                            service = serviceRepository.findServiceByName("HAVC");
+                            billItem = new BillItem(UUID.randomUUID(), bill, 1, 1 * service.getPrice(), service);
+                            billItemRepository.save(billItem);
+                            billValue += waterBill * service.getPrice();
+
+
+                            service = serviceRepository.findServiceByName("Parking");
+                            billItem = new BillItem(UUID.randomUUID(), bill, 1, 1 * service.getPrice(), service);
+                            billItemRepository.save(billItem);
+                            billValue += waterBill * service.getPrice();
+
+
+                            service = serviceRepository.findServiceByName("Maintenance");
+                            billItem = new BillItem(UUID.randomUUID(), bill, 1, 1 * service.getPrice(), service);
+                            billItemRepository.save(billItem);
+                            billValue += waterBill * service.getPrice();
 
                             bill.setValue(billValue);
                             bill = billRepository.save(bill);
@@ -168,7 +184,7 @@ public class ExcelFileService {
             workbook = new XSSFWorkbook();
             Sheet sheet = workbook.createSheet("MonthlyBill");
             String[] columnNamesBuilding = {"Building Id", "Building Name", "BuidlingAddress"};
-            String[] columnNamesBill = {"Contract Id", "Customer Id", "Flat Id", "Flat room no", "Electric", "Water"};
+            String[] columnNamesBill = {"Contract Id", "Customer Id", "Flat Id", "Flat room no", "Electric (VND)", "Water (VND)"};
             Font headerFont = workbook.createFont();
             headerFont.setBold(true);
             headerFont.setFontHeightInPoints((short) 12);
