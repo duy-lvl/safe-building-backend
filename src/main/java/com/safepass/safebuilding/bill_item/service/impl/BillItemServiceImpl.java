@@ -32,6 +32,7 @@ public class BillItemServiceImpl implements BillItemService {
             com.safepass.safebuilding.service.entity.Service service = serviceRepository.findServiceById(billItems.get(i).getService().getId()).get();
             billItemDTOS.get(i).setPrice(service.getPrice());
             billItemDTOS.get(i).setServiceName(service.getName());
+            billItemDTOS.get(i).setIcon(service.getIcon());
         }
 //        List<BillItemDTO> bi
         return ResponseEntity.status(HttpStatus.OK)
