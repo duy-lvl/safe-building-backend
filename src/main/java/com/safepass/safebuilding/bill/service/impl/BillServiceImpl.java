@@ -134,7 +134,7 @@ public class BillServiceImpl implements BillService {
         if (rctemp.isPresent()) {
 
             RentContract rentContract = rctemp.get();
-            UUID rentContractId = rentContract.getId();
+//            UUID rentContractId = rentContract.getId();
             int value = rentContract.getValue();
             ServiceDTO[] serviceDTOS = billCreate.getService();
             List<BillItem> billItems = new ArrayList<>();

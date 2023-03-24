@@ -66,10 +66,10 @@ public class DataImport {
     public String createFlatType() {
         List<String> sqls = new ArrayList<>();
         flatTypeIds = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 4; i++) {
             flatTypeIds.add(UUID.randomUUID());
         }
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 4; i++) {
             StringBuilder sql = new StringBuilder("INSERT INTO flat_type (id, description, name) VALUES (\"");
             sql.append(flatTypeIds.get(i)).append("\", \"") //id
                     .append("Description ").append(i).append("\", \"") //description
@@ -126,7 +126,7 @@ public class DataImport {
                     .append(sdf.format(faker.date().birthday())).append("\", \"")
                     .append(Gender.FEMALE).append("\", \"")
                     .append("customer").append(i+1).append("@gmail.com\", \"")
-                    .append(01234567).append(i+1).append("\", \"")
+                    .append("01234567").append(i+1).append("\", \"")
                     .append(faker.address().fullAddress()).append("\", \"")
                     .append(faker.business().creditCardNumber()).append("\", \"")
                     .append(sdf.format(faker.date().between(Date.valueOf("2020-12-01"), Date.valueOf("2022-12-29")))).append("\", \"")
@@ -144,7 +144,7 @@ public class DataImport {
                     .append(sdf.format(faker.date().birthday())).append("\", \"")
                     .append(Gender.MALE).append("\", \"")
                     .append("customer").append(i+1).append("@gmail.com\", \"")
-                    .append(01234567).append(i+1).append("\", \"")
+                    .append("01234567").append(i+1).append("\", \"")
                     .append(faker.address().fullAddress()).append("\", \"")
                     .append(faker.business().creditCardNumber()).append("\", \"")
                     .append(sdf.format(faker.date().between(Date.valueOf("2020-12-01"), Date.valueOf("2022-12-29")))).append("\", \"")
@@ -163,7 +163,7 @@ public class DataImport {
                     .append(sdf.format(faker.date().birthday())).append("\", \"")
                     .append(Gender.FEMALE).append("\", \"")
                     .append("customer").append(i+1).append("@gmail.com\", \"")
-                    .append(01234567).append(i+1).append("\", \"")
+                    .append("01234567").append(i+1).append("\", \"")
                     .append(faker.address().fullAddress()).append("\", \"")
                     .append(faker.business().creditCardNumber()).append("\", \"")
                     .append(sdf.format(faker.date().between(Date.valueOf("2020-12-01"), Date.valueOf("2022-12-29")))).append("\", \"")
@@ -379,11 +379,12 @@ public class DataImport {
                 if (count < customerIds.size()) {
                     UUID rentContractId = UUID.randomUUID();
                     rentContractIds.add(rentContractId);
-                    StringBuilder sql = new StringBuilder("INSERT INTO rent_contract (id, contract, start_date, expiry_date, status, value, customer_id, flat_id) VALUES (\"");
+                    StringBuilder sql = new StringBuilder("INSERT INTO rent_contract (id, contract, start_date, expiry_date, title, status, value, customer_id, flat_id) VALUES (\"");
                     sql.append(rentContractId).append("\", \"")
                             .append(faker.business().creditCardNumber()).append("\", \"")
-                            .append(faker.business().creditCardExpiry()).append("\", \"")
+                            .append(sdf.format(faker.date().between(Date.valueOf("2020-12-01"), Date.valueOf("2023-03-20")))).append("\", \"")
                             .append(expiryDates.get(random(0, expiryDates.size()-1))).append("\", \"")
+                            .append("Hợp đồng tháng").append("\", \"")
                             .append(RentContractStatus.VALID).append("\", ")
                             .append(random(5, 30)*1000000).append(", \"")
                             .append(customerIds.get(random(0, customerIds.size()-1))).append("\", \"")
@@ -542,7 +543,7 @@ public class DataImport {
                 StringBuilder sql = new StringBuilder("INSERT INTO device (id, token, customer_id) VALUES (\"");
                 UUID id = UUID.randomUUID();
                 sql.append(id).append("\", \"")
-                        .append("Device ").append(count).append("\", \"")
+                        .append("e-KQYOLETMGDtwaCct1cNK:APA91bG4SyarlhuGIvTQUKYKWGtgtcRLSyYqBXD1qvO-czgjEpqMUY5fMnY5OBbfWbdP5Rjo25Ek8Gyq2H7TYow38pedbsGbWbXRQhHSi5N0TXbEFKArU-fWSzVZgin4jub7U454tgqs").append("\", \"")
                         .append(customerId).append("\");");
                 sqls.add(sql.toString());
                 count++;
@@ -565,8 +566,8 @@ public class DataImport {
                         createService() + "\n\n" + createCustomer() + "\n\n" +
                         createBuilding() + "\n\n" + createFlat() + "\n\n" +
                         createFacility() + "\n\n" +
-                        createFlatFacility() + "\n\n" + createWallet() + "\n\n" +
-                        createRentContract() + "\n\n" + createMoneyTransfer() + "\n\n" +
+                        createFlatFacility() + "\n\n" +
+                        createRentContract() + "\n\n" + //createMoneyTransfer() + "\n\n" +
                         createBill() + "\n\n" + createBillItem() + "\n\n" +
                         createDevice()
         );
