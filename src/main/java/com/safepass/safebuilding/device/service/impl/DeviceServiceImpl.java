@@ -20,13 +20,12 @@ public class DeviceServiceImpl implements DeviceService {
     public Device addToken(Customer customer, String token) {
         Device device = new Device(UUID.randomUUID(), token, customer);
         Optional<Device> deviceOptional = deviceRepository.findDeviceByCustomerIdAndToken(customer.getId(), token);
+        if (deviceOptional.isPresent()) {
+            device = deviceOptional.get();
+            device.setToken(token);
+        }
+        return deviceRepository.save(device);
 
-        if (deviceOptional.isEmpty()) {
-            return deviceRepository.save(device);
-        }
-        else {
-            return device;
-        }
     }
 
 }
