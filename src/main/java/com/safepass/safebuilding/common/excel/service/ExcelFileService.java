@@ -241,7 +241,7 @@ public class ExcelFileService {
             sheet.autoSizeColumn(5);
             sheet.autoSizeColumn(6);
 
-            fileOutputStream = new FileOutputStream("src/main/resources/MonthlyBill" + building.getId() + ".xlsx");
+            fileOutputStream = new FileOutputStream("MonthlyBill" + building.getId() + ".xlsx");
             workbook.write(fileOutputStream);
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -253,9 +253,9 @@ public class ExcelFileService {
                 workbook.close();
             }
 
-            Path path = Paths.get("src/main/resources/MonthlyBill" + buildingId + ".xlsx");
+            Path path = Paths.get("MonthlyBill" + buildingId + ".xlsx");
             byte[] data = Files.readAllBytes(path);
-            File file = new File("src/main/resources/MonthlyBill" + buildingId + ".xlsx");
+            File file = new File("MonthlyBill" + buildingId + ".xlsx");
 
             String contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
             String url = imageService.save(file, data, contentType);
