@@ -168,7 +168,7 @@ public class BillServiceImpl implements BillService {
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(new ResponseObject(HttpStatus.CREATED.toString(), "Successfully", null, null));
         }
-        throw new NoSuchDataException("Contract not found");
+        throw new NoSuchDataException("This room does not have contract.");
     }
 
     @Transactional(rollbackFor = {SQLException.class, Exception.class})
