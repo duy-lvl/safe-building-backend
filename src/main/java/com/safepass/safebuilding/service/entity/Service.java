@@ -14,6 +14,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Builder
 public class Service {
     @Id
     @GeneratedValue(generator = "UUID")
@@ -25,10 +26,9 @@ public class Service {
     private String name;
     private String description;
     private int price;
+    private String icon;
 
     @Enumerated(EnumType.STRING)
     private ServiceStatus status;
 
-    @OneToMany(mappedBy = "id")
-    private List<BillItem> billItems;
 }

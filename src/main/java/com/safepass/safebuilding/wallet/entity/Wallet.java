@@ -16,6 +16,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Builder
 public class Wallet {
     @Id
     @GeneratedValue(generator = "UUID")
@@ -25,22 +26,13 @@ public class Wallet {
     private UUID id;
 
     //FK
-    @Type(type = "org.hibernate.type.UUIDCharType")
-    @ManyToOne(targetEntity = Customer.class)
-    @JoinColumn(
-            name = "customer_id",
-            referencedColumnName = "id"
-    )
-    private UUID customerId;
+    @ManyToOne
+    private Customer customer;
 
     private int amount;
 
     @Enumerated(EnumType.STRING)
     private WalletStatus status;
 
-    @OneToMany(mappedBy = "id")
-    private List<Transaction> transactions;
 
-    @OneToMany(mappedBy = "id")
-    private List<MoneyTransfer> moneyTransfers;
 }

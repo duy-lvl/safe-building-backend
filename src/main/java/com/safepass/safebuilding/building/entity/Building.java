@@ -7,6 +7,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,7 +16,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class Building {
+@ToString
+public class Building implements Serializable {
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
@@ -24,9 +26,13 @@ public class Building {
     private UUID id;
 
     private String name;
+    private String address;
+
+
+    @Enumerated(EnumType.STRING)
     private BuildingStatus status;
 
-    @OneToMany(mappedBy = "id")
-    private List<Flat> flats;
+    @Column(columnDefinition = "int default -1")
+    private int capacity;
 
 }

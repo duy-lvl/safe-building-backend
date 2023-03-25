@@ -8,8 +8,11 @@ import com.safepass.safebuilding.common.meta.FlatStatus;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
+import org.hibernate.validator.constraints.UniqueElements;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.List;
 import java.util.UUID;
 @Getter
@@ -17,6 +20,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Builder
 public class Flat {
     @Id
     @GeneratedValue(generator = "UUID")
@@ -31,27 +35,15 @@ public class Flat {
     @Enumerated(EnumType.STRING)
     private FlatStatus status;
 
+    @Min(101)
+    @Max(9999)
+    private int roomNumber;
     //FK
-    @Type(type = "org.hibernate.type.UUIDCharType")
-    @ManyToOne(targetEntity = FlatType.class)
-    @JoinColumn(
-            name = "flat_type_id",
-            referencedColumnName = "id"
-    )
-    private UUID flatTypeId;
+    @ManyToOne
+    private FlatType flatType;
 
-    @Type(type = "org.hibernate.type.UUIDCharType")
-    @ManyToOne(targetEntity = Building.class)
-    @JoinColumn(
-            name = "building_id",
-            referencedColumnName = "id"
-    )
-    private UUID buildingId;
-
-
-
-    @OneToMany(mappedBy = "id")
-    private List<RentContract> rentContracts;
+    @ManyToOne
+    private Building building;
 
     @ManyToMany
     @JoinTable(
@@ -60,4 +52,5 @@ public class Flat {
             inverseJoinColumns = @JoinColumn(name = "facility_id")
     )
     private List<Facility> facilities;
+
 }

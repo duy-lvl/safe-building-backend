@@ -30,13 +30,8 @@ public class MoneyTransfer {
     private UUID id;
 
     //FK
-    @Type(type = "org.hibernate.type.UUIDCharType")
-    @ManyToOne(targetEntity = Wallet.class)
-    @JoinColumn(
-            name = "wallet_id",
-            referencedColumnName = "id"
-    )
-    private UUID walletId;
+    @ManyToOne
+    private Wallet wallet;
 
     @Enumerated(EnumType.STRING)
     private MoneyTransferType type;

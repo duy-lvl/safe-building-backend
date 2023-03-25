@@ -2,7 +2,6 @@ package com.safepass.safebuilding.bill_item.entity;
 
 import com.safepass.safebuilding.bill.entity.Bill;
 import com.safepass.safebuilding.service.entity.Service;
-import com.safepass.safebuilding.common.meta.BillItemStatus;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
@@ -24,26 +23,14 @@ public class BillItem {
     private UUID id;
 
     //FK
-    @Type(type = "org.hibernate.type.UUIDCharType")
-    @ManyToOne(targetEntity = Bill.class)
-    @JoinColumn(
-            name = "bill_id",
-            referencedColumnName = "id"
-    )
-    private UUID billId;
-
-    //FK
-    @Type(type = "org.hibernate.type.UUIDCharType")
-    @ManyToOne(targetEntity = Service.class)
-    @JoinColumn(
-            name = "service_id",
-            referencedColumnName = "id"
-    )
-    private UUID serviceId;
+    @ManyToOne
+    private Bill bill;
 
     private int quantity;
-    private int value;
 
-    @Enumerated(EnumType.STRING)
-    private BillItemStatus status;
+    private int value;
+    //Join table
+    @ManyToOne
+    private Service service;
+
 }

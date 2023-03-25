@@ -1,6 +1,5 @@
 package com.safepass.safebuilding.rent_contract.entity;
 
-import com.safepass.safebuilding.bill.entity.Bill;
 import com.safepass.safebuilding.common.meta.RentContractStatus;
 import com.safepass.safebuilding.customer.entity.Customer;
 import com.safepass.safebuilding.flat.entity.Flat;
@@ -9,15 +8,14 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
-import java.sql.Date;
-import java.util.List;
+import java.util.Date;
 import java.util.UUID;
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 @Entity
+@Builder
 public class RentContract {
     @Id
     @GeneratedValue(generator = "UUID")
@@ -27,30 +25,20 @@ public class RentContract {
     private UUID id;
 
     //FK
-    @Type(type = "org.hibernate.type.UUIDCharType")
-    @ManyToOne(targetEntity = Customer.class)
-    @JoinColumn(
-            name = "customer_id",
-            referencedColumnName = "id"
-    )
-    private UUID customerId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Customer customer;
 
     //FK
-    @Type(type = "org.hibernate.type.UUIDCharType")
-    @ManyToOne(targetEntity = Flat.class)
-    @JoinColumn(
-            name = "flat_id",
-            referencedColumnName = "id"
-    )
-    private UUID flatId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Flat flat;
 
+    private String title;
     private String contract;
+    private Date startDate;
     private Date expiryDate;
     private int value;
 
     @Enumerated(EnumType.STRING)
     private RentContractStatus status;
 
-    @OneToMany(mappedBy = "id")
-    private List<Bill> bills;
 }
