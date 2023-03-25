@@ -10,7 +10,7 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RentContractDTO  implements Serializable{
+public class RentContractDTO implements Serializable{
     private String id;
     private String buildingName;
     private String buildingAddress;

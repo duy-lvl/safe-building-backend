@@ -90,17 +90,17 @@ public class RentContractServiceImpl implements RentContractService {
      *
      */
     @Override
-    public ResponseEntity<ResponseObject> getList(int page, int size)
+    public ResponseEntity<ResponseObject> getList(int page, int size,  String searchKey, String sortBy, String order)
             throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException
     {
         paginationValidation.validatePageSize(page, size);
 
-        String queryTotalRow = RentContractServiceUtil.contructQueryGetAllTotalRow();
+        String queryTotalRow = RentContractServiceUtil.contructQueryGetAllTotalRow(searchKey);
         long totalRow = rentContractJDBC.getTotalRow(queryTotalRow);
         int totalPage = (int) Math.ceil(1.0 * totalRow / size);
         Pagination pagination = new Pagination(page, size, totalPage);
         paginationValidation.validateMaxPageNumber(pagination);
-        String queryGetList = RentContractServiceUtil.contructQueryGetAll(page - 1, size);
+        String queryGetList = RentContractServiceUtil.contructQueryGetAll(page - 1, size, searchKey, sortBy, order);
         List<RentContractDTO> rentContracts = rentContractJDBC.getList(queryGetList);
 
         return ResponseEntity.status(HttpStatus.OK)

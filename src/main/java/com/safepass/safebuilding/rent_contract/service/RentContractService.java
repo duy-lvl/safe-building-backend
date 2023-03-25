@@ -38,7 +38,7 @@ public interface RentContractService {
      * @param size {@code int}
      * @return ResponseEntity<ResponseObject>
      */
-    ResponseEntity<ResponseObject> getList(int page, int size) throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException;
+    ResponseEntity<ResponseObject> getList(int page, int size, String searchKey, String sortBy, String order) throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException;
     /**
      * Get account list for account management screen
      *
