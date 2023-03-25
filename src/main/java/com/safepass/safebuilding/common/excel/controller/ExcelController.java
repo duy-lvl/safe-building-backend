@@ -27,7 +27,7 @@ public class ExcelController {
 
     @GetMapping("/get-template-excel-file")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<ResponseObject> downloadTemplateFile(@RequestParam UUID buildingId) throws IOException, NoSuchDataException {
+    public ResponseEntity<byte[]> downloadTemplateFile(@RequestParam UUID buildingId) throws IOException, NoSuchDataException {
         return excelFileService.createFileForMonthlyBill(buildingId);
 
     }

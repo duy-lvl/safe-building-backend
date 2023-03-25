@@ -172,7 +172,7 @@ public class ExcelFileService {
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseObject(HttpStatus.CREATED.toString(), "Successfully", null, null));
     }
 
-    public ResponseEntity<ResponseObject> createFileForMonthlyBill(UUID buildingId) throws IOException {
+    public ResponseEntity<byte[]> createFileForMonthlyBill(UUID buildingId) throws IOException {
         Building building = buildingRepository.findBuildingById(buildingId).orElse(null);
         if (building == null) {
             return null;
@@ -257,13 +257,15 @@ public class ExcelFileService {
             byte[] data = Files.readAllBytes(path);
             File file = new File("MonthlyBill" + buildingId + ".xlsx");
 
-            String contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-            String url = imageService.save(file, data, contentType);
+            /*String contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            String url = imageService.save(file, data, contentType);*/
             if (file.exists()){
                 file.delete();
             }
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", null, url));
+//            return ResponseEntity.status(HttpStatus.OK)
+//                    .body(new ResponseObject(HttpStatus.OK.toString(), "Successfully", null, data));
+            return ResponseEntity.ok().contentType(MediaType.parseMediaType(String.valueOf(com.google.common.net.MediaType.MICROSOFT_EXCEL)))
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; fileName=\"MonthlyBill.xlsx" + "\"").body(data);
         }
 
 
