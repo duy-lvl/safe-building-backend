@@ -13,22 +13,22 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 
-@RequestMapping(value = "/api/v1")
+@RequestMapping(value = "/api/v1/bills")
 public class BillController {
     @Autowired
     private BillService billService;
 
-    @GetMapping("/mobile/bills")
+    @GetMapping("/{customerId}")
     @PreAuthorize("hasAuthority('CUSTOMER')")
     public ResponseEntity<ResponseObject> getBillList(
             @RequestParam(name = "page", defaultValue = "1")  int page,
             @RequestParam(name = "size", defaultValue = "10") int size,
-            @RequestParam(name = "customerId") String customerId
+            @PathVariable(name = "customerId") String customerId
     ) throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException {
         return billService.getBillList(customerId, page, size);
     }
 
-    @GetMapping("/bills")
+    @GetMapping
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ResponseObject> getBillList(
             @RequestParam(name = "page", defaultValue = "1")  int page,
@@ -36,15 +36,15 @@ public class BillController {
     ) throws InvalidPageSizeException, MaxPageExceededException, NoSuchDataException {
         return billService.getBillList(page, size);
     }
-    @PostMapping("/bills")
+    @PostMapping("/bill")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ResponseObject> createBill(@RequestBody BillCreate billCreate) throws NoSuchDataException {
         return billService.createBill(billCreate);
     }
 
-    @PostMapping("/bills/create-bills")
+    @PostMapping
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<ResponseObject> createBill() throws NoSuchDataException {
+    public ResponseEntity<ResponseObject> createBill() {
         return billService.createBill();
     }
 }

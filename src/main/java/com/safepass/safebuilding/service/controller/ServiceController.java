@@ -18,7 +18,7 @@ import java.io.IOException;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
-@RequestMapping(value = "/api/v1")
+@RequestMapping(value = "/api/v1/services")
 public class ServiceController {
     @Autowired
     private ServiceService serviceService;
@@ -32,7 +32,7 @@ public class ServiceController {
 //        return serviceService.getAllService(page, size);
 //    }
 
-    @GetMapping("/mobile/services")
+    @GetMapping("/active")
     @PreAuthorize("hasAuthority('CUSTOMER')")
     public ResponseEntity<ResponseObject> mobileGetList(
             @RequestParam(name = "page", defaultValue = "1")  int page,
@@ -40,7 +40,7 @@ public class ServiceController {
         return serviceService.getActiveServices(page, size);
     }
 
-    @GetMapping("/services")
+    @GetMapping
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ResponseObject> searchService(
             @RequestParam(name = "page", defaultValue = "1")  int page,
@@ -52,13 +52,13 @@ public class ServiceController {
         return serviceService.getServiceList(page, size, searchKey, sortBy, order);
     }
 
-    @GetMapping("/services/{serviceId}")
+    @GetMapping("/{serviceId}")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ResponseObject> searchServiceById(
             @PathVariable String serviceId) throws NoSuchDataException {
         return serviceService.getServiceById(serviceId);
     }
-    @PostMapping("/services/create")
+    @PostMapping
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ResponseObject> createService(
             @RequestParam MultipartFile[] icon,
@@ -66,7 +66,7 @@ public class ServiceController {
         return serviceService.createService(icon, requestObject);
     }
 
-    @PutMapping ("/services/update")
+    @PutMapping
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ResponseObject> updateService(
             @RequestBody RequestObjectForUpdate requestObject
@@ -74,7 +74,7 @@ public class ServiceController {
         return serviceService.updateService(requestObject);
     }
 
-    @PutMapping ("/services/update-icon")
+    @PutMapping ("/icon")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ResponseObject> updateServiceIcon(
             @RequestParam String serviceId,
@@ -83,9 +83,5 @@ public class ServiceController {
         return serviceService.updateIcon(serviceId, newIcon);
     }
 
-    @PostMapping("/mobile/services/add")
-    @PreAuthorize("hasAuthority('customer')")
-    public ResponseEntity<ResponseObject> addService(@RequestBody AddServiceDTO addServiceDTO){
-        return serviceService.addService(addServiceDTO);
-    }
+
 }

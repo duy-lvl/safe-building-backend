@@ -28,7 +28,7 @@ public class FlatController {
         return flatService.getFlatList(page, size);
     }
 
-    @PostMapping("/create-flat")
+    @PostMapping
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ResponseObject> createFlat(@RequestBody RequestFlat requestFlat)
             throws InvalidDataException {

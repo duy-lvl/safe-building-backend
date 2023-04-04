@@ -21,7 +21,7 @@ public class FlatTypeController {
         return flatTypeService.getFlatType();
     }
 
-    @PostMapping("/create")
+    @PostMapping
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ResponseObject> create(@RequestBody FlatTypeCreateDTO flatType) {
         return flatTypeService.createFlatType(flatType);

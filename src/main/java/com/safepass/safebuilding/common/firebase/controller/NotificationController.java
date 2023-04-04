@@ -14,17 +14,17 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/notification")
+@RequestMapping("/api/v1/notifications")
 public class NotificationController {
     @Autowired
     private FirebaseMessagingService firebaseMessagingService;
-    @PostMapping("/send-notification")
+    @PostMapping("/notification")
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     public String sendNotificationByToken(@RequestBody NotificationMessage notificationMessage) {
         return firebaseMessagingService.sendNotificationByToken(notificationMessage);
     }
 
-    @PostMapping("/send-notification-for-multiple-customer")
+    @PostMapping
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     public String sendNotificationByTokenForListCustomer(
             @RequestBody MultipleDeviceNotification multipleDeviceNotification){

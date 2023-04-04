@@ -39,7 +39,7 @@ public class RentContractController {
         return rentContractService.getContractById(id);
     }
 
-    @PostMapping("/create-contract")
+    @PostMapping
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ResponseObject> createContract(
             @RequestParam String requestContract,
@@ -49,7 +49,7 @@ public class RentContractController {
         return rentContractService.createContract(files, requestContract, deviceTokens);
     }
 
-    @DeleteMapping("/delete-contract/{contractId}")
+    @DeleteMapping("/{contractId}")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ResponseObject> deleteContract(@PathVariable String contractId) throws NoSuchDataException {
         return rentContractService.deleteContract(contractId);

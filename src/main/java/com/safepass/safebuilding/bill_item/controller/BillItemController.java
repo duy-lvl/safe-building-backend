@@ -15,7 +15,7 @@ public class BillItemController {
     @Autowired
     private BillItemService billItemService;
 
-    @GetMapping("/{billId}")
+    @GetMapping("/{billId}/bill-items")
     public ResponseEntity<ResponseObject> getBill(@PathVariable String billId) {
         return billItemService.getBillItem(billId);
     }

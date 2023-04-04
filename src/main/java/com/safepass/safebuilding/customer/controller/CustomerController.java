@@ -9,6 +9,8 @@ import com.safepass.safebuilding.customer.dto.RequestObjectForCreateCustomer;
 import com.safepass.safebuilding.customer.dto.RequestObjectForFilter;
 import com.safepass.safebuilding.customer.dto.RequestObjectForUpdateCustomer;
 import com.safepass.safebuilding.customer.service.CustomerService;
+import com.safepass.safebuilding.service.dto.AddServiceDTO;
+import com.safepass.safebuilding.service.service.ServiceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,8 +30,11 @@ public class CustomerController {
     @Autowired
     private CustomerService customerService;
 
+    @Autowired
+    private ServiceService serviceService;
 
-    @PostMapping("/{customerId}/add-device")
+
+    @PostMapping("/{customerId}/device")
     @PreAuthorize("hasAuthority('CUSTOMER')")
     public ResponseEntity<ResponseObject> addDevice (
             @RequestParam(name = "token") String token,
@@ -64,7 +69,7 @@ public class CustomerController {
 //        return customerService.getAccountList(page, size);
 //    }
 
-    @GetMapping("/filter")
+    @GetMapping
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ResponseObject> filterCustomer(
             @RequestParam(defaultValue = "1") int page,
@@ -77,14 +82,14 @@ public class CustomerController {
         return customerService.filterCustomer(requestObjectForFilter);
     }
 
-    @PostMapping("/create-customer")
+    @PostMapping("/customer")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ResponseObject> addCustomer(@RequestBody RequestObjectForCreateCustomer requestObject)
             throws SQLException, InvalidDataException {
         return customerService.addCustomer(requestObject);
     }
 
-    @PutMapping("/update-customer")
+    @PutMapping("/customer")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ResponseObject> updateCustomer(@RequestBody RequestObjectForUpdateCustomer requestObject)
             throws InvalidDataException {
@@ -104,5 +109,11 @@ public class CustomerController {
     public ResponseEntity<ResponseObject> getCustomerContracts(@PathVariable String customerId)
             throws NoSuchDataException {
         return customerService.getCustomerContract(customerId);
+    }
+
+    @PostMapping("/service")
+    @PreAuthorize("hasAuthority('CUSTOMER')")
+    public ResponseEntity<ResponseObject> addService(@RequestBody AddServiceDTO addServiceDTO){
+        return serviceService.addService(addServiceDTO);
     }
 }

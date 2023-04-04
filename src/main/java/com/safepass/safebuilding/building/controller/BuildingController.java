@@ -42,7 +42,7 @@ public class BuildingController {
 //        return buildingService.searchBuildingByName(name, page, size);
 //    }
 
-    @GetMapping("/get-building-list")
+    @GetMapping
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ResponseObject> getBuildingListExtend(
             @RequestParam(name = "page", defaultValue = "1") int page,
@@ -60,7 +60,7 @@ public class BuildingController {
 //        return buildingService.getAvailableBuildings();
 //    }
 
-    @GetMapping("/{buildingId}/get-flats")
+    @GetMapping("/{buildingId}/flats")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ResponseObject> getFlatList(
             @PathVariable String buildingId
@@ -68,13 +68,13 @@ public class BuildingController {
         return flatService.getFlatByBuilding(buildingId);
     }
 
-    @PostMapping("/add-building")
+    @PostMapping
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ResponseObject> addBuilding(@RequestBody BuildingPostRequest buildingPostRequest) {
         return buildingService.createBuilding(buildingPostRequest);
     }
 
-    @PostMapping("/update-building")
+    @PutMapping
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ResponseObject> updateBuilding(@RequestBody BuildingDTO building) {
         return buildingService.updateBuilding(building);

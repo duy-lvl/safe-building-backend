@@ -18,14 +18,14 @@ public class ExcelController {
     @Autowired
     ExcelFileService excelFileService;
 
-    @PostMapping("/rent-contract/upload-excel-file")
+    @PostMapping("/rent-contract")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ResponseObject> uploadExcelFile(@RequestBody MultipartFile uploadFile) throws IOException {
         return excelFileService.uploadFileForMonthlyBill(uploadFile);
 
     }
 
-    @GetMapping("/get-template-excel-file")
+    @GetMapping("/rent-contract")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<byte[]> downloadTemplateFile(@RequestParam UUID buildingId) throws IOException, NoSuchDataException {
         return excelFileService.createFileForMonthlyBill(buildingId);

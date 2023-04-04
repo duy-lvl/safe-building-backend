@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.concurrent.ExecutionException;
 
 @RestController
-@RequestMapping("/api/v1/auth")
+@RequestMapping("/api/v1")
 public class AuthController {
     @Autowired
     AuthService authService;
